@@ -78,16 +78,19 @@ void XN_CALLBACK_TYPE PoseDetected(xn::PoseDetectionCapability& poseDetection, c
 
 OpenNi::OpenNi()
 {
+   init_ok = false;
    printf("init\n");
    XnStatus rc = XN_STATUS_OK;
    xn::EnumerationErrors errors;
 
    rc = g_Context.Init();
    CHECK_RC(rc, "init");
+
    rc = g_DepthGenerator.Create(g_Context);
 
    rc = g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator);
    CHECK_RC(rc, "Find depth generator");
+   if(rc != XN_STATUS_OK) return;
    rc = g_Context.FindExistingNode(XN_NODE_TYPE_USER, g_UserGenerator);
    CHECK_RC(rc, "Find user generator");
 
@@ -110,6 +113,7 @@ OpenNi::OpenNi()
    rc = g_Context.StartGeneratingAll();
    CHECK_RC(rc, "StartGenerating");
 
+   init_ok = true;
    printf("init E\n");
 }
 //---------------------------------------------------------------------------
@@ -122,13 +126,14 @@ OpenNi::~OpenNi()
 
 void OpenNi::update()
 {
-   g_Context.WaitAndUpdateAll();
+   if(init_ok) g_Context.WaitAndUpdateAll();
 }
 //---------------------------------------------------------------------------
 
 int OpenNi::getAnzPlayer()
 {
-   return g_UserGenerator.GetNumberOfUsers();
+   if(init_ok)return g_UserGenerator.GetNumberOfUsers();
+   else return 0;
 }
 //---------------------------------------------------------------------------
 
@@ -138,6 +143,7 @@ OpenNiPlayer OpenNi::getPlayer(int nr)
    XnUInt16 nUsers = 15;
 
    OpenNiPlayer p;
+   if(!init_ok) return p;
 
    g_UserGenerator.GetUsers(aUsers, nUsers);
    if(g_UserGenerator.GetSkeletonCap().IsTracking(nr))
@@ -159,6 +165,8 @@ OpenNiPlayer OpenNi::getPlayer(int nr)
 OpenNiPoint OpenNi::getPlayerPart(int nr, int part)
 {
    OpenNiPoint p;
+   if(!init_ok) return p;
+
    if(g_UserGenerator.GetSkeletonCap().IsTracking(nr))
    {
       XnSkeletonJointPosition pos;
@@ -202,6 +210,7 @@ OpenNiPoint OpenNi::getPlayerPart(int nr, int part)
 
 void OpenNi::drawPlayer(int nr)
 {
+   if(!init_ok) return;
    CL_FontDescription font_desc;
    font_desc.set_typeface_name("tahoma");
    font_desc.set_height(30);

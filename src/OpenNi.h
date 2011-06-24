@@ -92,6 +92,8 @@ public:
 
 private:
 
+   bool init_ok;
+
 
 };
 
