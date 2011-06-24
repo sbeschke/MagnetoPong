@@ -6,11 +6,11 @@
  */
 
 #include "MouseInputDevice.h"
+#include <iostream>
 
 MouseInputDevice::MouseInputDevice(CL_InputDevice* mouse)
-: mouse(mouse)
+: mouse(mouse), zValue(0.5f)
 {
-
 }
 
 MouseInputDevice::~MouseInputDevice() {
@@ -18,4 +18,8 @@ MouseInputDevice::~MouseInputDevice() {
 
 CL_Point MouseInputDevice::getPoint(void) {
 	return mouse->get_position();
+}
+
+float MouseInputDevice::getZ(void) {
+	return zValue;
 }
