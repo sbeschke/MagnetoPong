@@ -253,7 +253,7 @@ double OpenNi::getWinkel(int nr, int leftArm)
       p2 = Application::myself->kinect.getPlayerPart(nr, P_LELBOW, P_LSHOULDER);
    }
 
-   return atan((p1*p2)/(p1.length()*p2.length())) * 57.295779513082320876798154814105;
+   return atan((p1*p2)/(p1.length()*p2.length())) * 57.295779513082320876798154814105 + 45;
 }
 //---------------------------------------------------------------------------
 
