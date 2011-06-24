@@ -132,12 +132,12 @@ int OpenNi::getAnzPlayer()
 }
 //---------------------------------------------------------------------------
 
-Player OpenNi::getPlayer(int nr)
+OpenNiPlayer OpenNi::getPlayer(int nr)
 {
    XnUserID aUsers[15];
    XnUInt16 nUsers = 15;
 
-   Player p;
+   OpenNiPlayer p;
 
    g_UserGenerator.GetUsers(aUsers, nUsers);
    if(g_UserGenerator.GetSkeletonCap().IsTracking(nr))
@@ -156,9 +156,9 @@ Player OpenNi::getPlayer(int nr)
 }
 //---------------------------------------------------------------------------
 
-Point OpenNi::getPlayerPart(int nr, int part)
+OpenNiPoint OpenNi::getPlayerPart(int nr, int part)
 {
-   Point p;
+   OpenNiPoint p;
    if(g_UserGenerator.GetSkeletonCap().IsTracking(nr))
    {
       XnSkeletonJointPosition pos;
@@ -207,7 +207,7 @@ void OpenNi::drawPlayer(int nr)
    font_desc.set_height(30);
    CL_Font_System font(Application::myself->gc, font_desc);
 
-   Player p = getPlayer(nr);
+   OpenNiPlayer p = getPlayer(nr);
    if(p.calibrated)
    {
       for(int i=0; i < P_SIZE; i++)

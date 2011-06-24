@@ -39,16 +39,16 @@ using namespace std;
 #define P_RFOOT     23
 #define P_SIZE      24
 
-class Point
+class OpenNiPoint
 {
 public:
-   Point()
+   OpenNiPoint()
    {
       x = 0;
       y = 0;
       z = 0;
    };
-   Point(double x, double y, double z)
+   OpenNiPoint(double x, double y, double z)
    {
       this->x = x;
       this->y = y;
@@ -60,21 +60,21 @@ public:
    double z;   
 };
 
-class Player
+class OpenNiPlayer
 {
 public:
-   Player()
+   OpenNiPlayer()
    {
       calibrated = false;
 
       for(int i=0; i < P_SIZE; i++)
       {
-         pointList.push_back(new Point());
+         pointList.push_back(new OpenNiPoint());
       }
    }
    bool calibrated;
 
-   std::vector<Point* > pointList;
+   std::vector<OpenNiPoint* > pointList;
 };
 
 class OpenNi
@@ -85,8 +85,8 @@ public:
 
    void update();
    int  getAnzPlayer();
-   Player getPlayer(int nr);
-   Point  getPlayerPart(int nr, int part);
+   OpenNiPlayer getPlayer(int nr);
+   OpenNiPoint  getPlayerPart(int nr, int part);
 
    void drawPlayer(int nr);
 

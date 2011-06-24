@@ -8,7 +8,7 @@
 #include "Entity.h"
 
 Entity::Entity(Application* application)
-: application(application)
+: application(application), charge(0.0f), mass(0.0f)
 {
 
 }
@@ -35,4 +35,24 @@ float Entity::getY(void)
 void Entity::setPosition(const Vec2d& position)
 {
 	this->position = position;
+}
+
+float Entity::getCharge(void)
+{
+	return this->charge;
+}
+
+void Entity::setCharge(float charge)
+{
+	this->charge = charge;
+}
+
+float Entity::getMass(void)
+{
+	return this->mass;
+}
+
+void Entity::setMass(float mass)
+{
+	this->mass = mass;
 }
