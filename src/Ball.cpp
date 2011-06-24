@@ -46,7 +46,13 @@ void Ball::updateforces(const std::vector<Entity*>& objects, float timedifferenc
 void Ball::updateposition(float timedifference)
 {
 	speed += this->force * timedifference;
-	this->setPosition(this->getPosition()+this->speed*timedifference);
+	Vec2d newpos = this->getPosition()+this->speed*timedifference;
+	if(newpos.y > 480)
+		newpos.y -= 480;
+	if(newpos.y < 0)
+			newpos.y += 480;
+	this->setPosition(newpos);
+
 }
 Vec2d Ball::getForce()
 {
