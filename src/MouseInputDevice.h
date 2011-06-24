@@ -21,6 +21,7 @@ public:
 
 
 private:
+
 	CL_InputDevice* mouse;
 	float zValue;
 };

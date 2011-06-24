@@ -38,9 +38,10 @@ void Application::run(void)
 	CL_Font_System font(gc, font_desc);
 
 
-	Ball ball(this);
-	ball.setPosition(Vec2d(320,10));
-	ball.setCharge(0.1);
+	Ball ball(this,Vec2d(640,480));
+	ball.initializePosition();
+
+	ball.setCharge(1);
 	std::vector<Entity*> objects;
 
 	objects.push_back(&ball);

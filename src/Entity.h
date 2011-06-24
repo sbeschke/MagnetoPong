@@ -33,6 +33,7 @@ private:
 	Vec2d position;
 	float charge;
 	float mass;
+
 };
 
 #endif /* ENTITY_H_ */
