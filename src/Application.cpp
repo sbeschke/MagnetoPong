@@ -1,5 +1,7 @@
 #include "Application.h"
 #include "Bat.h"
+#include "Player.h"
+#include "MouseInputDevice.h"
 
 void Application::run(void)
 {
@@ -26,7 +28,8 @@ void Application::run(void)
 	font_desc.set_height(30);
 	CL_Font_System font(gc, font_desc);
 
-	Bat bat(this);
+	MouseInputDevice mouseInpDev(&mouse);
+	Player player1(this, &mouseInpDev);
 
 	while (!quit)
 	{
@@ -35,15 +38,17 @@ void Application::run(void)
 
 		if(mouse.get_keycode(CL_MOUSE_WHEEL_DOWN)
 				|| mouse.get_keycode(CL_MOUSE_LEFT)) {
-			bat.setCharge(bat.getCharge() - 0.1f);
+			//bat.setCharge(bat.getCharge() - 0.1f);
 		}
 		if(mouse.get_keycode(CL_MOUSE_WHEEL_UP)
 				|| mouse.get_keycode(CL_MOUSE_RIGHT)) {
-			bat.setCharge(bat.getCharge() + 0.1f);
+			//bat.setCharge(bat.getCharge() + 0.1f);
 		}
 
+		player1.processInput();
+
 		CL_Point mousePos = mouse.get_position();
-		bat.setPosition(mousePos);
+		//bat.setPosition(mousePos);
 
 		CL_Colorf red(155/255.0f, 60/255.0f, 68/255.0f);
 		CL_Gradient gradient1(CL_Colorf::black, red);
@@ -55,7 +60,7 @@ void Application::run(void)
 
 		//font.draw_text(gc, 146, 50, "A quiet evening in the pacific...");
 
-		bat.draw();
+		player1.getBat()->draw();
 
 		//boat_sprite.update();
 
