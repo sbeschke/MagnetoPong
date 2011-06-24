@@ -17,5 +17,11 @@ Bat::~Bat() {
 
 void Bat::draw(void)
 {
-	CL_Draw::circle(application->getGC(), CL_Pointf(getX(), getY()), 15, CL_Colorf::white);
+	float charge = getCharge();
+	CL_Colorf color;
+	color.set_alpha(255);
+	color.set_blue(255);
+	color.set_red(255.0f * charge);
+	color.set_green(255.0f * (1.0f - charge));
+	CL_Draw::circle(application->getGC(), CL_Pointf(getX(), getY()), 15, color);
 }
