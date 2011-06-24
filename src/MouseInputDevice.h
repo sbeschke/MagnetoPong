@@ -17,9 +17,12 @@ public:
 	virtual ~MouseInputDevice();
 
 	CL_Point getPoint(void);
+	float getZ(void);
+
 
 private:
 	CL_InputDevice* mouse;
+	float zValue;
 };
 
 #endif /* MOUSEINPUTDEVICE_H_ */

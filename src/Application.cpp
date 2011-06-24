@@ -54,10 +54,10 @@ void Application::run(void)
 
 	while (!quit)
 	{
-	   kinect.update();
+		kinect.update();
 
 		int timediff = CL_System::get_time() - start ;
-		start = CL_System::get_time();;
+		start = CL_System::get_time();
 
 
 		if(keyboard.get_keycode(CL_KEY_ESCAPE) == true)
