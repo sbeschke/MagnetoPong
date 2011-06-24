@@ -234,6 +234,24 @@ OpenNiPoint OpenNi::getPlayerPart(int nr, int part1, int part2)
 }
 //---------------------------------------------------------------------------
 
+double OpenNi::getWinkel(int nr, int LeftArm)
+{
+   OpenNiPoint p1, p2;
+   if(leftArm)
+   {
+      p1 = Application::myself->kinect.getPlayerPart(nr, P_RHAND, P_RELBOW);
+      p2 = Application::myself->kinect.getPlayerPart(nr, P_RSHOULDER, P_RELBOW);
+   }
+   else
+   {
+      p1 = Application::myself->kinect.getPlayerPart(nr, P_LHAND, P_LELBOW);
+      p2 = Application::myself->kinect.getPlayerPart(nr, P_LSHOULDER, P_LELBOW);
+   }
+
+
+}
+//---------------------------------------------------------------------------
+
 void OpenNi::drawPlayer(int nr)
 {
    if(!init_ok) return;
