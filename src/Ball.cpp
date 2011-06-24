@@ -35,16 +35,15 @@ void Ball::updateforces(const EntitySet& objects, float timedifference)
 		if(object!=this)
 
 		{
-			Vec2d distance = object->getPosition() - position;
-
+			Vec2d distance = position - object->getPosition();
 			float length = distance.length();
-
-
 			float charge = object->getCharge() * this->getCharge();
 
 			if( 2*RADIUS < length)
 			{
-				this->force += distance.normalize() * charge * BALLACC / (length * length *length);
+				float forceAmount = charge * BALLACC / (length * length * length);
+				std::cout << "Force amount: " << forceAmount << std::endl;
+				this->force += (distance/length) * forceAmount;
 			}
 			else
 			{
