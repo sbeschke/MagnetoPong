@@ -1,5 +1,7 @@
 #include "Application.h"
 #include "Bat.h"
+#include "Ball.h"
+#include <sstream>
 
 void Application::run(void)
 {
@@ -27,6 +29,13 @@ void Application::run(void)
 	CL_Font_System font(gc, font_desc);
 
 	Bat bat(this);
+	Ball ball(this);
+	ball.setPosition(Vec2d(320,240));
+	ball.setCharge(0.1);
+	std::vector<Entity*> objects;
+	objects.push_back(&bat);
+	objects.push_back(&ball);
+
 
 	while (!quit)
 	{
@@ -47,7 +56,12 @@ void Application::run(void)
 		//font.draw_text(gc, 146, 50, "A quiet evening in the pacific...");
 
 		bat.draw();
+		ball.draw();
+		ball.updateforces(objects);
+		std::ostringstream oss;
 
+		oss <<ball.getForce().x << " " << ball.getForce().y;
+		font.draw_text(gc, 146, 50, oss.str());
 		//boat_sprite.update();
 
 		window.flip();

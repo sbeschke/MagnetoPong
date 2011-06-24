@@ -21,6 +21,7 @@ public:
 
 	void draw(void);
 	void updateforces(const std::vector<Entity*>& objects);
+	Vec2d getForce();
 
 private:
 	Vec2d speed;

@@ -6,6 +6,7 @@
  */
 
 #include "Ball.h"
+#include <iostream>
 
 Ball::Ball(Application* application)
 : Entity(application)
@@ -21,14 +22,26 @@ void Ball::draw(void)
 }
 void Ball::updateforces(const std::vector<Entity*>& objects)
 {
+	this->force = Vec2d(0,0);
 	for(int i = 0; i < objects.size(); i++)
 	{
 		if(objects[i]!=this)
 		{
-			//this->force += objects[i]->getX();
+			Vec2d distance = objects[i]->getPosition() - this->getPosition();
+
+			float length = distance.length();
+
+
+			float charge = objects[i]->getCharge() * this->getCharge();
+			std::cout << charge << std::endl;
+
+			this->force += distance.normalize() * charge / (length * length *length);
 
 		}
 
 	}
-
+}
+Vec2d Ball::getForce()
+{
+	return this->force;
 }
