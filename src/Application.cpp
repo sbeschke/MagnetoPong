@@ -28,6 +28,10 @@ void PlayerCallback::playerCalibrated(int nr)
 		return;
 	}
 
+	KinectInputDevice* device = new KinectInputDevice(nr, playerSlot == Application::PLAYER_LEFT);
+	Player* player = new Player(app, device);
+	player->getBat()->setColor(playerColors[playerSlot]);
+
 	if(playerSlot == Application::PLAYER_LEFT) {
 		std::cout << "You play LEFT!" << std::endl;
 	}
@@ -35,8 +39,7 @@ void PlayerCallback::playerCalibrated(int nr)
 		std::cout << "You play RIGHT!" << std::endl;
 	}
 
-	KinectInputDevice* device = new KinectInputDevice(nr, playerSlot == Application::PLAYER_LEFT);
-	app->players[playerSlot] = new Player(app, device);
+	app->players[playerSlot] = player;
 }
 
 void PlayerCallback::playerLost(int nr)

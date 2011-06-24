@@ -13,6 +13,7 @@ Bat::Bat(Application* application)
 : Entity(application)
 {
 	setColor(CL_Colorf::cornsilk);
+	setRadius(25.0f);
 }
 
 Bat::~Bat() {

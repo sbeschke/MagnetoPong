@@ -37,6 +37,8 @@ public:
 	virtual void setMass(float mass);
 	virtual CL_Colorf getColor();
 	virtual void setColor(CL_Colorf color);
+	virtual float getRadius(void);
+	virtual void setRadius(float radius);
 
 	virtual void updateforces(const EntitySet& objects, float timedifference) {}
 	virtual void updateposition(float timedifference) {}
