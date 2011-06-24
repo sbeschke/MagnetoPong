@@ -6,9 +6,10 @@
  */
 
 #include "Entity.h"
+#include "Application.h"
 
 Entity::Entity(Application* application)
-: application(application), charge(0.0f), mass(0.0f)
+: application(application), charge(0.0f), mass(0.0f), radius(10.0f), color(CL_Colorf::white)
 {
 
 }
@@ -55,4 +56,26 @@ float Entity::getMass(void)
 void Entity::setMass(float mass)
 {
 	this->mass = mass;
+}
+
+void Entity::draw(void)
+{
+	float charge = getCharge();
+	CL_Colorf fieldColor = charge > 0 ?
+			CL_Colorf(0.0f, 2.0f, 0.0f, 1.0f) : CL_Colorf(2.0f, 0.0f, 0.0f, 1.0f);
+	fieldColor.set_alpha(abs(charge));
+	CL_Pointf center(getX(), getY());
+	CL_Draw::gradient_circle(application->getGC(), center, radius*4.0f,
+			CL_Gradient(fieldColor, CL_Colorf::transparent));
+	CL_Draw::circle(application->getGC(), center, radius, getColor());
+}
+
+CL_Colorf Entity::getColor()
+{
+	return color;
+}
+
+void Entity::setColor(CL_Colorf color)
+{
+	this->color = color;
 }

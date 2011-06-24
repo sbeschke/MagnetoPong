@@ -12,6 +12,7 @@
 Ball::Ball(Application* application, Vec2d windowFrame)
 : Entity(application)
 {
+	setColor(CL_Colorf(0.0f, 0.0f, 0.0f, 0.6f));
 	this->windowFrame = windowFrame;
 
 }
@@ -21,7 +22,7 @@ Ball::~Ball() {
 
 void Ball::draw(void)
 {
-	CL_Draw::circle(application->getGC(), CL_Pointf(getX(), getY()), RADIUS, CL_Colorf::white);
+	Entity::draw();
 }
 void Ball::updateforces(const EntitySet& objects, float timedifference)
 {
