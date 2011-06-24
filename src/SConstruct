@@ -3,4 +3,4 @@ import config
 env = Environment()
 config.setupEnvironment(env)
 
-env.Program('MagnetoPong', Glob('main.cpp'))
+env.Program('MagnetoPong', Glob('*.cpp'))
