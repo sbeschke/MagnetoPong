@@ -21,6 +21,7 @@ Player::~Player() {
 
 void Player::processInput(void) {
 	bat->setPosition(device->getPoint());
+	bat->setCharge(device->getZ());
 }
 
 Bat* Player::getBat(void) {

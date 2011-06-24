@@ -47,8 +47,8 @@ void Application::run(void)
 
 	while (!quit)
 	{
-		int timediff = CL_System::get_time() - start ;
-		start = CL_System::get_time();;
+		int timediff = CL_System::get_time() - start;
+		start = CL_System::get_time();
 
 
 
