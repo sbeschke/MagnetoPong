@@ -26,10 +26,19 @@ private:
    bool leftHand;
    int  playerNr;
 
-   double max_z;
-   double min_z;
+   double x_offset;
+   double x_strech;
+   double x_min;
+   double x_max;
 
-   bool z_kali;
+   double y_offset;
+   double y_strech;
+   double y_min;
+   double y_max;
+
+
+   bool y_kali;
+   bool x_kali;
 
 };
 

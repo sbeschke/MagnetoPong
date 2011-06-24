@@ -11,7 +11,7 @@
 #include <XnCodecIDs.h>
 #include <XnCppWrapper.h>
 #include "Application.h"
-
+#include "Player.h"
 #include "TGString.h"
 
 
@@ -84,8 +84,8 @@ void OpenNiPlayer::changeForDisplay()
 {
    for(int i=0; i < P_SIZE; i++)
    {
-      pointList.at(i)->x = pointList.at(i)->x * 0.5 + Application::x_res/2;
-      pointList.at(i)->y = pointList.at(i)->y * 0.5 + Application::y_res/2;
+      pointList.at(i)->x = pointList.at(i)->x * 0.3 + Application::x_res/2;
+      pointList.at(i)->y = pointList.at(i)->y * 0.3 + Application::y_res/2;
    }
 }
 //---------------------------------------------------------------------------
@@ -113,23 +113,28 @@ OpenNi::OpenNi()
    if(rc != XN_STATUS_OK)
    {
       rc = g_UserGenerator.Create(g_Context);
-      CHECK_RC(rc, "create User generator");
+      CHECK_RC(rc, "create UserGenerator");
    }
-
+   if(rc != XN_STATUS_OK) return;
    //std::cout << reinterpret_cast<unsigned int>(this);
 
    rc = g_UserGenerator.RegisterUserCallbacks(NewUser, LostUser, this, h);
-   CHECK_RC(rc, "create Depth");
+   CHECK_RC(rc, "create RegisterUserCallbacks");
+   if(rc != XN_STATUS_OK) return;
    rc = g_UserGenerator.GetSkeletonCap().SetSkeletonProfile(XN_SKEL_PROFILE_ALL);
-   CHECK_RC(rc, "create Depth");
+   CHECK_RC(rc, "SetSkeletonProfile");
+   if(rc != XN_STATUS_OK) return;
 
    rc = g_UserGenerator.GetSkeletonCap().RegisterCalibrationCallbacks(&CalibrationStart, &CalibrationEnd, NULL, hCalib);
-   CHECK_RC(rc, "create Depth");
+   CHECK_RC(rc, "RegisterCalibrationCallbacks");
+   if(rc != XN_STATUS_OK) return;
    rc = g_UserGenerator.GetPoseDetectionCap().RegisterToPoseCallbacks(&PoseDetected, NULL, NULL, hPose);
-   CHECK_RC(rc, "create Depth");
+   CHECK_RC(rc, "RegisterToPoseCallbacks");
+   if(rc != XN_STATUS_OK) return;
 
    rc = g_Context.StartGeneratingAll();
-   CHECK_RC(rc, "StartGenerating");
+   CHECK_RC(rc, "StartGeneratingAll");
+   if(rc != XN_STATUS_OK) return;
 
    init_ok = true;
    printf("init E\n");
@@ -265,35 +270,49 @@ void OpenNi::drawPlayer(int nr)
    font_desc.set_height(30);
    CL_Font_System font(Application::myself->gc, font_desc);
 
+   CL_Colorf color;
    OpenNiPlayer p = getPlayer(nr);
    if(p.calibrated)
    {
+      color = CL_Colorf::grey;
+
+      for(int i=0; i < Application::myself->players.size(); i++)
+      {
+         if(Application::myself->players.at(i) != NULL)
+         {
+            if(Application::myself->players.at(i)->getNumber() == nr)
+            {
+               color = playerColors[i];
+            }
+         }
+      }
+
       p.changeForDisplay();
       for(int i=0; i < P_SIZE; i++)
       {
-         if((p.pointList.at(i)->x != 0) && (p.pointList.at(i)->y != 0)) CL_Draw::circle(Application::myself->getGC(), CL_Pointf(p.pointList.at(i)->x, p.pointList.at(i)->y), 5, CL_Colorf((float)p.pointList.at(i)->z/2500.0,(float)0.0,(float)1.0,(float)1.0));
+         if((p.pointList.at(i)->x != 0) && (p.pointList.at(i)->y != 0)) CL_Draw::circle(Application::myself->getGC(), CL_Pointf(p.pointList.at(i)->x, p.pointList.at(i)->y), 5, color);
       }
 
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_HEAD)->x, p.pointList.at(P_HEAD)->y, p.pointList.at(P_NECK)->x, p.pointList.at(P_NECK)->y, CL_Colorf::white);
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_TORSO)->x, p.pointList.at(P_TORSO)->y, p.pointList.at(P_NECK)->x, p.pointList.at(P_NECK)->y, CL_Colorf::white);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_HEAD)->x, p.pointList.at(P_HEAD)->y, p.pointList.at(P_NECK)->x, p.pointList.at(P_NECK)->y, color);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_TORSO)->x, p.pointList.at(P_TORSO)->y, p.pointList.at(P_NECK)->x, p.pointList.at(P_NECK)->y, color);
 
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LSHOULDER)->x, p.pointList.at(P_LSHOULDER)->y, p.pointList.at(P_RSHOULDER)->x, p.pointList.at(P_RSHOULDER)->y, CL_Colorf::white);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LSHOULDER)->x, p.pointList.at(P_LSHOULDER)->y, p.pointList.at(P_RSHOULDER)->x, p.pointList.at(P_RSHOULDER)->y, color);
 
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LELBOW)->x, p.pointList.at(P_LELBOW)->y, p.pointList.at(P_LHAND)->x, p.pointList.at(P_LHAND)->y, color);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LSHOULDER)->x, p.pointList.at(P_LSHOULDER)->y, p.pointList.at(P_LELBOW)->x, p.pointList.at(P_LELBOW)->y, color);
 
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LELBOW)->x, p.pointList.at(P_LELBOW)->y, p.pointList.at(P_LHAND)->x, p.pointList.at(P_LHAND)->y, CL_Colorf::white);
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LSHOULDER)->x, p.pointList.at(P_LSHOULDER)->y, p.pointList.at(P_LELBOW)->x, p.pointList.at(P_LELBOW)->y, CL_Colorf::white);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RELBOW)->x, p.pointList.at(P_RELBOW)->y, p.pointList.at(P_RHAND)->x, p.pointList.at(P_RHAND)->y, color);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RSHOULDER)->x, p.pointList.at(P_RSHOULDER)->y, p.pointList.at(P_RELBOW)->x, p.pointList.at(P_RELBOW)->y, color);
 
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LHIP)->x, p.pointList.at(P_LHIP)->y, p.pointList.at(P_TORSO)->x, p.pointList.at(P_TORSO)->y, color);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_TORSO)->x, p.pointList.at(P_TORSO)->y, p.pointList.at(P_RHIP)->x, p.pointList.at(P_RHIP)->y, color);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LHIP)->x, p.pointList.at(P_LHIP)->y, p.pointList.at(P_RHIP)->x, p.pointList.at(P_RHIP)->y, color);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LHIP)->x, p.pointList.at(P_LHIP)->y, p.pointList.at(P_LKNEE)->x, p.pointList.at(P_LKNEE)->y, color);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RHIP)->x, p.pointList.at(P_RHIP)->y, p.pointList.at(P_RKNEE)->x, p.pointList.at(P_RKNEE)->y, color);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RFOOT)->x, p.pointList.at(P_RFOOT)->y, p.pointList.at(P_RKNEE)->x, p.pointList.at(P_RKNEE)->y, color);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LFOOT)->x, p.pointList.at(P_LFOOT)->y, p.pointList.at(P_LKNEE)->x, p.pointList.at(P_LKNEE)->y, color);
 
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RELBOW)->x, p.pointList.at(P_RELBOW)->y, p.pointList.at(P_RHAND)->x, p.pointList.at(P_RHAND)->y, CL_Colorf::white);
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RSHOULDER)->x, p.pointList.at(P_RSHOULDER)->y, p.pointList.at(P_RELBOW)->x, p.pointList.at(P_RELBOW)->y, CL_Colorf::white);
-
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LHIP)->x, p.pointList.at(P_LHIP)->y, p.pointList.at(P_TORSO)->x, p.pointList.at(P_TORSO)->y, CL_Colorf::white);
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_TORSO)->x, p.pointList.at(P_TORSO)->y, p.pointList.at(P_RHIP)->x, p.pointList.at(P_RHIP)->y, CL_Colorf::white);
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LHIP)->x, p.pointList.at(P_LHIP)->y, p.pointList.at(P_RHIP)->x, p.pointList.at(P_RHIP)->y, CL_Colorf::white);
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LHIP)->x, p.pointList.at(P_LHIP)->y, p.pointList.at(P_LKNEE)->x, p.pointList.at(P_LKNEE)->y, CL_Colorf::white);
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RHIP)->x, p.pointList.at(P_RHIP)->y, p.pointList.at(P_RKNEE)->x, p.pointList.at(P_RKNEE)->y, CL_Colorf::white);
-
-      TGString s = TGString("Winkel L: ") + getWinkel(nr, true) + " R Hand:(" + p.pointList.at(P_LHAND)->x + "|" + p.pointList.at(P_LHAND)->y + "|" + p.pointList.at(P_LHAND)->z +")" ;
+  //    TGString s = TGString("Winkel L: ") + getWinkel(nr, true) + " R Hand:(" + p.pointList.at(P_LHAND)->x + "|" + p.pointList.at(P_LHAND)->y + "|" + p.pointList.at(P_LHAND)->z +")" ;
   //    font.draw_text(Application::myself->gc, 10, 20*nr, s.c_str());
 
    }

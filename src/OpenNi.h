@@ -122,6 +122,7 @@ private:
 
    bool init_ok;
 
+
    OpenNiPlayerCallback* playerCallback;
 
 
