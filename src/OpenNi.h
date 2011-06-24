@@ -9,6 +9,7 @@
 #define OPENNI_H_
 
 
+#include <math.h>
 
 #include <vector>
 using namespace std;
@@ -48,11 +49,22 @@ public:
       y = 0;
       z = 0;
    };
+
    OpenNiPoint(double x, double y, double z)
    {
       this->x = x;
       this->y = y;
       this->z = z;
+   }
+
+   double operator*(OpenNiPoint& p)
+   {
+      return x+p.x + y*p.y + z*p.z;
+   }
+
+   double length()
+   {
+      return sqrt(x*x + y*y + z*z);
    }
 
    double x;
@@ -75,6 +87,16 @@ public:
    bool calibrated;
 
    std::vector<OpenNiPoint* > pointList;
+
+   void changeForDisplay();
+};
+
+class OpenNiPlayerCallback
+{
+public:
+	virtual void playerRecognized(int nr) =0;
+	virtual void playerCalibrated(int nr) =0;
+	virtual void playerLost(int nr) =0;
 };
 
 class OpenNi
@@ -90,11 +112,17 @@ public:
    OpenNiPoint  getPlayerPart(int nr, int part1, int part2);
            //pos von Part1 relativ zu Part2
 
+   double getWinkel(int nr, int leftArm);
+
    void drawPlayer(int nr);
+
+   void setPlayerCallback(OpenNiPlayerCallback* callback);
 
 private:
 
    bool init_ok;
+
+   OpenNiPlayerCallback* playerCallback;
 
 
 };

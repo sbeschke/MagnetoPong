@@ -9,7 +9,9 @@
 #define ENTITY_H_
 
 #include "Vec2d.h"
-#include "Application.h"
+#include <set>
+
+class Application;
 
 class Entity {
 public:
@@ -35,5 +37,8 @@ private:
 	float mass;
 
 };
+
+typedef std::set<Entity*> EntitySet;
+
 
 #endif /* ENTITY_H_ */

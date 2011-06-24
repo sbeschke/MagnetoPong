@@ -31,7 +31,7 @@ public:
 	virtual ~Ball();
 
 	void draw(void);
-	void updateforces(const std::vector<Entity*>& objects, float timedifference);
+	void updateforces(const EntitySet& objects, float timedifference);
 	void updateposition(float timedifference);
 	void initializePosition();
 

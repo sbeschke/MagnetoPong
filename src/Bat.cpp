@@ -7,6 +7,7 @@
 
 #include "Bat.h"
 #include <sstream>
+#include "Application.h"
 
 Bat::Bat(Application* application)
 : Entity(application)

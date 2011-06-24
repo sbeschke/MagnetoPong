@@ -2,18 +2,66 @@
 #include "Bat.h"
 #include "Ball.h"
 #include <sstream>
+#include <iostream>
 #include "Player.h"
 #include "MouseInputDevice.h"
+#include "KinectInputDevice.h"
 
 
 Application* Application::myself;
 int Application::x_res;
 int Application::y_res;
 
+void PlayerCallback::playerRecognized(int nr)
+{
+
+}
+
+void PlayerCallback::playerCalibrated(int nr)
+{
+	Application* app = Application::get();
+	unsigned int playerSlot = Application::PLAYER_LEFT;
+	if(app->players[Application::PLAYER_LEFT] != 0) {
+		playerSlot = Application::PLAYER_RIGHT;
+	}
+	if(app->players[Application::PLAYER_RIGHT]) {
+		return;
+	}
+
+	if(playerSlot == Application::PLAYER_LEFT) {
+		std::cout << "You play LEFT!" << std::endl;
+	}
+	if(playerSlot == Application::PLAYER_RIGHT) {
+		std::cout << "You play RIGHT!" << std::endl;
+	}
+
+	KinectInputDevice* device = new KinectInputDevice(nr, playerSlot == Application::PLAYER_LEFT);
+	app->players[playerSlot] = new Player(app, device);
+}
+
+void PlayerCallback::playerLost(int nr)
+{
+	Application* app = Application::get();
+	for(int playerSlot = 0; playerSlot < app->players.size(); playerSlot++) {
+		Player* player = app->players[playerSlot];
+		if(player && player->getNumber() == nr) {
+			std::cout << "Lost player on side " << playerSlot << std::endl;
+			delete player;
+			app->players[playerSlot = 0];
+		}
+	}
+}
+
 void Application::run(void)
 {
 	quit = false;
 	Application::myself = this;
+
+	players.resize(2);
+	players[PLAYER_LEFT] = 0;
+	players[PLAYER_RIGHT] = 0;
+
+	kinect.setPlayerCallback(&playerCallback);
 
 	unsigned int start =  CL_System::get_time();
 	CL_DisplayWindowDescription window_desc;
@@ -38,18 +86,13 @@ void Application::run(void)
 	CL_Font_System font(gc, font_desc);
 
 
+
 	Ball ball(this,Vec2d(640,480));
 	ball.initializePosition();
-
 	ball.setCharge(1);
-	std::vector<Entity*> objects;
-
-	objects.push_back(&ball);
 
 
-	MouseInputDevice mouseInpDev(&mouse);
-	Player player1(this, &mouseInpDev);
-	objects.push_back(player1.getBat());
+	addEntity(&ball);
 
 	while (!quit)
 	{
@@ -71,7 +114,14 @@ void Application::run(void)
 			//bat.setCharge(bat.getCharge() + 0.1f);
 		}
 
-		player1.processInput();
+		for(std::vector<Player*>::iterator it = players.begin();
+				it != players.end(); it++) {
+			Player* pl = *it;
+			if(pl != 0) {
+				pl->processInput();
+			}
+		}
+
 
 		CL_Point mousePos = mouse.get_position();
 		//bat.setPosition(mousePos);
@@ -90,11 +140,13 @@ void Application::run(void)
 
 		//font.draw_text(gc, 146, 50, "A quiet evening in the pacific...");
 
-		ball.draw();
-		ball.updateforces(objects,timediff);
+		for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++) {
+			(*it)->draw();
+		}
+		ball.updateforces(entities,timediff);
 
 		ball.updateposition(timediff);
-		player1.getBat()->draw();
+		//player1.getBat()->draw();
 		//std::ostringstream oss;
 		//font.draw_text(gc, 146, 50, oss.str());
 		//boat_sprite.update();
@@ -102,4 +154,22 @@ void Application::run(void)
 		CL_KeepAlive::process();
 		//CL_System::sleep(10);
 	}
+}
+
+void Application::addEntity(Entity* entity)
+{
+	entities.insert(entity);
+}
+
+void Application::remEntity(Entity* entity)
+{
+	EntitySet::iterator it = entities.find(entity);
+	if(it != entities.end()) {
+		entities.erase(it);
+	}
+}
+
+void Application::addPlayer(int num)
+{
+
 }

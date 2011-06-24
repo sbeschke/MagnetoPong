@@ -6,6 +6,7 @@
  */
 
 #include "Ball.h"
+#include "Application.h"
 
 
 Ball::Ball(Application* application, Vec2d windowFrame)
@@ -22,21 +23,23 @@ void Ball::draw(void)
 {
 	CL_Draw::circle(application->getGC(), CL_Pointf(getX(), getY()), RADIUS, CL_Colorf::white);
 }
-void Ball::updateforces(const std::vector<Entity*>& objects, float timedifference)
+void Ball::updateforces(const EntitySet& objects, float timedifference)
 {
 	this->force = Vec2d(0,0);
 	Vec2d position = this->getPosition();
-	for(int i = 0; i < objects.size(); i++)
+	for(EntitySet::iterator it = objects.begin(); it != objects.end(); it++)
 	{
 
-		if(objects[i]!=this)
+		Entity* object = *it;
+		if(object!=this)
+
 		{
-			Vec2d distance = objects[i]->getPosition() - position;
+			Vec2d distance = object->getPosition() - position;
 
 			float length = distance.length();
 
 
-			float charge = objects[i]->getCharge() * this->getCharge();
+			float charge = object->getCharge() * this->getCharge();
 
 			if( 2*RADIUS < length)
 			{

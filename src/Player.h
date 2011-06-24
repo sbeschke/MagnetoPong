@@ -20,11 +20,16 @@ public:
 	virtual void processInput(void);
 	virtual Bat* getBat(void);
 
+	virtual int getNumber(void);
+	virtual void setNumber(int number);
+
 private:
 	Application* application;
 	Bat* bat;
 	// todo should be using a ref-counting pointer here
 	InputDevice* device;
+
+	int number;
 };
 
 #endif /* PLAYER_H_ */
