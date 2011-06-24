@@ -22,11 +22,17 @@ public:
 	virtual float getX(void);
 	virtual float getY(void);
 	virtual void setPosition(const Vec2d& position);
+	virtual float getCharge(void);
+	virtual void setCharge(float charge);
+	virtual float getMass(void);
+	virtual void setMass(float mass);
 
 protected:
 	Application* application;
 private:
 	Vec2d position;
+	float charge;
+	float mass;
 };
 
 #endif /* ENTITY_H_ */

@@ -8,14 +8,8 @@
 #ifndef VEC2D_H_
 #define VEC2D_H_
 
-class Vec2d {
-public:
-	float x;
-	float y;
+#include <ClanLib/core.h>
 
-	Vec2d();
-	Vec2d(float x, float y);
-	~Vec2d();
-};
+typedef CL_Vec2<float> Vec2d;
 
 #endif /* VEC2D_H_ */

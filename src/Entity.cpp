@@ -36,3 +36,23 @@ void Entity::setPosition(const Vec2d& position)
 {
 	this->position = position;
 }
+
+float Entity::getCharge(void)
+{
+	return this->charge;
+}
+
+void Entity::setCharge(float charge)
+{
+	this->charge = charge;
+}
+
+float Entity::getMass(void)
+{
+	return this->mass;
+}
+
+void Entity::setMass(float mass)
+{
+	this->mass = mass;
+}
