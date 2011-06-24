@@ -16,6 +16,8 @@ KinectInputDevice::KinectInputDevice(int nr, bool lefthand)
    playerNr = nr;
    min_z = 0;
    max_z = 600;
+
+   z_kali = false;
 }
 
 KinectInputDevice::~KinectInputDevice()
@@ -46,7 +48,7 @@ CL_Point KinectInputDevice::getPoint(void)
    {
       p = Application::myself->kinect.getPlayerPart(playerNr, P_LHAND, P_LSHOULDER);
    }
-   return CL_Point(p.x, p.y);
+   return CL_Point((p.x+Application::x_res/2), (p.y+Application::y_res/2));
 }
 //---------------------------------------------------------------------------
 
@@ -61,13 +63,28 @@ float KinectInputDevice::getZ(void)
    {
       p = Application::myself->kinect.getPlayerPart(playerNr, P_LHAND, P_LSHOULDER);
    }
-   if(p.z > max_z)  p.z = 1.0;
-   else if(p.z < min_z) p.z = -1.0;
+
+   if(!z_kali)
+   {
+      double winkel = Application::myself->kinect.getWinkel(playerNr, leftHand);
+      if(winkel < 5)
+      {
+         max_z = p.length();
+         z_kali = true;
+
+         cout << "kali\n";
+      }
+
+
+   }
+
+   double dist = p.length();
+   if(dist > max_z)  dist = 1.0;
+   else if(dist < min_z) dist = -1.0;
    else
    {
-      p.z = (p.z/max_z)*2.0 - 1.0;
+      dist = (dist/max_z)*2.0 - 1.0;
    }
-   cout << p.z << "\n";
-   return p.z;
+   return dist;
 }
 //---------------------------------------------------------------------------

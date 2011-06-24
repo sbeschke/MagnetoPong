@@ -29,6 +29,8 @@ private:
    double max_z;
    double min_z;
 
+   bool z_kali;
+
 
 };
 
