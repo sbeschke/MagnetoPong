@@ -31,3 +31,10 @@ Bat* Player::getBat(void) {
 	return bat;
 }
 
+int Player::getNumber(void) {
+	return number;
+}
+
+void Player::setNumber(int number) {
+	this->number = number;
+}

@@ -34,6 +34,9 @@ public:
 	static int x_res;
 	static int y_res;
 
+	const static unsigned int PLAYER_LEFT = 0;
+	const static unsigned int PLAYER_RIGHT = 1;
+
 	static Application* get(void) {
 		return myself;
 	}
