@@ -15,7 +15,8 @@ public:
 		CL_SetupCore setup_core;
 		CL_SetupDisplay setup_display;
 		CL_SetupGL setup_gl;
-
+		Application::x_res = 640;
+		Application::y_res = 480;
 		try
 		{
 			Application example;

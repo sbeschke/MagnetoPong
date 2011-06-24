@@ -199,8 +199,8 @@ OpenNiPoint OpenNi::getPlayerPart(int nr, int part)
       case P_RANKLE:    s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_ANKLE, pos); break;
       case P_RFOOT:     s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_FOOT,  pos); break;
       }
-      p.x = (pos.position.X * -0.5) + 1600/2;
-      p.y = (pos.position.Y * -0.5) + 800/2 ;
+      p.x = (pos.position.X * -0.5) + Application::x_res/2;
+      p.y = (pos.position.Y * -0.5) + Application::y_res/2 ;
       p.z = abs(pos.position.Z);
 
    }
@@ -238,10 +238,18 @@ void OpenNi::drawPlayer(int nr)
       CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RELBOW)->x, p.pointList.at(P_RELBOW)->y, p.pointList.at(P_RHAND)->x, p.pointList.at(P_RHAND)->y, CL_Colorf::white);
       CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RSHOULDER)->x, p.pointList.at(P_RSHOULDER)->y, p.pointList.at(P_RELBOW)->x, p.pointList.at(P_RELBOW)->y, CL_Colorf::white);
 
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LHIP)->x, p.pointList.at(P_LHIP)->y, p.pointList.at(P_TORSO)->x, p.pointList.at(P_TORSO)->y, CL_Colorf::white);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_TORSO)->x, p.pointList.at(P_TORSO)->y, p.pointList.at(P_RHIP)->x, p.pointList.at(P_RHIP)->y, CL_Colorf::white);
       CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LHIP)->x, p.pointList.at(P_LHIP)->y, p.pointList.at(P_RHIP)->x, p.pointList.at(P_RHIP)->y, CL_Colorf::white);
       CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LHIP)->x, p.pointList.at(P_LHIP)->y, p.pointList.at(P_LKNEE)->x, p.pointList.at(P_LKNEE)->y, CL_Colorf::white);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RHIP)->x, p.pointList.at(P_RHIP)->y, p.pointList.at(P_RKNEE)->x, p.pointList.at(P_RKNEE)->y, CL_Colorf::white);
 
       TGString s = TGString("R Hand:(") + p.pointList.at(P_LHAND)->x + "|" + p.pointList.at(P_LHAND)->y + "|" + p.pointList.at(P_LHAND)->z +")";
       font.draw_text(Application::myself->gc, 10, 40, s.c_str());
    }
+}
+
+OpenNiPoint OpenNi::getPlayerPart(int nr, int part1, int part2)
+{
+
 }

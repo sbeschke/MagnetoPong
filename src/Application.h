@@ -17,6 +17,8 @@ private:
 public:
 
 	static Application* myself;
+	static int x_res;
+	static int y_res;
 
 	CL_GraphicContext gc;
 
