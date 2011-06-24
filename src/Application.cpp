@@ -6,9 +6,13 @@
 #include "MouseInputDevice.h"
 
 
+Application* Application::myself;
+
 void Application::run(void)
 {
 	quit = false;
+	Application::myself = this;
+
 	unsigned int start =  CL_System::get_time();
 	CL_DisplayWindowDescription window_desc;
 	window_desc.set_size(CL_Size(640, 480), true);
@@ -18,7 +22,7 @@ void Application::run(void)
 	CL_Slot slot_quit = window.sig_window_close().connect(this, &Application::on_window_close);
 
 	graphicContext = window.get_gc();
-	CL_GraphicContext& gc = graphicContext;
+	gc = graphicContext;
 	CL_InputDevice keyboard = window.get_ic().get_keyboard();
 	CL_InputDevice mouse = window.get_ic().get_mouse(0);
 
@@ -32,9 +36,8 @@ void Application::run(void)
 	CL_Font_System font(gc, font_desc);
 
 
-
 	Ball ball(this);
-	ball.setPosition(Vec2d(320,240));
+	ball.setPosition(Vec2d(320,200));
 	ball.setCharge(0.1);
 	std::vector<Entity*> objects;
 
@@ -47,9 +50,10 @@ void Application::run(void)
 
 	while (!quit)
 	{
-		int timediff = CL_System::get_time() - start;
-		start = CL_System::get_time();
+		kinect.update();
 
+		int timediff = CL_System::get_time() - start ;
+		start = CL_System::get_time();
 
 
 		if(keyboard.get_keycode(CL_KEY_ESCAPE) == true)
@@ -71,22 +75,20 @@ void Application::run(void)
 
 		CL_Colorf red(155/255.0f, 60/255.0f, 68/255.0f);
 		CL_Gradient gradient1(CL_Colorf::black, red);
-		CL_Draw::gradient_fill(gc, CL_Rectf(0,0,640,480), gradient1);
+		CL_Draw::gradient_fill(gc, CL_Rectf(0,0,1600,800), gradient1);
 
+		for(int i=0; i < 5; i++)
+		{
+		   kinect.drawPlayer(i);
+		}
 		//draw_sunset(gc);
 
 		//boat_sprite.draw(gc, 70, 252);
 
 		//font.draw_text(gc, 146, 50, "A quiet evening in the pacific...");
 
-
-
 		ball.draw();
 		ball.updateforces(objects,timediff);
-
-
-
-
 
 		ball.updateposition(timediff);
 		player1.getBat()->draw();

@@ -5,6 +5,8 @@
 #include <ClanLib/sound.h>
 #include "Application.h"
 
+#include <iostream>
+
 class Program
 {
 public:

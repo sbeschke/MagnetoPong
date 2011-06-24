@@ -6,6 +6,8 @@
 #include <ClanLib/gl.h>
 #include <ClanLib/core.h>
 
+#include "OpenNi.h"
+
 class Application
 {
 private:
@@ -13,6 +15,13 @@ private:
 	CL_GraphicContext graphicContext;
 
 public:
+
+	static Application* myself;
+
+	CL_GraphicContext gc;
+
+	OpenNi kinect;
+
 	CL_GraphicContext& getGC(void)
 	{
 		return graphicContext;
