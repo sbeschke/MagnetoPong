@@ -78,16 +78,19 @@ void XN_CALLBACK_TYPE PoseDetected(xn::PoseDetectionCapability& poseDetection, c
 
 OpenNi::OpenNi()
 {
+   init_ok = false;
    printf("init\n");
    XnStatus rc = XN_STATUS_OK;
    xn::EnumerationErrors errors;
 
    rc = g_Context.Init();
    CHECK_RC(rc, "init");
+
    rc = g_DepthGenerator.Create(g_Context);
 
    rc = g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator);
    CHECK_RC(rc, "Find depth generator");
+   if(rc != XN_STATUS_OK) return;
    rc = g_Context.FindExistingNode(XN_NODE_TYPE_USER, g_UserGenerator);
    CHECK_RC(rc, "Find user generator");
 
@@ -110,6 +113,7 @@ OpenNi::OpenNi()
    rc = g_Context.StartGeneratingAll();
    CHECK_RC(rc, "StartGenerating");
 
+   init_ok = true;
    printf("init E\n");
 }
 //---------------------------------------------------------------------------
@@ -122,13 +126,14 @@ OpenNi::~OpenNi()
 
 void OpenNi::update()
 {
-   g_Context.WaitAndUpdateAll();
+   if(init_ok) g_Context.WaitAndUpdateAll();
 }
 //---------------------------------------------------------------------------
 
 int OpenNi::getAnzPlayer()
 {
-   return g_UserGenerator.GetNumberOfUsers();
+   if(init_ok)return g_UserGenerator.GetNumberOfUsers();
+   else return 0;
 }
 //---------------------------------------------------------------------------
 
@@ -138,6 +143,7 @@ OpenNiPlayer OpenNi::getPlayer(int nr)
    XnUInt16 nUsers = 15;
 
    OpenNiPlayer p;
+   if(!init_ok) return p;
 
    g_UserGenerator.GetUsers(aUsers, nUsers);
    if(g_UserGenerator.GetSkeletonCap().IsTracking(nr))
@@ -159,6 +165,8 @@ OpenNiPlayer OpenNi::getPlayer(int nr)
 OpenNiPoint OpenNi::getPlayerPart(int nr, int part)
 {
    OpenNiPoint p;
+   if(!init_ok) return p;
+
    if(g_UserGenerator.GetSkeletonCap().IsTracking(nr))
    {
       XnSkeletonJointPosition pos;
@@ -191,8 +199,8 @@ OpenNiPoint OpenNi::getPlayerPart(int nr, int part)
       case P_RANKLE:    s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_ANKLE, pos); break;
       case P_RFOOT:     s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_FOOT,  pos); break;
       }
-      p.x = (pos.position.X * -0.5) + 1600/2;
-      p.y = (pos.position.Y * -0.5) + 800/2 ;
+      p.x = (pos.position.X * -0.5) + Application::x_res/2;
+      p.y = (pos.position.Y * -0.5) + Application::y_res/2 ;
       p.z = abs(pos.position.Z);
 
    }
@@ -202,6 +210,7 @@ OpenNiPoint OpenNi::getPlayerPart(int nr, int part)
 
 void OpenNi::drawPlayer(int nr)
 {
+   if(!init_ok) return;
    CL_FontDescription font_desc;
    font_desc.set_typeface_name("tahoma");
    font_desc.set_height(30);
@@ -229,10 +238,18 @@ void OpenNi::drawPlayer(int nr)
       CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RELBOW)->x, p.pointList.at(P_RELBOW)->y, p.pointList.at(P_RHAND)->x, p.pointList.at(P_RHAND)->y, CL_Colorf::white);
       CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RSHOULDER)->x, p.pointList.at(P_RSHOULDER)->y, p.pointList.at(P_RELBOW)->x, p.pointList.at(P_RELBOW)->y, CL_Colorf::white);
 
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LHIP)->x, p.pointList.at(P_LHIP)->y, p.pointList.at(P_TORSO)->x, p.pointList.at(P_TORSO)->y, CL_Colorf::white);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_TORSO)->x, p.pointList.at(P_TORSO)->y, p.pointList.at(P_RHIP)->x, p.pointList.at(P_RHIP)->y, CL_Colorf::white);
       CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LHIP)->x, p.pointList.at(P_LHIP)->y, p.pointList.at(P_RHIP)->x, p.pointList.at(P_RHIP)->y, CL_Colorf::white);
       CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LHIP)->x, p.pointList.at(P_LHIP)->y, p.pointList.at(P_LKNEE)->x, p.pointList.at(P_LKNEE)->y, CL_Colorf::white);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RHIP)->x, p.pointList.at(P_RHIP)->y, p.pointList.at(P_RKNEE)->x, p.pointList.at(P_RKNEE)->y, CL_Colorf::white);
 
       TGString s = TGString("R Hand:(") + p.pointList.at(P_LHAND)->x + "|" + p.pointList.at(P_LHAND)->y + "|" + p.pointList.at(P_LHAND)->z +")";
       font.draw_text(Application::myself->gc, 10, 40, s.c_str());
    }
+}
+
+OpenNiPoint OpenNi::getPlayerPart(int nr, int part1, int part2)
+{
+
 }
