@@ -7,7 +7,7 @@ void Application::run(void)
 
 	CL_DisplayWindowDescription window_desc;
 	window_desc.set_size(CL_Size(640, 480), true);
-	window_desc.set_title("Sunset");
+	window_desc.set_title("MagnetoPong!!!11einself");
 	CL_DisplayWindow window(window_desc);
 
 	CL_Slot slot_quit = window.sig_window_close().connect(this, &Application::on_window_close);
@@ -43,7 +43,7 @@ void Application::run(void)
 		}
 
 		CL_Point mousePos = mouse.get_position();
-		bat.setPosition(Vec2d(mousePos[0], mousePos[1]));
+		bat.setPosition(mousePos);
 
 		CL_Colorf red(155/255.0f, 60/255.0f, 68/255.0f);
 		CL_Gradient gradient1(CL_Colorf::black, red);
