@@ -33,6 +33,15 @@ void Application::run(void)
 		if(keyboard.get_keycode(CL_KEY_ESCAPE) == true)
 			quit = true;
 
+		if(mouse.get_keycode(CL_MOUSE_WHEEL_DOWN)
+				|| mouse.get_keycode(CL_MOUSE_LEFT)) {
+			bat.setCharge(bat.getCharge() - 0.1f);
+		}
+		if(mouse.get_keycode(CL_MOUSE_WHEEL_UP)
+				|| mouse.get_keycode(CL_MOUSE_RIGHT)) {
+			bat.setCharge(bat.getCharge() + 0.1f);
+		}
+
 		CL_Point mousePos = mouse.get_position();
 		bat.setPosition(Vec2d(mousePos[0], mousePos[1]));
 
