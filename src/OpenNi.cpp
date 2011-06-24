@@ -302,8 +302,3 @@ void OpenNi::setPlayerCallback(OpenNiPlayerCallback* callback)
 {
 	playerCallback = callback;
 }
-
-OpenNiPoint OpenNi::getPlayerPart(int nr, int part1, int part2)
-{
-
-}
