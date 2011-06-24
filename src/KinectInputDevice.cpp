@@ -54,6 +54,14 @@ CL_Point KinectInputDevice::getPoint(void)
 
 float KinectInputDevice::getZ(void)
 {
+   double winkel = Application::myself->kinect.getWinkel(playerNr, !leftHand);
+   winkel -= 45;
+   winkel /= 45;
+   if(winkel > 1.0) winkel = 1.0;
+   else if(winkel < -1.0) winkel = -1.0;
+
+   return winkel;
+/*
    OpenNiPoint p;
    if(leftHand)
    {
@@ -67,7 +75,7 @@ float KinectInputDevice::getZ(void)
    if(!z_kali)
    {
       double winkel = Application::myself->kinect.getWinkel(playerNr, leftHand);
-      if(winkel < 5)
+      if(winkel < 2)
       {
          max_z = p.length();
          z_kali = true;
@@ -86,5 +94,6 @@ float KinectInputDevice::getZ(void)
       dist = (dist/max_z)*2.0 - 1.0;
    }
    return dist;
+   */
 }
 //---------------------------------------------------------------------------

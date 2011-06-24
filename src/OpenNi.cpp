@@ -294,7 +294,7 @@ void OpenNi::drawPlayer(int nr)
       CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RHIP)->x, p.pointList.at(P_RHIP)->y, p.pointList.at(P_RKNEE)->x, p.pointList.at(P_RKNEE)->y, CL_Colorf::white);
 
       TGString s = TGString("Winkel L: ") + getWinkel(nr, true) + " R Hand:(" + p.pointList.at(P_LHAND)->x + "|" + p.pointList.at(P_LHAND)->y + "|" + p.pointList.at(P_LHAND)->z +")" ;
-      font.draw_text(Application::myself->gc, 10, 20*nr, s.c_str());
+  //    font.draw_text(Application::myself->gc, 10, 20*nr, s.c_str());
 
    }
 }

@@ -31,7 +31,6 @@ private:
 
    bool z_kali;
 
-
 };
 
 #endif /* KINECTINPUTDEVICE_H_ */
