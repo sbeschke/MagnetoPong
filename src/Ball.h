@@ -20,7 +20,8 @@ public:
 	virtual ~Ball();
 
 	void draw(void);
-	void updateforces(const std::vector<Entity*>& objects);
+	void updateforces(const std::vector<Entity*>& objects, float timedifference);
+
 	Vec2d getForce();
 
 private:

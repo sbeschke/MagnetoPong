@@ -4,6 +4,7 @@
 #include <ClanLib/core.h>
 #include <ClanLib/display.h>
 #include <ClanLib/gl.h>
+#include <ClanLib/core.h>
 
 class Application
 {

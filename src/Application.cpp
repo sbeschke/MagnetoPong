@@ -6,7 +6,7 @@
 void Application::run(void)
 {
 	quit = false;
-
+	unsigned int start =  CL_System::get_time();
 	CL_DisplayWindowDescription window_desc;
 	window_desc.set_size(CL_Size(640, 480), true);
 	window_desc.set_title("MagnetoPong!!!11einself");
@@ -39,6 +39,11 @@ void Application::run(void)
 
 	while (!quit)
 	{
+		int timediff = CL_System::get_time() - start ;
+		start = CL_System::get_time();;
+
+
+
 		if(keyboard.get_keycode(CL_KEY_ESCAPE) == true)
 			quit = true;
 
@@ -66,10 +71,10 @@ void Application::run(void)
 
 		bat.draw();
 		ball.draw();
-		ball.updateforces(objects);
+		ball.updateforces(objects,(float)timediff);
 		std::ostringstream oss;
 
-		oss <<ball.getForce().x << " " << ball.getForce().y;
+		oss <<ball.getForce().x << " " << ball.getForce().y  << std::endl<< timediff;
 		font.draw_text(gc, 146, 50, oss.str());
 		//boat_sprite.update();
 
