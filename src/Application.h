@@ -20,6 +20,12 @@ public:
 	void playerLost(int nr);
 };
 
+const CL_Colorf playerColors[] = {
+			CL_Colorf::violet,
+			CL_Colorf::blue
+	};
+
+
 class Application
 {
 private:

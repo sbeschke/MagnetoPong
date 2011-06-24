@@ -79,3 +79,11 @@ void Entity::setColor(CL_Colorf color)
 {
 	this->color = color;
 }
+
+float Entity::getRadius(void) {
+	return radius;
+}
+
+void Entity::setRadius(float radius) {
+	this->radius = radius;
+}
