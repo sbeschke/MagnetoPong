@@ -87,7 +87,7 @@ void Application::run(void)
 
 
 
-	Ball ball(this,Vec2d(640,480));
+	Ball ball(this,Vec2d(Application::x_res, Application::y_res));
 	ball.initializePosition();
 	ball.setCharge(1);
 
