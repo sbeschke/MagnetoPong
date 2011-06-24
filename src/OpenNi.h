@@ -75,6 +75,8 @@ public:
    bool calibrated;
 
    std::vector<OpenNiPoint* > pointList;
+
+   void changeForDisplay();
 };
 
 class OpenNiPlayerCallback
@@ -97,6 +99,8 @@ public:
    OpenNiPoint  getPlayerPart(int nr, int part);
    OpenNiPoint  getPlayerPart(int nr, int part1, int part2);
            //pos von Part1 relativ zu Part2
+
+   double getWinkel(int nr, int LeftArm);
 
    void drawPlayer(int nr);
 

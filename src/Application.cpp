@@ -5,6 +5,7 @@
 #include <iostream>
 #include "Player.h"
 #include "MouseInputDevice.h"
+#include "KinectInputDevice.h"
 
 
 Application* Application::myself;
@@ -63,8 +64,8 @@ void Application::run(void)
 	addEntity(&ball);
 
 
-	MouseInputDevice mouseInpDev(&mouse);
-	Player player1(this, &mouseInpDev);
+	KinectInputDevice kinectInpDev(1,false);
+	Player player1(this, &kinectInpDev);
 
 	while (!quit)
 	{
