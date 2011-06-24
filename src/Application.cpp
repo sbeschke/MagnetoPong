@@ -86,9 +86,10 @@ void Application::run(void)
 	CL_Font_System font(gc, font_desc);
 
 
-	Ball ball(this);
-	ball.setPosition(Vec2d(320,200));
-	ball.setCharge(0.1);
+
+	Ball ball(this,Vec2d(Application::x_res, Application::y_res));
+	ball.initializePosition();
+	ball.setCharge(1);
 
 
 	addEntity(&ball);

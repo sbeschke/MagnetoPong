@@ -116,7 +116,7 @@ OpenNi::OpenNi()
       CHECK_RC(rc, "create User generator");
    }
 
-   std::cout << reinterpret_cast<unsigned int>(this);
+   //std::cout << reinterpret_cast<unsigned int>(this);
 
    rc = g_UserGenerator.RegisterUserCallbacks(NewUser, LostUser, this, h);
    CHECK_RC(rc, "create Depth");

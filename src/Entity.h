@@ -35,6 +35,7 @@ private:
 	Vec2d position;
 	float charge;
 	float mass;
+
 };
 
 typedef std::set<Entity*> EntitySet;
