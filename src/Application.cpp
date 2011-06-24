@@ -1,19 +1,23 @@
 #include "Application.h"
 #include "Bat.h"
 
+Application* Application::myself;
+
 void Application::run(void)
 {
 	quit = false;
 
+	Application::myself = this;
+
 	CL_DisplayWindowDescription window_desc;
-	window_desc.set_size(CL_Size(640, 480), true);
+	window_desc.set_size(CL_Size(1600, 800), true);
 	window_desc.set_title("Sunset");
 	CL_DisplayWindow window(window_desc);
 
 	CL_Slot slot_quit = window.sig_window_close().connect(this, &Application::on_window_close);
 
 	graphicContext = window.get_gc();
-	CL_GraphicContext& gc = graphicContext;
+	gc = graphicContext;
 	CL_InputDevice keyboard = window.get_ic().get_keyboard();
 	CL_InputDevice mouse = window.get_ic().get_mouse(0);
 
@@ -27,26 +31,35 @@ void Application::run(void)
 	CL_Font_System font(gc, font_desc);
 
 	Bat bat(this);
+	//kinect.application = this;
 
 	while (!quit)
 	{
+	   kinect.update();
+
 		if(keyboard.get_keycode(CL_KEY_ESCAPE) == true)
 			quit = true;
 
+/*
 		CL_Point mousePos = mouse.get_position();
 		bat.setPosition(Vec2d(mousePos[0], mousePos[1]));
+*/
 
 		CL_Colorf red(155/255.0f, 60/255.0f, 68/255.0f);
 		CL_Gradient gradient1(CL_Colorf::black, red);
-		CL_Draw::gradient_fill(gc, CL_Rectf(0,0,640,480), gradient1);
+		CL_Draw::gradient_fill(gc, CL_Rectf(0,0,1600,800), gradient1);
 
+		for(int i=0; i < 5; i++)
+		{
+		   kinect.drawPlayer(i);
+		}
 		//draw_sunset(gc);
 
 		//boat_sprite.draw(gc, 70, 252);
 
 		//font.draw_text(gc, 146, 50, "A quiet evening in the pacific...");
 
-		bat.draw();
+	//	bat.draw();
 
 		//boat_sprite.update();
 
