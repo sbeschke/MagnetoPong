@@ -90,9 +90,12 @@ void Application::run(void)
 	Ball ball(this,Vec2d(Application::x_res, Application::y_res));
 	ball.initializePosition();
 	ball.setCharge(1);
-
-
 	addEntity(&ball);
+
+	Ball ball2(this,Vec2d(Application::x_res, Application::y_res));
+	ball2.setPosition(Vec2d((x_res/2)-50, y_res/2));
+	ball2.setCharge(-1);
+	addEntity(&ball2);
 
 	while (!quit)
 	{
@@ -126,9 +129,11 @@ void Application::run(void)
 		CL_Point mousePos = mouse.get_position();
 		//bat.setPosition(mousePos);
 
-		CL_Colorf red(155/255.0f, 60/255.0f, 68/255.0f);
-		CL_Gradient gradient1(CL_Colorf::black, red);
-		CL_Draw::gradient_fill(gc, CL_Rectf(0,0,1600,800), gradient1);
+		//CL_Colorf red(155/255.0f, 60/255.0f, 68/255.0f);
+		//CL_Gradient gradient1(CL_Colorf::black, red);
+		//CL_Draw::gradient_fill(gc, CL_Rectf(0,0,1600,800), gradient1);
+
+		CL_Draw::fill(gc, CL_Rectf(0,0,x_res,y_res), CL_Colorf::white);
 
 		for(int i=0; i < 5; i++)
 		{
@@ -141,11 +146,15 @@ void Application::run(void)
 		//font.draw_text(gc, 146, 50, "A quiet evening in the pacific...");
 
 		for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++) {
+			(*it)->updateforces(entities,timediff);
+		}
+
+		for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++) {
+			(*it)->updateposition(timediff);
 			(*it)->draw();
 		}
-		ball.updateforces(entities,timediff);
 
-		ball.updateposition(timediff);
+
 		//player1.getBat()->draw();
 		//std::ostringstream oss;
 		//font.draw_text(gc, 146, 50, oss.str());

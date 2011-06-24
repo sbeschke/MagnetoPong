@@ -18,7 +18,6 @@ public:
 	Bat(Application* application);
 	virtual ~Bat();
 
-	void draw(void);
 private:
 };
 
