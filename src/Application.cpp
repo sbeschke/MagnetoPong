@@ -82,16 +82,17 @@ void Application::run(void)
 
 
 		ball.draw();
-		ball.updateforces(objects,(float)timediff);
+		ball.updateforces(objects,timediff);
 
 
+
+
+
+		ball.updateposition(timediff);
 		player1.getBat()->draw();
-
-
 		//std::ostringstream oss;
 		//font.draw_text(gc, 146, 50, oss.str());
 		//boat_sprite.update();
-
 		window.flip();
 		CL_KeepAlive::process();
 		//CL_System::sleep(10);

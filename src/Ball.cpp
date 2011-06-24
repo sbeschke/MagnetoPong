@@ -42,6 +42,9 @@ void Ball::updateforces(const std::vector<Entity*>& objects, float timedifferenc
 		}
 
 	}
+}
+void Ball::updateposition(float timedifference)
+{
 	speed += this->force * timedifference;
 	this->setPosition(this->getPosition()+this->speed*timedifference);
 }

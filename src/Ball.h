@@ -21,6 +21,8 @@ public:
 
 	void draw(void);
 	void updateforces(const std::vector<Entity*>& objects, float timedifference);
+	void updateposition(float timedifference);
+
 
 	Vec2d getForce();
 
