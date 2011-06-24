@@ -77,6 +77,14 @@ public:
    std::vector<OpenNiPoint* > pointList;
 };
 
+class OpenNiPlayerCallback
+{
+public:
+	virtual void playerRecognized(int nr) =0;
+	virtual void playerCalibrated(int nr) =0;
+	virtual void playerLost(int nr) =0;
+};
+
 class OpenNi
 {
 public:
@@ -92,9 +100,13 @@ public:
 
    void drawPlayer(int nr);
 
+   void setPlayerCallback(OpenNiPlayerCallback* callback);
+
 private:
 
    bool init_ok;
+
+   OpenNiPlayerCallback* playerCallback;
 
 
 };

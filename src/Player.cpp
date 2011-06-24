@@ -8,14 +8,17 @@
 #include "Player.h"
 #include "Bat.h"
 #include "InputDevice.h"
+#include "Application.h"
 
 Player::Player(Application* application, InputDevice* device)
 : application(application), device(device)
 {
 	bat = new Bat(application);
+	application->addEntity(bat);
 }
 
 Player::~Player() {
+	application->remEntity(bat);
 	delete bat;
 }
 

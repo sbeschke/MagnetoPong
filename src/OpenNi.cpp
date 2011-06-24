@@ -35,7 +35,8 @@ XnCallbackHandle hPose;
 
 void XN_CALLBACK_TYPE NewUser(xn::UserGenerator& generator, XnUserID user, void* pCookie)
 {
-   printf("New user nrentified: %d\n", user);
+   printf("New user identified: %d\n", user);
+   Application::get()->playerCallback.playerRecognized(user);
    g_UserGenerator.GetPoseDetectionCap().StartPoseDetection("Psi", user);
 }
 //---------------------------------------------------------------------------
@@ -43,6 +44,7 @@ void XN_CALLBACK_TYPE NewUser(xn::UserGenerator& generator, XnUserID user, void*
 void XN_CALLBACK_TYPE LostUser(xn::UserGenerator& generator, XnUserID user, void* pCookie)
 {
    printf("User %d lost\n", user);
+   Application::get()->playerCallback.playerLost(user);
 }
 //---------------------------------------------------------------------------
 
@@ -58,6 +60,7 @@ void XN_CALLBACK_TYPE CalibrationEnd(xn::SkeletonCapability& skeleton, XnUserID 
    if (bSuccess)
    {
       skeleton.StartTracking(user);
+      Application::get()->playerCallback.playerCalibrated(user);
    }
    else
    {
@@ -100,7 +103,9 @@ OpenNi::OpenNi()
       CHECK_RC(rc, "create User generator");
    }
 
-   rc = g_UserGenerator.RegisterUserCallbacks(NewUser, LostUser, NULL, h);
+   std::cout << reinterpret_cast<unsigned int>(this);
+
+   rc = g_UserGenerator.RegisterUserCallbacks(NewUser, LostUser, this, h);
    CHECK_RC(rc, "create Depth");
    rc = g_UserGenerator.GetSkeletonCap().SetSkeletonProfile(XN_SKEL_PROFILE_ALL);
    CHECK_RC(rc, "create Depth");
@@ -247,6 +252,11 @@ void OpenNi::drawPlayer(int nr)
       TGString s = TGString("R Hand:(") + p.pointList.at(P_LHAND)->x + "|" + p.pointList.at(P_LHAND)->y + "|" + p.pointList.at(P_LHAND)->z +")";
       font.draw_text(Application::myself->gc, 10, 40, s.c_str());
    }
+}
+
+void OpenNi::setPlayerCallback(OpenNiPlayerCallback* callback)
+{
+	playerCallback = callback;
 }
 
 OpenNiPoint OpenNi::getPlayerPart(int nr, int part1, int part2)

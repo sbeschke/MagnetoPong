@@ -2,6 +2,7 @@
 #include "Bat.h"
 #include "Ball.h"
 #include <sstream>
+#include <iostream>
 #include "Player.h"
 #include "MouseInputDevice.h"
 
@@ -10,10 +11,26 @@ Application* Application::myself;
 int Application::x_res;
 int Application::y_res;
 
+void PlayerCallback::playerRecognized(int nr)
+{
+}
+
+void PlayerCallback::playerCalibrated(int nr)
+{
+
+}
+
+void PlayerCallback::playerLost(int nr)
+{
+
+}
+
 void Application::run(void)
 {
 	quit = false;
 	Application::myself = this;
+
+	kinect.setPlayerCallback(&playerCallback);
 
 	unsigned int start =  CL_System::get_time();
 	CL_DisplayWindowDescription window_desc;
@@ -41,14 +58,13 @@ void Application::run(void)
 	Ball ball(this);
 	ball.setPosition(Vec2d(320,200));
 	ball.setCharge(0.1);
-	std::vector<Entity*> objects;
 
-	objects.push_back(&ball);
+
+	addEntity(&ball);
 
 
 	MouseInputDevice mouseInpDev(&mouse);
 	Player player1(this, &mouseInpDev);
-	objects.push_back(player1.getBat());
 
 	while (!quit)
 	{
@@ -90,7 +106,7 @@ void Application::run(void)
 		//font.draw_text(gc, 146, 50, "A quiet evening in the pacific...");
 
 		ball.draw();
-		ball.updateforces(objects,timediff);
+		ball.updateforces(entities,timediff);
 
 		ball.updateposition(timediff);
 		player1.getBat()->draw();
@@ -101,4 +117,22 @@ void Application::run(void)
 		CL_KeepAlive::process();
 		//CL_System::sleep(10);
 	}
+}
+
+void Application::addEntity(Entity* entity)
+{
+	entities.insert(entity);
+}
+
+void Application::remEntity(Entity* entity)
+{
+	EntitySet::iterator it = entities.find(entity);
+	if(it != entities.end()) {
+		entities.erase(it);
+	}
+}
+
+void Application::addPlayer(int num)
+{
+
 }
