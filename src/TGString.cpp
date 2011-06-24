@@ -292,10 +292,10 @@ TGString TGString::operator+ (bool val)
 }
 //---------------------------------------------------------------------------
 
-TGString TGString::operator+(void *p)
+/*TGString TGString::operator+(void *p)
 {
    return operator+((int)(p));
-}
+}*/
 //---------------------------------------------------------------------------
 
 TGString TGString::operator+(const char *str)

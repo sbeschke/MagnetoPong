@@ -62,7 +62,7 @@ public:
     TGString operator+ (unsigned long long  val); //base 10
     TGString operator+ (double        val);
     TGString operator+ (bool          val);
-    TGString operator+ (void *p);
+    //TGString operator+ (void *p);
     TGString operator+ (const char *str);
     TGString operator+ (TGString str);
 

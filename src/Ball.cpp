@@ -45,7 +45,7 @@ void Ball::updateforces(const std::vector<Entity*>& objects, float timedifferenc
 	//borderforces
 
 	int distance_to_middle = 240 - position.y;
-	float borderparam = 1e-4;
+	float borderparam = 1e-6;
 	float borderforce = borderparam*(distance_to_middle);
 	this->force.y += borderforce;
 
