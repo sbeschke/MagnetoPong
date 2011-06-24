@@ -8,7 +8,7 @@
 #include "Entity.h"
 
 Entity::Entity(Application* application)
-: application(application)
+: application(application), charge(0.0f), mass(0.0f)
 {
 
 }
