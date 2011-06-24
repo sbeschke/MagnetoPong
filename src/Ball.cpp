@@ -23,11 +23,12 @@ void Ball::draw(void)
 void Ball::updateforces(const std::vector<Entity*>& objects, float timedifference)
 {
 	this->force = Vec2d(0,0);
+	Vec2d position = this->getPosition();
 	for(int i = 0; i < objects.size(); i++)
 	{
 		if(objects[i]!=this)
 		{
-			Vec2d distance = objects[i]->getPosition() - this->getPosition();
+			Vec2d distance = objects[i]->getPosition() - position;
 
 			float length = distance.length();
 
@@ -40,13 +41,27 @@ void Ball::updateforces(const std::vector<Entity*>& objects, float timedifferenc
 			}
 
 		}
-
 	}
+	//borderforces
+
+	int distance_to_middle = 240 - position.y;
+	float borderparam = 1e-4;
+	float borderforce = borderparam*(distance_to_middle);
+	this->force.y += borderforce;
+
+
+
 }
 void Ball::updateposition(float timedifference)
 {
 	speed += this->force * timedifference;
-	this->setPosition(this->getPosition()+this->speed*timedifference);
+	Vec2d newpos = this->getPosition()+this->speed*timedifference;
+	if(newpos.y > 480)
+		newpos.y -= 480;
+	if(newpos.y < 0)
+			newpos.y += 480;
+	this->setPosition(newpos);
+
 }
 Vec2d Ball::getForce()
 {

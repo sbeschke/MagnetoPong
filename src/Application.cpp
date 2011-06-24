@@ -37,7 +37,7 @@ void Application::run(void)
 
 
 	Ball ball(this);
-	ball.setPosition(Vec2d(320,240));
+	ball.setPosition(Vec2d(320,200));
 	ball.setCharge(0.1);
 	std::vector<Entity*> objects;
 
