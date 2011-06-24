@@ -13,10 +13,10 @@
 class KinectInputDevice : public InputDevice
 {
 public:
-   KinectInputDevice(int nr, bool leftHand);
+   KinectInputDevice(int nr, bool lefthand);
    virtual ~KinectInputDevice();
 
-   void setHand(bool leftHand);
+   void setHand(bool lefthand);
    void setPlayer(int nr);
 
    CL_Point getPoint(void);
@@ -25,6 +25,11 @@ public:
 private:
    bool leftHand;
    int  playerNr;
+
+   double max_z;
+   double min_z;
+
+
 };
 
 #endif /* KINECTINPUTDEVICE_H_ */

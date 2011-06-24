@@ -8,11 +8,14 @@
 #include "KinectInputDevice.h"
 #include "OpenNi.h"
 #include "Application.h"
+#include <iostream>
 
-KinectInputDevice::KinectInputDevice(int nr, bool leftHand)
+KinectInputDevice::KinectInputDevice(int nr, bool lefthand)
 {
-   leftHand = leftHand;
+   leftHand = lefthand;
    playerNr = nr;
+   min_z = 0;
+   max_z = 600;
 }
 
 KinectInputDevice::~KinectInputDevice()
@@ -20,9 +23,9 @@ KinectInputDevice::~KinectInputDevice()
 }
 //---------------------------------------------------------------------------
 
-void KinectInputDevice::setHand(bool leftHand)
+void KinectInputDevice::setHand(bool lefthand)
 {
-   this->leftHand = leftHand;
+   this->leftHand = lefthand;
 }
 //---------------------------------------------------------------------------
 
@@ -58,6 +61,13 @@ float KinectInputDevice::getZ(void)
    {
       p = Application::myself->kinect.getPlayerPart(playerNr, P_LHAND, P_LSHOULDER);
    }
+   if(p.z > max_z)  p.z = 1.0;
+   else if(p.z < min_z) p.z = -1.0;
+   else
+   {
+      p.z = (p.z/max_z)*2.0 - 1.0;
+   }
+   cout << p.z << "\n";
    return p.z;
 }
 //---------------------------------------------------------------------------
