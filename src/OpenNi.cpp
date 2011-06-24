@@ -239,21 +239,21 @@ OpenNiPoint OpenNi::getPlayerPart(int nr, int part1, int part2)
 }
 //---------------------------------------------------------------------------
 
-double OpenNi::getWinkel(int nr, int LeftArm)
+double OpenNi::getWinkel(int nr, int leftArm)
 {
    OpenNiPoint p1, p2;
    if(leftArm)
    {
-      p1 = Application::myself->kinect.getPlayerPart(nr, P_RHAND, P_RELBOW);
-      p2 = Application::myself->kinect.getPlayerPart(nr, P_RSHOULDER, P_RELBOW);
+      p1 = Application::myself->kinect.getPlayerPart(nr, P_RELBOW, P_RHAND);
+      p2 = Application::myself->kinect.getPlayerPart(nr, P_RELBOW, P_RSHOULDER);
    }
    else
    {
-      p1 = Application::myself->kinect.getPlayerPart(nr, P_LHAND, P_LELBOW);
-      p2 = Application::myself->kinect.getPlayerPart(nr, P_LSHOULDER, P_LELBOW);
+      p1 = Application::myself->kinect.getPlayerPart(nr, P_LELBOW, P_LHAND);
+      p2 = Application::myself->kinect.getPlayerPart(nr, P_LELBOW, P_LSHOULDER);
    }
 
-
+   return atan((p1*p2)/(p1.length()*p2.length())) * 57.295779513082320876798154814105;
 }
 //---------------------------------------------------------------------------
 
@@ -293,8 +293,9 @@ void OpenNi::drawPlayer(int nr)
       CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LHIP)->x, p.pointList.at(P_LHIP)->y, p.pointList.at(P_LKNEE)->x, p.pointList.at(P_LKNEE)->y, CL_Colorf::white);
       CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RHIP)->x, p.pointList.at(P_RHIP)->y, p.pointList.at(P_RKNEE)->x, p.pointList.at(P_RKNEE)->y, CL_Colorf::white);
 
-      TGString s = TGString("R Hand:(") + p.pointList.at(P_LHAND)->x + "|" + p.pointList.at(P_LHAND)->y + "|" + p.pointList.at(P_LHAND)->z +")";
+      TGString s = TGString("Winkel L: ") + getWinkel(nr, true) + " R Hand:(" + p.pointList.at(P_LHAND)->x + "|" + p.pointList.at(P_LHAND)->y + "|" + p.pointList.at(P_LHAND)->z +")" ;
       font.draw_text(Application::myself->gc, 10, 20*nr, s.c_str());
+
    }
 }
 void OpenNi::setPlayerCallback(OpenNiPlayerCallback* callback)
