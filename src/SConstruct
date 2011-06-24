@@ -3,6 +3,8 @@ import config
 env = Environment(
 	CPPPATH=[config.CLANLIB_INCLUDE],
 #	LIBPATH=[config.CLANLIB_LIBPATH],
-	LIBS=['pthread', 'clan22Core', 'clan22App']
+	LIBS=['pthread', 'X11', 'freetype', 'clan22Core', 'clan22App', 'clan22Display', 'clan22GL']
 )
+env.ParseConfig("pkg-config clanCore-2.2 clanApp-2.2 clanDisplay-2.2 clanGL-2.2 --cflags --libs")
+
 env.Program('MagnetoPong', Glob('main.cpp'))
