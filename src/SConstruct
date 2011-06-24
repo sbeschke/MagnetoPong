@@ -1,0 +1,8 @@
+import config
+
+env = Environment(
+	CPPPATH=[config.CLANLIB_INCLUDE],
+#	LIBPATH=[config.CLANLIB_LIBPATH],
+	LIBS=['pthread', 'clan22Core', 'clan22App']
+)
+env.Program('MagnetoPong', Glob('main.cpp'))

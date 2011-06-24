@@ -6,19 +6,23 @@
  */
 
 #include "Application.h"
+#include "Game.h"
+
+Application* Application::theApplication;
 
 Application::Application() {
-	// TODO Auto-generated constructor stub
-
+	scene = new Game();
+	scene->seize();
 }
 
 Application::~Application() {
-	// TODO Auto-generated destructor stub
+	scene->yield();
+	delete scene;
 }
 
 orxSTATUS orxFASTCALL Application::Init()
 {
-	orxViewport_CreateFromConfig( "Viewport" );
+	theApplication = new Application();
 	return orxSTATUS_SUCCESS;
 }
 
@@ -29,5 +33,5 @@ orxSTATUS orxFASTCALL Application::Run()
 
 void orxFASTCALL Application::Exit()
 {
-
+	delete theApplication;
 }

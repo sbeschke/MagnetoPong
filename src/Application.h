@@ -9,15 +9,21 @@
 #define APPLICATION_H_
 
 #include "orx.h"
+#include "Scene.h"
 
 class Application {
 public:
-	Application();
-	virtual ~Application();
+	static Application* theApplication;
 
 	static orxSTATUS orxFASTCALL Init();
 	static orxSTATUS orxFASTCALL Run();
 	static void orxFASTCALL Exit();
+
+	Application();
+	virtual ~Application();
+
+private:
+	Scene* scene;
 };
 
 #endif /* APPLICATION_H_ */
