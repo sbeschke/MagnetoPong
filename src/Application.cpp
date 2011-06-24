@@ -4,6 +4,7 @@
 #include <sstream>
 #include "Player.h"
 #include "MouseInputDevice.h"
+#include "KinectInputDevice.h"
 
 
 Application* Application::myself;
@@ -47,7 +48,8 @@ void Application::run(void)
 
 
 	MouseInputDevice mouseInpDev(&mouse);
-	Player player1(this, &mouseInpDev);
+	KinectInputDevice kinectInpDev(1,false);
+	Player player1(this, &kinectInpDev);
 	objects.push_back(player1.getBat());
 
 	while (!quit)

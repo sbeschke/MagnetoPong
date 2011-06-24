@@ -75,6 +75,8 @@ public:
    bool calibrated;
 
    std::vector<OpenNiPoint* > pointList;
+
+   void changeForDisplay();
 };
 
 class OpenNi

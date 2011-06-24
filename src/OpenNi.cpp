@@ -10,9 +10,10 @@
 #include <XnOpenNI.h>
 #include <XnCodecIDs.h>
 #include <XnCppWrapper.h>
+#include "Application.h"
 
 #include "TGString.h"
-#include "Application.h"
+
 
 //---------------------------------------------------------------------------
 // Includes
@@ -35,7 +36,7 @@ XnCallbackHandle hPose;
 
 void XN_CALLBACK_TYPE NewUser(xn::UserGenerator& generator, XnUserID user, void* pCookie)
 {
-   printf("New user nrentified: %d\n", user);
+   printf("New user identified: %d\n", user);
    g_UserGenerator.GetPoseDetectionCap().StartPoseDetection("Psi", user);
 }
 //---------------------------------------------------------------------------
@@ -71,6 +72,18 @@ void XN_CALLBACK_TYPE PoseDetected(xn::PoseDetectionCapability& poseDetection, c
    printf("Pose '%s' detected for user %d\n", strPose, nid);
    g_UserGenerator.GetSkeletonCap().RequestCalibration(nid, FALSE);
    g_UserGenerator.GetPoseDetectionCap().StopPoseDetection(nid);
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+
+void OpenNiPlayer::changeForDisplay()
+{
+   for(int i=0; i < P_SIZE; i++)
+   {
+      pointList.at(i)->x = pointList.at(i)->x * 0.5 + Application::x_res/2;
+      pointList.at(i)->y = pointList.at(i)->y * 0.5 + Application::y_res/2;
+   }
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
@@ -199,12 +212,25 @@ OpenNiPoint OpenNi::getPlayerPart(int nr, int part)
       case P_RANKLE:    s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_ANKLE, pos); break;
       case P_RFOOT:     s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_FOOT,  pos); break;
       }
-      p.x = (pos.position.X * -0.5) + Application::x_res/2;
-      p.y = (pos.position.Y * -0.5) + Application::y_res/2 ;
+      p.x = (pos.position.X * -1.0);//-0.5) + Application::x_res/2;
+      p.y = (pos.position.Y * -1.0);//-0.5) + Application::y_res/2;
       p.z = abs(pos.position.Z);
 
    }
    return p;
+}
+//---------------------------------------------------------------------------
+
+OpenNiPoint OpenNi::getPlayerPart(int nr, int part1, int part2)
+{
+   OpenNiPoint p1 = getPlayerPart(nr, part1);
+   OpenNiPoint p2 = getPlayerPart(nr, part2);
+
+   p1.x = p1.x - p2.x;
+   p1.y = p1.y - p2.y;
+   p1.z = p2.z - p1.z;
+
+   return p1;
 }
 //---------------------------------------------------------------------------
 
@@ -219,11 +245,11 @@ void OpenNi::drawPlayer(int nr)
    OpenNiPlayer p = getPlayer(nr);
    if(p.calibrated)
    {
+      p.changeForDisplay();
       for(int i=0; i < P_SIZE; i++)
       {
-         if((i != P_LFINGER) && (i != P_RFINGER) && (i != P_WAIST)) CL_Draw::circle(Application::myself->getGC(), CL_Pointf(p.pointList.at(i)->x, p.pointList.at(i)->y), 5, CL_Colorf((float)p.pointList.at(i)->z/3000.0,(float)0.0,(float)1.0,(float)1.0));
+         if((p.pointList.at(i)->x != 0) && (p.pointList.at(i)->y != 0)) CL_Draw::circle(Application::myself->getGC(), CL_Pointf(p.pointList.at(i)->x, p.pointList.at(i)->y), 5, CL_Colorf((float)p.pointList.at(i)->z/2500.0,(float)0.0,(float)1.0,(float)1.0));
       }
-
 
       CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_HEAD)->x, p.pointList.at(P_HEAD)->y, p.pointList.at(P_NECK)->x, p.pointList.at(P_NECK)->y, CL_Colorf::white);
       CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_TORSO)->x, p.pointList.at(P_TORSO)->y, p.pointList.at(P_NECK)->x, p.pointList.at(P_NECK)->y, CL_Colorf::white);
@@ -245,11 +271,6 @@ void OpenNi::drawPlayer(int nr)
       CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RHIP)->x, p.pointList.at(P_RHIP)->y, p.pointList.at(P_RKNEE)->x, p.pointList.at(P_RKNEE)->y, CL_Colorf::white);
 
       TGString s = TGString("R Hand:(") + p.pointList.at(P_LHAND)->x + "|" + p.pointList.at(P_LHAND)->y + "|" + p.pointList.at(P_LHAND)->z +")";
-      font.draw_text(Application::myself->gc, 10, 40, s.c_str());
+      font.draw_text(Application::myself->gc, 10, 20*nr, s.c_str());
    }
-}
-
-OpenNiPoint OpenNi::getPlayerPart(int nr, int part1, int part2)
-{
-
 }
