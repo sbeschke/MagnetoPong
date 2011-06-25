@@ -26,6 +26,8 @@ KinectInputDevice::KinectInputDevice(int nr, bool lefthand)
 
    x_min = 0;
    x_max = 0;
+
+   lastTorsoY = 0;
 }
 
 KinectInputDevice::~KinectInputDevice()
@@ -50,68 +52,44 @@ CL_Point KinectInputDevice::getPoint(void)
    OpenNiPoint p;
    if(leftHand)
    {
-      p = Application::myself->kinect.getPlayerPart(playerNr, P_RHAND, P_RSHOULDER);
+      p = Application::myself->kinect.getPlayerPart(playerNr, P_LHAND, P_LSHOULDER);
    }
    else
    {
-      p = Application::myself->kinect.getPlayerPart(playerNr, P_LHAND, P_LSHOULDER);
+      p = Application::myself->kinect.getPlayerPart(playerNr, P_RHAND, P_RSHOULDER);
    }
 
    if(!x_kali)// || !y_kali)
    {
-      //double winkel = Application::myself->kinect.getWinkel(playerNr, leftHand);
-      double winkel;
-      if(leftHand)
+      if((p.z < 100) && (p.z > -20))
       {
-         winkel = Application::myself->kinect.getWinkel(playerNr, P_RSHOULDER, P_RELBOW, P_RHAND);
-      }
-      else
-      {
-         winkel = Application::myself->kinect.getWinkel(playerNr, P_LSHOULDER, P_LELBOW, P_LHAND);
-      }
-    //  cout << winkel << endl;
-      if(winkel < 5)
-      {
-         if((p.z < 100) && (p.z > -20))
+         if((p.y < 50) && (p.y > -50))
          {
-            if((p.y < 50) && (p.y > -50) && !x_kali)
+            double winkel = Application::myself->kinect.getWinkelELBOW(playerNr, leftHand);
+            if(p.x > 0)
             {
-               if(p.x > 0)
+               if(winkel > 170)
                {
                   x_max = p.x;
-               }
-               else
-               {
-                  x_min = p.x;
-               }
-
-               if(x_min != 0 && x_max != 0)
-               {
-                  double size = x_max - x_min;
-                  x_strech = Application::x_res/size;
-                  x_kali = true;
-                  cout << "x_kalk " << x_strech << "\n";
+                  cout << "x_max " << x_max;
                }
             }
-    /*        else if((p.x < 50) && (p.x > -50) && !y_kali)
+            else
             {
-               if(p.y > 0)
+               if(winkel > 140)
                {
-                  y_max = p.y;
+                  x_min = p.x;
+                  cout << "x_min " << x_min;
                }
-               else
-               {
-                  y_min = p.y;
-               }
+            }
 
-               if(y_min != 0 && y_max != 0)
-               {
-                  double size = y_max - y_min;
-                  y_strech = Application::y_res/size;
-                  y_kali = true;
-                  cout << "y_kalk " << y_strech << "\n";
-               }
-            }*/
+            if(x_min != 0 && x_max != 0)
+            {
+               double size = x_max - x_min;
+               x_strech = Application::x_res/size;
+               x_kali = true;
+               cout << "x_kalk " << x_strech << "\n";
+            }
          }
       }
    }
@@ -126,22 +104,30 @@ CL_Point KinectInputDevice::getPoint(void)
 
 float KinectInputDevice::getZ(void)
 {
-   //double winkel = Application::myself->kinect.getWinkel(playerNr, !leftHand);
+   double winkel = Application::myself->kinect.getWinkelELBOW(playerNr, !leftHand);
 
-   double winkel;
-   if(!leftHand)
-   {
-      winkel = Application::myself->kinect.getWinkel(playerNr, P_RSHOULDER, P_RELBOW, P_RHAND);
-   }
-   else
-   {
-      winkel = Application::myself->kinect.getWinkel(playerNr, P_LSHOULDER, P_LELBOW, P_LHAND);
-   }
    winkel -= 90.0;
-   winkel /= 90.0;
+   winkel /= 80.0;
    if(winkel > 1.0) winkel = 1.0;
    else if(winkel < -1.0) winkel = -1.0;
 
    return winkel;
 }
 //---------------------------------------------------------------------------
+
+bool KinectInputDevice::getJump()
+{
+   OpenNiPoint p = Application::myself->kinect.getPlayerPart(playerNr, P_TORSO);
+   bool jump = false;
+   if(lastTorsoY)
+   {
+      if(p.y < lastTorsoY - 30)
+      {
+         jump = true;
+        // cout << "jump\n";
+      }
+   }
+
+   lastTorsoY = p.y;
+   return jump;
+}

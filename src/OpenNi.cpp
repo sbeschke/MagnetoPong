@@ -238,8 +238,8 @@ OpenNiPoint OpenNi::getPlayerPart(int nr, int part)
       case P_RANKLE:    s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_ANKLE,     pos); break;
       case P_RFOOT:     s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_FOOT,      pos); break;
       }
-      p.x = (pos.position.X * -1.0);//-0.5) + Application::x_res/2;
-      p.y = (pos.position.Y * -1.0);//-0.5) + Application::y_res/2;
+      p.x = pos.position.X;// * -1.0;
+      p.y = pos.position.Y * -1.0;
       p.z = abs(pos.position.Z);
 
    }
@@ -260,24 +260,23 @@ OpenNiPoint OpenNi::getPlayerPart(int nr, int part1, int part2)
 }
 //---------------------------------------------------------------------------
 
-double OpenNi::getWinkel(int nr, int leftArm)
+double OpenNi::getWinkelELBOW(int nr, int leftArm)
 {
    OpenNiPoint p1, p2;
    if(!init_ok) return 0;
 
    if(leftArm)
    {
-      p1 = Application::myself->kinect.getPlayerPart(nr, P_RELBOW, P_RHAND);
-      p2 = Application::myself->kinect.getPlayerPart(nr, P_RELBOW, P_RSHOULDER);
+      p1 = Application::myself->kinect.getPlayerPart(nr, P_LHAND,     P_LELBOW);
+      p2 = Application::myself->kinect.getPlayerPart(nr, P_LSHOULDER, P_LELBOW);
    }
    else
    {
-      p1 = Application::myself->kinect.getPlayerPart(nr, P_LELBOW, P_LHAND);
-      p2 = Application::myself->kinect.getPlayerPart(nr, P_LELBOW, P_LSHOULDER);
+      p1 = Application::myself->kinect.getPlayerPart(nr, P_RHAND,     P_RELBOW);
+      p2 = Application::myself->kinect.getPlayerPart(nr, P_RSHOULDER, P_RELBOW);
    }
 
-  // return atan((p1*p2)/(p1.length()*p2.length())) * 57.295779513082320876798154814105 + 45;
-   return acos((p1*p2)/(p1.length()*p2.length())) * 57.295779513082320876798154814105 ;//+ 45;
+   return acos((p1*p2)/(p1.length()*p2.length())) * 57.295779513082320876798154814105;
 }
 //---------------------------------------------------------------------------
 

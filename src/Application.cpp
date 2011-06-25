@@ -8,6 +8,9 @@
 #include "KinectInputDevice.h"
 #include "OnScreenMessage.h"
 #include "TGString.h"
+#include "Ball.h"
+#include <exception>
+#include <stdlib.h>
 
 
 Application* Application::myself;
@@ -77,7 +80,7 @@ void PlayerCallback::playerCalibrated(int nr)
 		std::cout << "You play RIGHT!" << std::endl;
 	}
 
-	app->players[playerSlot] = player;
+	app->addPlayer(player, playerSlot);
 }
 
 void PlayerCallback::playerLost(int nr)
@@ -87,9 +90,7 @@ void PlayerCallback::playerLost(int nr)
 		Player* player = app->players[playerSlot];
 		if(player != 0 && player->getNumber() == nr) {
 			std::cout << "Lost player on side " << playerSlot << std::endl;
-			//delete player;
-			player->quit();
-			app->players[playerSlot] = 0;
+			app->remPlayer(playerSlot);
 		}
 	}
 }
@@ -115,6 +116,7 @@ void Application::run(void)
 	players.resize(2);
 	players[PLAYER_LEFT] = 0;
 	players[PLAYER_RIGHT] = 0;
+	playersActive = 0;
 
 	kinect.setPlayerCallback(&playerCallback);
 
@@ -140,18 +142,16 @@ void Application::run(void)
 	font_desc.set_height(30);
 	CL_Font_System font(gc, font_desc);
 
-	Application::get()->osmCenter.setMessage("Welcome to MagnetoPong!", 5.0f);
+	CL_FontDescription scoreFont_desc;
+	scoreFont_desc.set_typeface_name("tahoma");
+	scoreFont_desc.set_height(30);
+	CL_Font_System scoreFont(gc, scoreFont_desc);
 
-	Ball ball(this,Vec2d(Application::x_res, Application::y_res));
-	ball.initializePosition();
-	ball.setCharge(1);
-	addEntity(&ball);
+	osmCenter.setMessage("Welcome to MagnetoPong!", 5.0f);
 
-	Ball ball2(this,Vec2d(Application::x_res, Application::y_res));
-	ball2.initializePosition();
-	ball2.setCharge(-1);
-	addEntity(&ball2);
+	clearBalls();
 
+	void addPlayer(int num);
 	while (!quit)
 	{
 		kinect.update();
@@ -183,14 +183,35 @@ void Application::run(void)
 			}
 		}
 
-		for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++) {
+		for(EntitySet::iterator it = entities.begin(); it != entities.end();) {
+			EntitySet::iterator next = it;
+			next++;
 			(*it)->updateposition(timediff);
 			(*it)->draw();
+
+			if(Ball* ball = dynamic_cast<Ball*>(*it)) {
+				if(checkBall(ball)) {
+					remEntity(ball);
+					delete ball;
+				}
+			}
+			it = next;
 		}
 
 		osmCenter.draw();
 		osmLeft.draw();
 		osmRight.draw();
+
+		if(playersActive == 2) {
+			// draw scores
+			std::ostringstream scoreLeftTxtStrm;
+			scoreLeftTxtStrm << players[PLAYER_LEFT]->getScore() << " : "
+					<< players[PLAYER_RIGHT]->getScore();
+			std::string scoreLeftTxt = scoreLeftTxtStrm.str();
+			CL_Size scoreSize = scoreFont.get_text_size(Application::get()->gc, scoreLeftTxt);
+			CL_Pointf scoreLeftPos((x_res + scoreSize.width) / 2, scoreSize.height);
+			scoreFont.draw_text(gc, scoreLeftPos, scoreLeftTxt, CL_Colorf::black);
+		}
 
 //		TGString s = TGString("b1(") + ball.getPosition().x + "|" + ball.getPosition().y + ") b2(" + ball2.getPosition().x + "|" + ball2.getPosition().y + ")";
 	//	font.draw_text(Application::myself->gc, 10, 20, s.c_str(), CL_Colorf::black);
@@ -210,7 +231,151 @@ void Application::remEntity(Entity* entity)
 	entities.erase(entity);
 }
 
-void Application::addPlayer(int num)
+void Application::addPlayer(Player* player, int playerSlot)
 {
+	if(players[playerSlot] != 0) {
+		remPlayer(playerSlot);
+	}
+	players[playerSlot] = player;
+	playersActive++;
 
+	clearBalls();
+
+	switch(playersActive) {
+	case 0: {
+		break;
+	}
+	case 1: {
+		osmCenter.setMessage("Waiting for Player 2");
+		break;
+	}
+	case 2: {
+		startMatch();
+		osmCenter.setMessage("FIGHT", 3.0f);
+		break;
+	}
+	default: throw std::exception(); break;
+	}
+}
+
+void Application::remPlayer(int playerSlot)
+{
+	//delete player;
+	Player* player = players[playerSlot];
+	player->quit();
+	players[playerSlot] = 0;
+	playersActive--;
+
+	osmCenter.setMessage("Player OUT", 3.0f);
+	endMatch();
+}
+
+// return true if ball is out
+bool Application::checkBall(Ball* ball)
+{
+	bool ballOut = false;
+	Vec2d pos = ball->getPosition();
+
+	if(pos.x < 0) {
+		ballOutLeft(ball);
+		ballOut = true;
+	}
+	else if(pos.x >= x_res) {
+		ballOutRight(ball);
+		ballOut = true;
+	}
+	else if(!(pos.y >= 0 && pos.y < y_res)) {
+		ballGone(ball);
+		ballOut = true;
+	}
+
+	if(ballOut) {
+		switch(playersActive) {
+		case 0: {
+			makeBall();
+			break;
+		}
+		case 1: {
+			makeBall();
+			break;
+		}
+		case 2: {
+			makeBall();
+			break;
+		}
+		default: throw std::exception(); break;
+		}
+	}
+
+	return ballOut;
+}
+
+void Application::ballOutLeft(Ball* ball) {
+	if(playersActive == 2) {
+		osmCenter.setMessage("Right Player Scores", 2.0f);
+		players[PLAYER_RIGHT]->incrementScore();
+	}
+}
+
+void Application::ballOutRight(Ball* ball) {
+	if(playersActive == 2) {
+		osmCenter.setMessage("Left Player Scores", 2.0f);
+		players[PLAYER_LEFT]->incrementScore();
+	}
+}
+
+void Application::ballGone(Ball* ball) {
+
+}
+
+void Application::clearBalls(void) {
+	for(EntitySet::iterator it = entities.begin(); it != entities.end();) {
+		EntitySet::iterator next = it;
+		next++;
+		if(Ball* ball = dynamic_cast<Ball*>(*it)) {
+			remEntity(ball);
+			delete ball;
+		}
+		it = next;
+	}
+
+	switch(playersActive) {
+	case 0: {
+		makeBall();
+		makeBall();
+		break;
+	}
+	case 1: {
+		makeBall();
+		break;
+	}
+	case 2: {
+		makeBall();
+		break;
+	}
+	default: throw std::exception(); break;
+	}
+}
+
+void Application::makeBall(void)
+{
+	Ball* b1 = new Ball(this,Vec2d(Application::x_res, Application::y_res));
+	b1->initializePosition();
+	int ch = rand() % 2;
+	b1->setCharge(ch ? 1.0f : -1.0f);
+	addEntity(b1);
+
+}
+
+void Application::startMatch(void)
+{
+	for(std::vector<Player*>::iterator it = players.begin(); it != players.end(); it++) {
+		if(*it != 0) {
+			(*it)->setScore(0);
+		}
+	}
+}
+
+void Application::endMatch(void)
+{
 }

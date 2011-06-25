@@ -18,6 +18,7 @@ public:
 	Bat(Application* application);
 	virtual ~Bat();
 
+
 private:
 };
 
