@@ -49,22 +49,11 @@ void Ball::updateforces(const EntitySet& objects, float timedifference)
 			}
 			else
 			{
-
-
-
+				//no inteaction because of overlap
 			}
 
 		}
 	}
-	//borderforces
-
-	/*int distance_to_middle = 240 - position.y;
-	float borderparam = 1e-6;
-	float borderforce = borderparam*(distance_to_middle);
-	this->force.y += borderforce;*/
-
-
-
 }
 void Ball::initializePosition()
 {
@@ -88,12 +77,6 @@ void Ball::updateposition(float timedifference)
 		newpos.y= RADIUS;
 	}
 	this->setPosition(newpos);
-	if(newpos.x > windowFrame.x || newpos.x < 0 || newpos.y > windowFrame.y || newpos.y < 0)
-	{
-		initializePosition();
-		this->speed = Vec2d(0,0);
-		//TODO emit gameover
-	}
 
 }
 Vec2d Ball::getForce()

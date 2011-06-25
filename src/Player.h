@@ -24,6 +24,10 @@ public:
 	virtual int getNumber(void);
 	virtual void setNumber(int number);
 
+	virtual void incrementScore(void);
+	virtual int getScore(void);
+	virtual void setScore(int score);
+
 private:
 	Application* application;
 	Bat* bat;
@@ -31,6 +35,8 @@ private:
 	InputDevice* device;
 
 	int number;
+
+	int score;
 };
 
 #endif /* PLAYER_H_ */

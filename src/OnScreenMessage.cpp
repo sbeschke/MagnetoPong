@@ -32,6 +32,7 @@ void OnScreenMessage::setMessage(const std::string message, float timeout) {
 }
 
 void OnScreenMessage::tick(float secs) {
+	if(!hasTimeout) return;
 	timeout -= secs;
 	if(timeout <= 0.0f) {
 		show = false;
