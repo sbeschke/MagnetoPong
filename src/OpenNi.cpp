@@ -142,7 +142,7 @@ OpenNi::OpenNi()
 
 OpenNi::~OpenNi()
 {
-   g_Context.Shutdown();
+   if(init_ok) g_Context.Shutdown();
 }
 //---------------------------------------------------------------------------
 
@@ -246,6 +246,8 @@ OpenNiPoint OpenNi::getPlayerPart(int nr, int part1, int part2)
 double OpenNi::getWinkel(int nr, int leftArm)
 {
    OpenNiPoint p1, p2;
+   if(!init_ok) return 0;
+
    if(leftArm)
    {
       p1 = Application::myself->kinect.getPlayerPart(nr, P_RELBOW, P_RHAND);
@@ -264,6 +266,7 @@ double OpenNi::getWinkel(int nr, int leftArm)
 void OpenNi::drawPlayer(int nr)
 {
    if(!init_ok) return;
+
    CL_FontDescription font_desc;
    font_desc.set_typeface_name("tahoma");
    font_desc.set_height(30);
@@ -316,6 +319,8 @@ void OpenNi::drawPlayer(int nr)
 
    }
 }
+//---------------------------------------------------------------------------
+
 void OpenNi::setPlayerCallback(OpenNiPlayerCallback* callback)
 {
 	playerCallback = callback;
