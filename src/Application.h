@@ -66,6 +66,7 @@ public:
 
 	OnScreenMessage osmCenter;
 	OnScreenMessage osmShout;
+	OnScreenMessage osmHuge;
 	OnScreenMessage osmLeft;
 	OnScreenMessage osmRight;
 

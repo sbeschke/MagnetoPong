@@ -99,10 +99,16 @@ Application::Application(void)
 {
 
 	CL_FontDescription font_desc;
-	font_desc.set_typeface_name("DejaVu Sans");
-	font_desc.set_height(50);
+	font_desc.set_typeface_name("Verdana");
+	font_desc.set_height(60);
+	CL_FontDescription huge_font_desc;
+	huge_font_desc.set_typeface_name("Verdana");
+	huge_font_desc.set_height(200);
+	huge_font_desc.set_weight(5);
 	osmCenter = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.75f), font_desc, CL_Colorf::darkslateblue);
 	osmShout = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.25f), font_desc, CL_Colorf::deeppink);
+	osmHuge = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.5f),
+			huge_font_desc, CL_Colorf::deeppink);
 	osmLeft = OnScreenMessage(CL_Pointf(x_res / 4, y_res / 2), font_desc,
 			playerColors[PLAYER_LEFT]);
 	osmRight = OnScreenMessage(CL_Pointf(x_res * 3 / 4, y_res / 2),
@@ -144,13 +150,13 @@ void Application::run(void)
 	CL_Sprite boat_sprite(gc, "Boat", &resources);
 
 	CL_FontDescription font_desc;
-	font_desc.set_typeface_name("Verdana Sans");
+	font_desc.set_typeface_name("Verdana");
 	font_desc.set_height(80);
 	CL_Font_System font(gc, font_desc);
 
 	CL_FontDescription scoreFont_desc;
-	scoreFont_desc.set_typeface_name("tahoma");
-	scoreFont_desc.set_height(30);
+	scoreFont_desc.set_typeface_name("Verdana");
+	scoreFont_desc.set_height(80);
 	CL_Font_System scoreFont(gc, scoreFont_desc);
 
 
@@ -168,7 +174,7 @@ void Application::run(void)
 		if(keyboard.get_keycode(CL_KEY_ESCAPE) == true)
 			quit = true;
 
-		if(keyboard.get_keycode(CL_KEY_SPACE) == true) {
+		if(keyboard.get_keycode(CL_KEY_SPACE) == true && playersActive < 2) {
 			int playerSlot = PLAYER_RIGHT;
 			if(players[Application::PLAYER_RIGHT] != 0) {
 				playerSlot = Application::PLAYER_LEFT;
@@ -196,6 +202,7 @@ void Application::run(void)
 
 		osmCenter.tick((float)timediff / 1000.0f);
 		osmShout.tick((float)timediff / 1000.0f);
+		osmHuge.tick((float)timediff / 1000.0f);
 		osmLeft.tick((float)timediff / 1000.0f);
 		osmRight.tick((float)timediff / 1000.0f);
 
@@ -229,6 +236,7 @@ void Application::run(void)
 		osmShout.draw();
 		osmLeft.draw();
 		osmRight.draw();
+		osmHuge.draw();
 
 		if(playersActive == 2) {
 			// draw scores
@@ -237,7 +245,7 @@ void Application::run(void)
 					<< players[PLAYER_RIGHT]->getScore();
 			std::string scoreLeftTxt = scoreLeftTxtStrm.str();
 			CL_Size scoreSize = scoreFont.get_text_size(Application::get()->gc, scoreLeftTxt);
-			CL_Pointf scoreLeftPos((x_res + scoreSize.width) / 2, scoreSize.height);
+			CL_Pointf scoreLeftPos((x_res - scoreSize.width) / 2, scoreSize.height);
 			scoreFont.draw_text(gc, scoreLeftPos, scoreLeftTxt, CL_Colorf::black);
 			if(!inMatch) {
 				clearBalls();
@@ -325,10 +333,10 @@ void Application::ballOut(Ball* ball, int playerSlot) {
 		if(players[playerSlot]->getScore() >= SCORE_TO_WIN) {
 			endMatch();
 			if(playerSlot == PLAYER_RIGHT) {
-				osmShout.setMessage("Right WINS", 3.0f);
+				osmHuge.setMessage("Right WINS", 3.0f);
 			}
 			else if(playerSlot == PLAYER_LEFT) {
-				osmShout.setMessage("Left WINS", 3.0f);
+				osmHuge.setMessage("Left WINS", 3.0f);
 			}
 		}
 		else {
@@ -379,6 +387,9 @@ void Application::startMatch(void)
 {
 	inMatch = true;
 	osmShout.setMessage("FIGHT", 3.0f);
+	std::ostringstream centerText;
+	centerText << "Score " << SCORE_TO_WIN << " points to win";
+	osmCenter.setMessage(centerText.str(), 3.0f);
 	for(std::vector<Player*>::iterator it = players.begin(); it != players.end(); it++) {
 		if(*it != 0) {
 			(*it)->setScore(0);

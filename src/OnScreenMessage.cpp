@@ -49,7 +49,7 @@ void OnScreenMessage::draw(void)
 		CL_Size size = fontSystem.get_text_size(Application::get()->gc, message);
 
 		fontSystem.draw_text(Application::get()->gc,
-				textPos.x - (size.width/2), textPos.y - (size.height/2),
+				textPos.x - (size.width/2), textPos.y + (size.height/2),
 				message, color);
 	}
 }
