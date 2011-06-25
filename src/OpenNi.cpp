@@ -15,7 +15,6 @@
 #include "TGString.h"
 
 
-
 //---------------------------------------------------------------------------
 // Includes
 //---------------------------------------------------------------------------
@@ -106,18 +105,31 @@ void OpenNiPlayer::changeForDisplay()
 OpenNi::OpenNi()
 {
    init_ok = false;
-   printf("init start\n");
+   init();
+}
+//---------------------------------------------------------------------------
+
+OpenNi::~OpenNi()
+{
+   if(init_ok) g_Context.Shutdown();
+}
+//---------------------------------------------------------------------------
+
+void OpenNi::init()
+{
+   if(init_ok) return;
+
    XnStatus rc = XN_STATUS_OK;
    xn::EnumerationErrors errors;
 
    rc = g_Context.Init();
-   CHECK_RC(rc, "init");
+   CHECK_RC(rc, "Context.init");
 //   XnLicense license = {"PrimeSense", "0KOIk2JeIBYClPWVnMoRKn5cdY4="};
 //   rc = g_Context.AddLicense(license);
    rc = g_Context.InitFromXmlFile(SAMPLE_XML_PATH);
-   CHECK_ERRORS(rc, errors, "InitFromXmlFile");
+  // CHECK_ERRORS(rc, errors, "InitFromXmlFile");
    CHECK_RC(rc, "InitFromXml");
-   CHECK_RC(rc, "Licence");
+ //  CHECK_RC(rc, "Licence");
    if(rc != XN_STATUS_OK) return;
    rc = g_DepthGenerator.Create(g_Context);
 
@@ -153,19 +165,13 @@ OpenNi::OpenNi()
    if(rc != XN_STATUS_OK) return;
 
    init_ok = true;
-   printf("init fin\n");
-}
-//---------------------------------------------------------------------------
-
-OpenNi::~OpenNi()
-{
-   if(init_ok) g_Context.Shutdown();
 }
 //---------------------------------------------------------------------------
 
 void OpenNi::update()
 {
    if(init_ok) g_Context.WaitAndUpdateAll();
+   else init();
 }
 //---------------------------------------------------------------------------
 

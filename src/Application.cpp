@@ -11,6 +11,7 @@
 #include "Ball.h"
 #include <exception>
 #include <stdlib.h>
+#include "BoostBar.h"
 
 
 Application* Application::myself;
@@ -99,10 +100,19 @@ Application::Application(void)
 {
 
 	CL_FontDescription font_desc;
-	font_desc.set_typeface_name("DejaVu Sans");
-	font_desc.set_height(50);
-	osmCenter = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.75f), font_desc, CL_Colorf::darkslateblue);
-	osmShout = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.25f), font_desc, CL_Colorf::deeppink);
+	font_desc.set_typeface_name("Verdana");
+	font_desc.set_height(60);
+	CL_FontDescription huge_font_desc;
+	CL_FontDescription font_desc2 = font_desc;
+	font_desc2.set_height(40);
+	huge_font_desc.set_typeface_name("Verdana");
+	huge_font_desc.set_height(200);
+	huge_font_desc.set_weight(5);
+
+	osmCenter = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.75f), font_desc2, CL_Colorf::darkslateblue);
+	osmShout  = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.25f), font_desc, CL_Colorf::deeppink);
+	osmHuge   = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.5f),
+			huge_font_desc, CL_Colorf::deeppink);
 	osmLeft = OnScreenMessage(CL_Pointf(x_res / 4, y_res / 2), font_desc,
 			playerColors[PLAYER_LEFT]);
 	osmRight = OnScreenMessage(CL_Pointf(x_res * 3 / 4, y_res / 2),
@@ -145,20 +155,24 @@ void Application::run(void)
 	CL_Sprite boat_sprite(gc, "Boat", &resources);
 
 	CL_FontDescription font_desc;
-	font_desc.set_typeface_name("Verdana Sans");
+	font_desc.set_typeface_name("Verdana");
 	font_desc.set_height(80);
 	CL_Font_System font(gc, font_desc);
 
 	CL_FontDescription scoreFont_desc;
-	scoreFont_desc.set_typeface_name("tahoma");
-	scoreFont_desc.set_height(30);
+	scoreFont_desc.set_typeface_name("Verdana");
+	scoreFont_desc.set_height(80);
 	CL_Font_System scoreFont(gc, scoreFont_desc);
+
+	BoostBar boostbarPL(PLAYER_LEFT);
+	boostbarPL.setMaxValue(BOOSTRELOADTIME);
+	BoostBar boostbarPR(PLAYER_RIGHT);
+	boostbarPR.setMaxValue(BOOSTRELOADTIME);
 
 
 	playersChanged();
 	clearBalls();
 
-	void addPlayer(int num);
 	while (!quit)
 	{
 		kinect.update();
@@ -169,6 +183,20 @@ void Application::run(void)
 
 		if(keyboard.get_keycode(CL_KEY_ESCAPE) == true)
 			quit = true;
+
+		if(keyboard.get_keycode(CL_KEY_SPACE) == true && playersActive < 2) {
+			int playerSlot = PLAYER_RIGHT;
+			if(players[Application::PLAYER_RIGHT] != 0) {
+				playerSlot = Application::PLAYER_LEFT;
+			}
+			if(players[Application::PLAYER_LEFT] != 0) {
+				break;
+			}
+
+			MouseInputDevice* device = new MouseInputDevice(&mouse);
+			Player* player = new Player(this, device);
+			addPlayer(player, playerSlot);
+		}
 
 
 		for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++) {
@@ -184,6 +212,7 @@ void Application::run(void)
 
 		osmCenter.tick((float)timediff / 1000.0f);
 		osmShout.tick((float)timediff / 1000.0f);
+		osmHuge.tick((float)timediff / 1000.0f);
 		osmLeft.tick((float)timediff / 1000.0f);
 		osmRight.tick((float)timediff / 1000.0f);
 
@@ -217,25 +246,28 @@ void Application::run(void)
 		osmShout.draw();
 		osmLeft.draw();
 		osmRight.draw();
+		osmHuge.draw();
 
 		if(playersActive == 2) {
-			if(inMatch) {
-				// draw scores
-				std::ostringstream scoreLeftTxtStrm;
-				scoreLeftTxtStrm << players[PLAYER_LEFT]->getScore() << " : "
-						<< players[PLAYER_RIGHT]->getScore();
-				std::string scoreLeftTxt = scoreLeftTxtStrm.str();
-				CL_Size scoreSize = scoreFont.get_text_size(Application::get()->gc, scoreLeftTxt);
-				CL_Pointf scoreLeftPos((x_res + scoreSize.width) / 2, scoreSize.height);
-				scoreFont.draw_text(gc, scoreLeftPos, scoreLeftTxt, CL_Colorf::black);
-			}
-			else {
+			// draw scores
+			std::ostringstream scoreLeftTxtStrm;
+			scoreLeftTxtStrm << players[PLAYER_LEFT]->getScore() << " : "
+					<< players[PLAYER_RIGHT]->getScore();
+			std::string scoreLeftTxt = scoreLeftTxtStrm.str();
+			CL_Size scoreSize = scoreFont.get_text_size(Application::get()->gc, scoreLeftTxt);
+			CL_Pointf scoreLeftPos((x_res - scoreSize.width) / 2, scoreSize.height);
+			scoreFont.draw_text(gc, scoreLeftPos, scoreLeftTxt, CL_Colorf::black);
+			if(!inMatch) {
 				clearBalls();
 				timeToMatch -= timediff;
 				if(timeToMatch <= 0.0f) {
 					startMatch();
 				}
 			}
+			boostbarPL.setValue(players[PLAYER_LEFT]->getBat()->getBoostctr());
+			boostbarPR.setValue(players[PLAYER_RIGHT]->getBat()->getBoostctr());
+			boostbarPL.draw();
+			boostbarPR.draw();
 		}
 
 //		TGString s = TGString("b1(") + ball.getPosition().x + "|" + ball.getPosition().y + ") b2(" + ball2.getPosition().x + "|" + ball2.getPosition().y + ")";
@@ -305,24 +337,6 @@ bool Application::checkBall(Ball* ball)
 		ballOut = true;
 	}
 
-	if(ballOut) {
-		switch(playersActive) {
-		case 0:
-		case 1:{
-			if(entities.size() <= 5) {
-				makeBall();
-			}
-			break;
-		}
-		case 2: {
-			spawnBall = true;
-			timeToSpawnBall = 3000.0f;
-			break;
-		}
-		default: throw std::exception(); break;
-		}
-	}
-
 	return ballOut;
 }
 
@@ -333,10 +347,10 @@ void Application::ballOut(Ball* ball, int playerSlot) {
 		if(players[playerSlot]->getScore() >= SCORE_TO_WIN) {
 			endMatch();
 			if(playerSlot == PLAYER_RIGHT) {
-				osmShout.setMessage("Right WINS", 5.0f);
+				osmHuge.setMessage("Right WINS", 3.0f);
 			}
 			else if(playerSlot == PLAYER_LEFT) {
-				osmShout.setMessage("Left WINS", 5.0f);
+				osmHuge.setMessage("Left WINS", 3.0f);
 			}
 		}
 		else {
@@ -346,11 +360,18 @@ void Application::ballOut(Ball* ball, int playerSlot) {
 			else if(playerSlot == PLAYER_LEFT) {
 				osmShout.setMessage("Left Scores", 2.0f);
 			}
+			spawnBall = true;
+			timeToSpawnBall = 3000.0f;
+		}
+	}
+	else {
+		if(entities.size() <= 5) {
+			makeBall();
 		}
 	}
 }
 void Application::ballGone(Ball* ball) {
-
+	makeBall();
 }
 
 void Application::clearBalls(void) {
@@ -380,6 +401,9 @@ void Application::startMatch(void)
 {
 	inMatch = true;
 	osmShout.setMessage("FIGHT", 3.0f);
+	std::ostringstream centerText;
+	centerText << "Score " << SCORE_TO_WIN << " points to win";
+	osmCenter.setMessage(centerText.str(), 3.0f);
 	for(std::vector<Player*>::iterator it = players.begin(); it != players.end(); it++) {
 		if(*it != 0) {
 			(*it)->setScore(0);
@@ -399,9 +423,8 @@ void Application::doSpawnBall(void)
 		case 0:
 		case 1:{
 			makeBall();
-			spawnBall = false;
-			//spawnBall = true;
-			//timeToSpawnBall = 3000.0f;
+			spawnBall = true;
+			timeToSpawnBall = 3000.0f;
 			break;
 		}
 		case 2: {
@@ -418,6 +441,7 @@ void Application::prepareMatch(void)
 	spawnBall = false;
 	inMatch = false;
 	timeToMatch = 5000.0f;
+	osmCenter.setMessage("Get ready...", 3.0f);
 }
 
 void Application::playersChanged(void)
@@ -435,7 +459,6 @@ void Application::playersChanged(void)
 			break;
 		}
 		case 2: {
-			osmCenter.setMessage("Get ready...", 3.0f);
 			prepareMatch();
 			break;
 		}

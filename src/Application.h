@@ -47,7 +47,7 @@ public:
 	static int x_res;
 	static int y_res;
 
-	const static int SCORE_TO_WIN = 1;
+	const static int SCORE_TO_WIN = 11;
 
 	const static unsigned int PLAYER_LEFT = 0;
 	const static unsigned int PLAYER_RIGHT = 1;
@@ -67,6 +67,7 @@ public:
 
 	OnScreenMessage osmCenter;
 	OnScreenMessage osmShout;
+	OnScreenMessage osmHuge;
 	OnScreenMessage osmLeft;
 	OnScreenMessage osmRight;
 
