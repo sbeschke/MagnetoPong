@@ -11,7 +11,6 @@
 class Application;
 class Bat;
 class InputDevice;
-class BoostBar;
 
 class Player {
 public:
@@ -34,7 +33,6 @@ private:
 	Bat* bat;
 	// todo should be using a ref-counting pointer here
 	InputDevice* device;
-	BoostBar* boostbar;
 
 	int number;
 

@@ -16,7 +16,6 @@ Player::Player(Application* application, InputDevice* device)
 {
 	bat = new Bat(application);
 	application->addEntity(bat);
-	boostbar = new BoostBar(0);
 }
 
 Player::~Player() {
@@ -44,7 +43,6 @@ int Player::getNumber(void) {
 }
 
 void Player::setNumber(int number) {
-   boostbar->setPlayer(number);
 	this->number = number;
 }
 

@@ -8,8 +8,8 @@
 #ifndef BOOSTBAR_H_
 #define BOOSTBAR_H_
 
-#define BB_HEIGHT 40
-#define BB_WIDTH 100
+#define BB_HEIGHT 30
+#define BB_WIDTH 200
 class BoostBar
 {
 public:

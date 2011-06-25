@@ -11,6 +11,7 @@
 #include "Ball.h"
 #include <exception>
 #include <stdlib.h>
+#include "BoostBar.h"
 
 
 Application* Application::myself;
@@ -153,6 +154,11 @@ void Application::run(void)
 	scoreFont_desc.set_height(30);
 	CL_Font_System scoreFont(gc, scoreFont_desc);
 
+	BoostBar boostbarPL(PLAYER_LEFT);
+	boostbarPL.setMaxValue(BOOSTRELOADTIME);
+	BoostBar boostbarPR(PLAYER_RIGHT);
+	boostbarPR.setMaxValue(BOOSTRELOADTIME);
+
 
 	playersChanged();
 	clearBalls();
@@ -217,8 +223,10 @@ void Application::run(void)
 		osmLeft.draw();
 		osmRight.draw();
 
-		if(playersActive == 2) {
-			if(inMatch) {
+		if(playersActive == 2)
+		{
+			if(inMatch)
+			{
 				// draw scores
 				std::ostringstream scoreLeftTxtStrm;
 				scoreLeftTxtStrm << players[PLAYER_LEFT]->getScore() << " : "
@@ -228,13 +236,18 @@ void Application::run(void)
 				CL_Pointf scoreLeftPos((x_res + scoreSize.width) / 2, scoreSize.height);
 				scoreFont.draw_text(gc, scoreLeftPos, scoreLeftTxt, CL_Colorf::black);
 			}
-			else {
+			else
+			{
 				clearBalls();
 				timeToMatch -= timediff;
 				if(timeToMatch <= 0.0f) {
 					startMatch();
 				}
 			}
+			boostbarPL.setValue(players[PLAYER_LEFT]->getBat()->getBoostctr());
+			boostbarPR.setValue(players[PLAYER_RIGHT]->getBat()->getBoostctr());
+			boostbarPL.draw();
+			boostbarPR.draw();
 		}
 
 //		TGString s = TGString("b1(") + ball.getPosition().x + "|" + ball.getPosition().y + ") b2(" + ball2.getPosition().x + "|" + ball2.getPosition().y + ")";
