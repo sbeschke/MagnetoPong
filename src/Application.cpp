@@ -9,6 +9,7 @@
 
 
 Application* Application::myself;
+int Application::detail;
 int Application::x_res;
 int Application::y_res;
 
@@ -130,14 +131,7 @@ void Application::run(void)
 		}
 
 
-		CL_Point mousePos = mouse.get_position();
-		//bat.setPosition(mousePos);
-
-		//CL_Colorf red(155/255.0f, 60/255.0f, 68/255.0f);
-		//CL_Gradient gradient1(CL_Colorf::black, red);
-		//CL_Draw::gradient_fill(gc, CL_Rectf(0,0,1600,800), gradient1);
-
-		CL_Draw::fill(gc, CL_Rectf(0,0,x_res,y_res), CL_Colorf::white);
+		gc.clear(CL_Colorf::white);
 
 		for(int i=0; i < 5; i++)
 		{

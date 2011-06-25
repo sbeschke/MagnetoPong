@@ -37,6 +37,7 @@ public:
 	PlayerCallback playerCallback;
 
 	static Application* myself;
+	static int detail;
 	static int x_res;
 	static int y_res;
 

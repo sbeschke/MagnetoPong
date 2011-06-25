@@ -95,7 +95,7 @@ void OpenNiPlayer::changeForDisplay()
 OpenNi::OpenNi()
 {
    init_ok = false;
-   printf("init\n");
+   printf("init start\n");
    XnStatus rc = XN_STATUS_OK;
    xn::EnumerationErrors errors;
 
@@ -114,9 +114,8 @@ OpenNi::OpenNi()
    {
       rc = g_UserGenerator.Create(g_Context);
       CHECK_RC(rc, "create UserGenerator");
+      if(rc != XN_STATUS_OK) return;
    }
-   if(rc != XN_STATUS_OK) return;
-   //std::cout << reinterpret_cast<unsigned int>(this);
 
    rc = g_UserGenerator.RegisterUserCallbacks(NewUser, LostUser, this, h);
    CHECK_RC(rc, "create RegisterUserCallbacks");
@@ -137,7 +136,7 @@ OpenNi::OpenNi()
    if(rc != XN_STATUS_OK) return;
 
    init_ok = true;
-   printf("init E\n");
+   printf("init fin\n");
 }
 //---------------------------------------------------------------------------
 
@@ -290,25 +289,25 @@ void OpenNi::drawPlayer(int nr)
       p.changeForDisplay();
       for(int i=0; i < P_SIZE; i++)
       {
-         if((p.pointList.at(i)->x != 0) && (p.pointList.at(i)->y != 0)) CL_Draw::circle(Application::myself->getGC(), CL_Pointf(p.pointList.at(i)->x, p.pointList.at(i)->y), 5, color);
+         if((p.pointList.at(i)->x != 0) || (p.pointList.at(i)->y != 0)) CL_Draw::circle(Application::myself->getGC(), CL_Pointf(p.pointList.at(i)->x, p.pointList.at(i)->y), 5, color);
       }
 
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_HEAD)->x, p.pointList.at(P_HEAD)->y, p.pointList.at(P_NECK)->x, p.pointList.at(P_NECK)->y, color);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_HEAD)->x,  p.pointList.at(P_HEAD)->y,  p.pointList.at(P_NECK)->x, p.pointList.at(P_NECK)->y, color);
       CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_TORSO)->x, p.pointList.at(P_TORSO)->y, p.pointList.at(P_NECK)->x, p.pointList.at(P_NECK)->y, color);
 
       CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LSHOULDER)->x, p.pointList.at(P_LSHOULDER)->y, p.pointList.at(P_RSHOULDER)->x, p.pointList.at(P_RSHOULDER)->y, color);
 
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LELBOW)->x, p.pointList.at(P_LELBOW)->y, p.pointList.at(P_LHAND)->x, p.pointList.at(P_LHAND)->y, color);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LELBOW)->x,    p.pointList.at(P_LELBOW)->y,    p.pointList.at(P_LHAND)->x,  p.pointList.at(P_LHAND)->y,  color);
       CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LSHOULDER)->x, p.pointList.at(P_LSHOULDER)->y, p.pointList.at(P_LELBOW)->x, p.pointList.at(P_LELBOW)->y, color);
 
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RELBOW)->x, p.pointList.at(P_RELBOW)->y, p.pointList.at(P_RHAND)->x, p.pointList.at(P_RHAND)->y, color);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RELBOW)->x,    p.pointList.at(P_RELBOW)->y,    p.pointList.at(P_RHAND)->x,  p.pointList.at(P_RHAND)->y,  color);
       CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RSHOULDER)->x, p.pointList.at(P_RSHOULDER)->y, p.pointList.at(P_RELBOW)->x, p.pointList.at(P_RELBOW)->y, color);
 
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LHIP)->x, p.pointList.at(P_LHIP)->y, p.pointList.at(P_TORSO)->x, p.pointList.at(P_TORSO)->y, color);
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_TORSO)->x, p.pointList.at(P_TORSO)->y, p.pointList.at(P_RHIP)->x, p.pointList.at(P_RHIP)->y, color);
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LHIP)->x, p.pointList.at(P_LHIP)->y, p.pointList.at(P_RHIP)->x, p.pointList.at(P_RHIP)->y, color);
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LHIP)->x, p.pointList.at(P_LHIP)->y, p.pointList.at(P_LKNEE)->x, p.pointList.at(P_LKNEE)->y, color);
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RHIP)->x, p.pointList.at(P_RHIP)->y, p.pointList.at(P_RKNEE)->x, p.pointList.at(P_RKNEE)->y, color);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LHIP)->x,  p.pointList.at(P_LHIP)->y,  p.pointList.at(P_TORSO)->x, p.pointList.at(P_TORSO)->y, color);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_TORSO)->x, p.pointList.at(P_TORSO)->y, p.pointList.at(P_RHIP)->x,  p.pointList.at(P_RHIP)->y,  color);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LHIP)->x,  p.pointList.at(P_LHIP)->y,  p.pointList.at(P_RHIP)->x,  p.pointList.at(P_RHIP)->y,  color);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LHIP)->x,  p.pointList.at(P_LHIP)->y,  p.pointList.at(P_LKNEE)->x, p.pointList.at(P_LKNEE)->y, color);
+      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RHIP)->x,  p.pointList.at(P_RHIP)->y,  p.pointList.at(P_RKNEE)->x, p.pointList.at(P_RKNEE)->y, color);
       CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RFOOT)->x, p.pointList.at(P_RFOOT)->y, p.pointList.at(P_RKNEE)->x, p.pointList.at(P_RKNEE)->y, color);
       CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LFOOT)->x, p.pointList.at(P_LFOOT)->y, p.pointList.at(P_LKNEE)->x, p.pointList.at(P_LKNEE)->y, color);
 
