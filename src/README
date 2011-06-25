@@ -1,0 +1,31 @@
+Installation Info
+
+Perequisites:
+------------
+Using Kinect:
+- OpenMI with modules: Nite, Sensorkinect
+C++ lib for gaming purposes:
+- ClanLib version 2.2
+(Using our "make":
+- scons (requires Python 2.7))
+
+Tested on:
+-----------
+Ubuntu Mint 10
+Arch
+Fedora 15 64 bit (Repository may contain outdated ClanLib)
+(Windows 7 OpenMI works, rest has compiling problems)
+
+not running on
+--------------
+OpenSuse 11.3 + old graphic card (outdated python in the repos, OpenGL >2.0 needed)
+
+Licence:
+--------
+Creative Commons by-nc-sa
+= credits to the authors, only non-commercial use, added code falls under same licence
+http://creativecommons.org/licenses/by-nc-sa/3.0/
+
+Authors:
+--------
+Chaostreff Tübingen 2011 (on GPN 11 Karlsruhe 2011) 
