@@ -11,7 +11,7 @@
 #include "Application.h"
 
 Player::Player(Application* application, InputDevice* device)
-: application(application), device(device)
+: application(application), device(device), score(0)
 {
 	bat = new Bat(application);
 	application->addEntity(bat);
@@ -43,4 +43,19 @@ int Player::getNumber(void) {
 
 void Player::setNumber(int number) {
 	this->number = number;
+}
+
+void Player::incrementScore(void)
+{
+	score++;
+}
+
+int Player::getScore(void)
+{
+	return score;
+}
+
+void Player::setScore(int score)
+{
+	this->score = score;
 }
