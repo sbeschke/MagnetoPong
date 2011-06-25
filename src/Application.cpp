@@ -90,8 +90,6 @@ void Application::run(void)
 	font_desc.set_height(30);
 	CL_Font_System font(gc, font_desc);
 
-
-
 	Ball ball(this,Vec2d(Application::x_res, Application::y_res));
 	ball.initializePosition();
 	ball.setCharge(1);
@@ -132,6 +130,8 @@ void Application::run(void)
 				kinect.drawPlayer(pl->getNumber());
 			}
 		}
+
+		cout << "b1(" << ball.getPosition().x << "|" << ball.getPosition().y << ") b2(" << ball2.getPosition().x << "|" << ball2.getPosition().y << ")";
 
 
 
