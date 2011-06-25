@@ -12,6 +12,7 @@ Entity::Entity(Application* application)
 : application(application), charge(0.0f), mass(0.0f), radius(10.0f), color(CL_Colorf::white)
 {
    boost = 1;
+   boostctr = 0;
 }
 
 Entity::~Entity() {
@@ -103,6 +104,35 @@ void Entity::setRadius(float radius)
 
 void Entity::setBoost(bool active)
 {
-   if(active) boost = 2;
-   else       boost = 1;
+   if(active && boostctr == 0) boost = 4;
+   else
+   {
+      if(boost != 1)
+      {
+         boostctr = BOOSTRELOADTIME;
+      }
+      boost = 1;
+   }
+}
+
+float Entity::getBoostctr()
+{
+   return boostctr;
+}
+
+float Entity::getBoostRelaod()
+{
+   return BOOSTRELOADTIME;
+}
+
+void Entity::updateposition(float timedifference)
+{
+   if(boostctr)
+   {
+      boostctr -= timedifference/1000;
+      if(boostctr < 0)
+      {
+         boostctr = 0;
+      }
+   }
 }

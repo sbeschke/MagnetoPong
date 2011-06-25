@@ -113,6 +113,7 @@ public:
    OpenNi();
    virtual ~OpenNi();
 
+   void init();
    void update();
    int  getAnzPlayer();
    OpenNiPlayer getPlayer(int nr);
@@ -126,6 +127,8 @@ public:
    void drawPlayer(int nr);
 
    void setPlayerCallback(OpenNiPlayerCallback* callback);
+
+   bool kinectconnected() {return init_ok;};
 
 private:
 
