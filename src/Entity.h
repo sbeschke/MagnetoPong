@@ -15,7 +15,7 @@
 #include <ClanLib/gl.h>
 #include <ClanLib/core.h>
 
-#define BOOSTRELOADTIME 10
+#define BOOSTRELOADTIME 5
 
 class Application;
 class Entity;
