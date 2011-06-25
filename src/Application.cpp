@@ -157,7 +157,6 @@ void Application::run(void)
 	playersChanged();
 	clearBalls();
 
-	void addPlayer(int num);
 	while (!quit)
 	{
 		kinect.update();
@@ -168,6 +167,20 @@ void Application::run(void)
 
 		if(keyboard.get_keycode(CL_KEY_ESCAPE) == true)
 			quit = true;
+
+		if(keyboard.get_keycode(CL_KEY_SPACE) == true) {
+			int playerSlot = PLAYER_RIGHT;
+			if(players[Application::PLAYER_RIGHT] != 0) {
+				playerSlot = Application::PLAYER_LEFT;
+			}
+			if(players[Application::PLAYER_LEFT] != 0) {
+				break;
+			}
+
+			MouseInputDevice* device = new MouseInputDevice(&mouse);
+			Player* player = new Player(this, device);
+			addPlayer(player, playerSlot);
+		}
 
 
 		for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++) {
@@ -218,17 +231,15 @@ void Application::run(void)
 		osmRight.draw();
 
 		if(playersActive == 2) {
-			if(inMatch) {
-				// draw scores
-				std::ostringstream scoreLeftTxtStrm;
-				scoreLeftTxtStrm << players[PLAYER_LEFT]->getScore() << " : "
-						<< players[PLAYER_RIGHT]->getScore();
-				std::string scoreLeftTxt = scoreLeftTxtStrm.str();
-				CL_Size scoreSize = scoreFont.get_text_size(Application::get()->gc, scoreLeftTxt);
-				CL_Pointf scoreLeftPos((x_res + scoreSize.width) / 2, scoreSize.height);
-				scoreFont.draw_text(gc, scoreLeftPos, scoreLeftTxt, CL_Colorf::black);
-			}
-			else {
+			// draw scores
+			std::ostringstream scoreLeftTxtStrm;
+			scoreLeftTxtStrm << players[PLAYER_LEFT]->getScore() << " : "
+					<< players[PLAYER_RIGHT]->getScore();
+			std::string scoreLeftTxt = scoreLeftTxtStrm.str();
+			CL_Size scoreSize = scoreFont.get_text_size(Application::get()->gc, scoreLeftTxt);
+			CL_Pointf scoreLeftPos((x_res + scoreSize.width) / 2, scoreSize.height);
+			scoreFont.draw_text(gc, scoreLeftPos, scoreLeftTxt, CL_Colorf::black);
+			if(!inMatch) {
 				clearBalls();
 				timeToMatch -= timediff;
 				if(timeToMatch <= 0.0f) {
@@ -304,24 +315,6 @@ bool Application::checkBall(Ball* ball)
 		ballOut = true;
 	}
 
-	if(ballOut) {
-		switch(playersActive) {
-		case 0:
-		case 1:{
-			if(entities.size() <= 5) {
-				makeBall();
-			}
-			break;
-		}
-		case 2: {
-			spawnBall = true;
-			timeToSpawnBall = 3000.0f;
-			break;
-		}
-		default: throw std::exception(); break;
-		}
-	}
-
 	return ballOut;
 }
 
@@ -332,10 +325,10 @@ void Application::ballOut(Ball* ball, int playerSlot) {
 		if(players[playerSlot]->getScore() >= SCORE_TO_WIN) {
 			endMatch();
 			if(playerSlot == PLAYER_RIGHT) {
-				osmShout.setMessage("Right WINS", 5.0f);
+				osmShout.setMessage("Right WINS", 3.0f);
 			}
 			else if(playerSlot == PLAYER_LEFT) {
-				osmShout.setMessage("Left WINS", 5.0f);
+				osmShout.setMessage("Left WINS", 3.0f);
 			}
 		}
 		else {
@@ -345,11 +338,18 @@ void Application::ballOut(Ball* ball, int playerSlot) {
 			else if(playerSlot == PLAYER_LEFT) {
 				osmShout.setMessage("Left Scores", 2.0f);
 			}
+			spawnBall = true;
+			timeToSpawnBall = 3000.0f;
+		}
+	}
+	else {
+		if(entities.size() <= 5) {
+			makeBall();
 		}
 	}
 }
 void Application::ballGone(Ball* ball) {
-
+	makeBall();
 }
 
 void Application::clearBalls(void) {
@@ -398,9 +398,8 @@ void Application::doSpawnBall(void)
 		case 0:
 		case 1:{
 			makeBall();
-			spawnBall = false;
-			//spawnBall = true;
-			//timeToSpawnBall = 3000.0f;
+			spawnBall = true;
+			timeToSpawnBall = 3000.0f;
 			break;
 		}
 		case 2: {
@@ -417,6 +416,7 @@ void Application::prepareMatch(void)
 	spawnBall = false;
 	inMatch = false;
 	timeToMatch = 5000.0f;
+	osmCenter.setMessage("Get ready...", 3.0f);
 }
 
 void Application::playersChanged(void)
@@ -434,7 +434,6 @@ void Application::playersChanged(void)
 			break;
 		}
 		case 2: {
-			osmCenter.setMessage("Get ready...", 3.0f);
 			prepareMatch();
 			break;
 		}

@@ -46,7 +46,7 @@ public:
 	static int x_res;
 	static int y_res;
 
-	const static int SCORE_TO_WIN = 1;
+	const static int SCORE_TO_WIN = 3;
 
 	const static unsigned int PLAYER_LEFT = 0;
 	const static unsigned int PLAYER_RIGHT = 1;

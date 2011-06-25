@@ -18,6 +18,7 @@ public:
 
 	CL_Point getPoint(void);
 	float getZ(void);
+	bool getJump(void) { return false; }
 
 
 private:
