@@ -48,7 +48,7 @@ bool Ball::updateforces(const EntitySet& objects, float timedifference)
 				//std::cout << "Force amount: " << forceAmount << std::endl;
 				this->force += (distance/length) * forceAmount;
 			}
-			else
+			if (4*RADIUS < length)
 			{
 				//no inteaction because of overlap
 				overlap = true;
