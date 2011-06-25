@@ -99,7 +99,7 @@ void Application::run(void)
 	addEntity(&ball);
 
 	Ball ball2(this,Vec2d(Application::x_res, Application::y_res));
-	ball2.setPosition(Vec2d((x_res/2)-31, y_res/2));
+	ball2.initializePosition();
 	ball2.setCharge(-1);
 	addEntity(&ball2);
 
