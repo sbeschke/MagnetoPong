@@ -8,6 +8,9 @@
 #include "KinectInputDevice.h"
 #include "OnScreenMessage.h"
 #include "TGString.h"
+#include "Ball.h"
+#include <exception>
+#include <stdlib.h>
 
 
 Application* Application::myself;
@@ -77,7 +80,7 @@ void PlayerCallback::playerCalibrated(int nr)
 		std::cout << "You play RIGHT!" << std::endl;
 	}
 
-	app->players[playerSlot] = player;
+	app->addPlayer(player, playerSlot);
 }
 
 void PlayerCallback::playerLost(int nr)
@@ -87,9 +90,7 @@ void PlayerCallback::playerLost(int nr)
 		Player* player = app->players[playerSlot];
 		if(player != 0 && player->getNumber() == nr) {
 			std::cout << "Lost player on side " << playerSlot << std::endl;
-			//delete player;
-			player->quit();
-			app->players[playerSlot] = 0;
+			app->remPlayer(playerSlot);
 		}
 	}
 }
@@ -115,6 +116,7 @@ void Application::run(void)
 	players.resize(2);
 	players[PLAYER_LEFT] = 0;
 	players[PLAYER_RIGHT] = 0;
+	playersActive = 0;
 
 	kinect.setPlayerCallback(&playerCallback);
 
@@ -140,18 +142,11 @@ void Application::run(void)
 	font_desc.set_height(30);
 	CL_Font_System font(gc, font_desc);
 
-	Application::get()->osmCenter.setMessage("Welcome to MagnetoPong!", 5.0f);
+	osmCenter.setMessage("Welcome to MagnetoPong!", 5.0f);
 
-	Ball ball(this,Vec2d(Application::x_res, Application::y_res));
-	ball.initializePosition();
-	ball.setCharge(1);
-	addEntity(&ball);
+	clearBalls();
 
-	Ball ball2(this,Vec2d(Application::x_res, Application::y_res));
-	ball2.initializePosition();
-	ball2.setCharge(-1);
-	addEntity(&ball2);
-
+	void addPlayer(int num);
 	while (!quit)
 	{
 		kinect.update();
@@ -183,9 +178,19 @@ void Application::run(void)
 			}
 		}
 
-		for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++) {
+		for(EntitySet::iterator it = entities.begin(); it != entities.end();) {
+			EntitySet::iterator next = it;
+			next++;
 			(*it)->updateposition(timediff);
 			(*it)->draw();
+
+			if(Ball* ball = dynamic_cast<Ball*>(*it)) {
+				if(checkBall(ball)) {
+					remEntity(ball);
+					delete ball;
+				}
+			}
+			it = next;
 		}
 
 		osmCenter.draw();
@@ -210,7 +215,119 @@ void Application::remEntity(Entity* entity)
 	entities.erase(entity);
 }
 
-void Application::addPlayer(int num)
+void Application::addPlayer(Player* player, int playerSlot)
 {
+	if(players[playerSlot] != 0) {
+		remPlayer(playerSlot);
+	}
+	players[playerSlot] = player;
+	playersActive++;
+
+	clearBalls();
+}
+
+void Application::remPlayer(int playerSlot)
+{
+	//delete player;
+	Player* player = players[playerSlot];
+	player->quit();
+	players[playerSlot] = 0;
+	playersActive--;
+}
+
+// return true if ball is out
+bool Application::checkBall(Ball* ball)
+{
+	bool ballOut = false;
+	Vec2d pos = ball->getPosition();
+
+	if(pos.x < 0) {
+		ballOutLeft(ball);
+		ballOut = true;
+	}
+	else if(pos.x >= x_res) {
+		ballOutRight(ball);
+		ballOut = true;
+	}
+	else if(!(pos.y >= 0 && pos.y < y_res)) {
+		ballGone(ball);
+		ballOut = true;
+	}
+
+	if(ballOut) {
+		switch(playersActive) {
+		case 0: {
+			makeBallNoPlayers();
+			break;
+		}
+		case 1: {
+			makeBallOnePlayer();
+			break;
+		}
+		case 2: {
+			break;
+		}
+		default: throw std::exception(); break;
+		}
+	}
+
+	return ballOut;
+}
+
+void Application::ballOutLeft(Ball* ball) {
+
+}
+
+void Application::ballOutRight(Ball* ball) {
+
+}
+
+void Application::ballGone(Ball* ball) {
+
+}
+
+void Application::clearBalls(void) {
+	for(EntitySet::iterator it = entities.begin(); it != entities.end();) {
+		EntitySet::iterator next = it;
+		next++;
+		if(Ball* ball = dynamic_cast<Ball*>(*it)) {
+			remEntity(ball);
+			delete ball;
+		}
+		it = next;
+	}
+
+	switch(playersActive) {
+	case 0: {
+		makeBallNoPlayers();
+		makeBallNoPlayers();
+		break;
+	}
+	case 1: {
+		makeBallOnePlayer();
+		break;
+	}
+	case 2: {
+		break;
+	}
+	default: throw std::exception(); break;
+	}
+}
+
+void Application::makeBallNoPlayers(void)
+{
+	Ball* b1 = new Ball(this,Vec2d(Application::x_res, Application::y_res));
+	b1->initializePosition();
+	b1->setCharge(2.0f * (float)rand() / (float)RAND_MAX - 1.0f);
+	addEntity(b1);
+
+}
+
+void Application::makeBallOnePlayer(void)
+{
+	Ball* b1 = new Ball(this,Vec2d(Application::x_res, Application::y_res));
+	b1->initializePosition();
+	b1->setCharge(2.0f * (float)rand() / (float)RAND_MAX - 1.0f);
+	addEntity(b1);
 
 }
