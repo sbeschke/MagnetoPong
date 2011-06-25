@@ -4,13 +4,13 @@
 #include <ClanLib/core.h>
 #include <ClanLib/display.h>
 #include <ClanLib/gl.h>
-#include <ClanLib/core.h>
 #include <vector>
 #include <set>
 
 #include "OpenNi.h"
 #include "Player.h"
 #include "Entity.h"
+#include "OnScreenMessageList.h"
 
 class PlayerCallback : public OpenNiPlayerCallback
 {
@@ -55,6 +55,8 @@ public:
 	CL_GraphicContext gc;
 
 	OpenNi kinect;
+
+	OnScreenMessageList osmCenter;
 
 	CL_GraphicContext& getGC(void)
 	{

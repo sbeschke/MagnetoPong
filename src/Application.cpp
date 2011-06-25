@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "MouseInputDevice.h"
 #include "KinectInputDevice.h"
+#include "OnScreenMessage.h"
 
 
 Application* Application::myself;
@@ -15,17 +16,17 @@ int Application::y_res;
 
 void PlayerCallback::playerRecognized(int nr)
 {
-
+	Application::get()->osmCenter.add(OnScreenMessage("Welcome. Please PSI!", 5.0f));
 }
 
 void PlayerCallback::playerCalibrated(int nr)
 {
 	Application* app = Application::get();
-	unsigned int playerSlot = Application::PLAYER_LEFT;
-	if(app->players[Application::PLAYER_LEFT] != 0) {
-		playerSlot = Application::PLAYER_RIGHT;
+	unsigned int playerSlot = Application::PLAYER_RIGHT;
+	if(app->players[Application::PLAYER_RIGHT] != 0) {
+		playerSlot = Application::PLAYER_LEFT;
 	}
-	if(app->players[Application::PLAYER_RIGHT]) {
+	if(app->players[Application::PLAYER_LEFT]) {
 		return;
 	}
 
@@ -118,6 +119,8 @@ void Application::run(void)
 		for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++) {
 			(*it)->updateforces(entities,timediff);
 		}
+
+		osmCenter.tick((float)timediff / 1000.0f);
 
 		gc.clear(CL_Colorf::white);
 		for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++) {
