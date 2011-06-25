@@ -19,8 +19,8 @@
 // Includes
 //---------------------------------------------------------------------------
 
-#define RECORD_FILE     "../../../Data/Recording.oni"
-#define SAMPLE_XML_PATH "../../../Data/Sample-User.xml"
+//#define RECORD_FILE     "../../../Data/Recording.oni"
+//#define SAMPLE_XML_PATH "Sample-User.xml"
 
 #define POSE_TO_USE "Psi"
 
