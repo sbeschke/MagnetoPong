@@ -16,7 +16,16 @@ int Application::y_res;
 
 void PlayerCallback::playerRecognized(int nr)
 {
-	Application::get()->osmCenter.add(OnScreenMessage("Welcome. Please PSI!", 5.0f));
+	Application* app = Application::get();
+	if(app->players[Application::PLAYER_RIGHT] == 0) {
+		Application::get()->osmRight.add(OnScreenMessage("Welcome. Please PSI!", 5.0f));
+	}
+	else if(app->players[Application::PLAYER_LEFT] == 0) {
+		Application::get()->osmLeft.add(OnScreenMessage("Welcome. Please PSI!", 5.0f));
+	}
+	else {
+		Application::get()->osmCenter.add(OnScreenMessage("Too many players, please go away!", 5.0f));
+	}
 }
 
 void PlayerCallback::playerCalibrated(int nr)
@@ -59,6 +68,19 @@ void PlayerCallback::playerLost(int nr)
 	}
 }
 
+Application::Application(void)
+{
+
+	CL_FontDescription font_desc;
+	font_desc.set_typeface_name("tahoma");
+	font_desc.set_height(30);
+	osmCenter = OnScreenMessageList(CL_Pointf(x_res / 2, y_res / 2), font_desc, CL_Colorf::darkslateblue);
+	osmLeft = OnScreenMessageList(CL_Pointf(x_res / 4, y_res / 2), font_desc,
+			playerColors[PLAYER_LEFT]);
+	osmRight = OnScreenMessageList(CL_Pointf(x_res * 3 / 4, y_res / 2),
+			font_desc, playerColors[PLAYER_RIGHT]);
+}
+
 void Application::run(void)
 {
 	quit = false;
@@ -93,6 +115,8 @@ void Application::run(void)
 	font_desc.set_height(30);
 	CL_Font_System font(gc, font_desc);
 
+	Application::get()->osmCenter.add(OnScreenMessage("Welcome to MagnetoPong!", 5.0f));
+
 	Ball ball(this,Vec2d(Application::x_res, Application::y_res));
 	ball.initializePosition();
 	ball.setCharge(1);
@@ -120,6 +144,8 @@ void Application::run(void)
 		}
 
 		osmCenter.tick((float)timediff / 1000.0f);
+		osmLeft.tick((float)timediff / 1000.0f);
+		osmRight.tick((float)timediff / 1000.0f);
 
 		gc.clear(CL_Colorf::white);
 
@@ -138,6 +164,8 @@ void Application::run(void)
 		}
 
 		osmCenter.draw();
+		osmLeft.draw();
+		osmRight.draw();
 
 	//	cout << "b1(" << ball.getPosition().x << "|" << ball.getPosition().y << ") b2(" << ball2.getPosition().x << "|" << ball2.getPosition().y << ")\n";
 
