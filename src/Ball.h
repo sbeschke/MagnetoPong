@@ -28,7 +28,7 @@ public:
 	virtual ~Ball();
 
 	void draw(void);
-	void updateforces(const EntitySet& objects, float timedifference);
+	bool updateforces(const EntitySet& objects, float timedifference);
 	void updateposition(float timedifference);
 	void initializePosition();
 

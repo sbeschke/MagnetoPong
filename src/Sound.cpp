@@ -28,5 +28,8 @@ void Sound::loadeffects(std::map<std::string,std::string> &effects)
 }
 void Sound::effect(std::string name)
 {
-	effects[name]->play();
+	if(effects.find(name) != effects.end()){
+		effects[name]->play();
+	}
+
 }

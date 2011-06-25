@@ -26,9 +26,10 @@ void Ball::draw(void)
 	Entity::draw();
 }
 
-void Ball::updateforces(const EntitySet& objects, float timedifference)
+bool Ball::updateforces(const EntitySet& objects, float timedifference)
 {
 	this->force = Vec2d(0,0);
+	bool overlap = false;
 	Vec2d position = this->getPosition();
 	for(EntitySet::iterator it = objects.begin(); it != objects.end(); it++)
 	{
@@ -50,10 +51,13 @@ void Ball::updateforces(const EntitySet& objects, float timedifference)
 			else
 			{
 				//no inteaction because of overlap
+				overlap = true;
+
 			}
 
 		}
 	}
+	return overlap;
 }
 void Ball::initializePosition()
 {
