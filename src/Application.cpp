@@ -128,9 +128,9 @@ Application::Application(void)
 	effects["on"]="effects/ltsaberon01.wav";
 	effects["collision"]="effects/ltsaberbodyhit01.wav";
 	effects["point"]="effects/Tetris.ogg";
-	effects["win"]="effects/Notice1.ogg";
+	effects["win"]="effects/applause.ogg";
 	player->loadeffects(effects);
-	player->effect("point");
+
 
 
 
