@@ -1,0 +1,36 @@
+How to play the game
+------------------
+Get the system running in a not so bright room since sunlight reduces the Kinect`s vision.
+
+Position yourself in the range of the Kinect.
+Form a psi-like shape so that the Kinect starts to take your measurements.
+A psi-like shape means you stand straight, face the Kinect and hold your hands up like in the western "Hands up!"
+
+Wait till the callibration is finished and a human-like shape appears in the game.
+(If the callibration seemingly takes too long depending on the abilities of your computer, move a little bit so that the Kinect may understand you as a human to be callibrated.)
+
+The first player will be "right" and plays on the right side, the second player will be "left" etc.
+
+Hand Controll
+--------------
+The "right player controlls the position of his ball-shaped pole  with the right hand relative to the right shoulder and uses the left ellbow angle to controll its status. The pole`s status is shown as a corona around the players magnet.
+An  ellbow angle from 180° to 90° results in a turquoise south pole.
+An angle below 90° moves the pole towards the north and the angle of nearly 0°C results in a red marked north pole
+
+The "left" player controlls the position of his ball-shaped pole in the game with the left hand and uses the right hand to controll the pole`s status.
+
+The ball
+---------
+Besides these two controllable poles in the game, the ball that needs to be moved in magnetopong is also a pole.
+It is initialized each time as an ideal south or north pole (indicated by its color) and needs to be moved to the others player`s field end.
+
+Special move
+------------
+There is a booster for each player in the game.
+If the booster is charged (see color bar in the respective player`s corner) the player can "boost" its pole`s might proportional to the distance she/he moves the body _up_ .
+So jumping up is one possibility to start the boost.
+Beding knees and then jumping up covers a bigger distance and icreases the boost.
+
+Have fun and don´t twist your ankles or punch your adversary while playing! :D
+
+

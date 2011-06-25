@@ -11,6 +11,8 @@
 #include <ClanLib/mikmod.h>
 #ifndef SOUND_H_
 #define SOUND_H_
+//Hashmap for the effects
+typedef std::map<std::string,CL_SoundBuffer*> EffectMap;
 
 class Sound {
 public:
@@ -18,10 +20,15 @@ public:
 	Sound();
 	void setmusik(std::string filename);
 	void play();
-	void loadeffects(std::map<std::string,std::string> effects);
+	void effect(std::string name);
+	void loadeffects(std::map<std::string,std::string> &effects);
 private:
-	std::map<std::string,CL_SoundBuffer_Session*> effects;
+	EffectMap effects;
 	CL_SoundBuffer_Session musik;
+	CL_SetupSound setup_sound;
+	CL_SetupMikMod setup_mikmod;
+	CL_SetupVorbis setup_vorbis;
+	CL_SoundOutput output;
 
 
 };

@@ -14,12 +14,19 @@ Sound::~Sound() {
 }
 
 Sound::Sound() {
+	output = CL_SoundOutput(44100);
+}
+void Sound::loadeffects(std::map<std::string,std::string> &effects)
+{
+	std::map<std::string,std::string>::iterator it = effects.begin();
+	for(;it != effects.end();it++)
+	{
+		CL_SoundBuffer* tempbuffer = new CL_SoundBuffer(it->second);
+		this->effects[it->first]= tempbuffer;
+	}
 
-	CL_SetupSound setup_sound;
-	CL_SetupMikMod setup_mikmod;
-	CL_SetupVorbis setup_vorbis;
-	CL_SoundOutput output(44100);
-	CL_SoundBuffer vorbis("music/Earth.ogg");
-	vorbis.play(true);
-
+}
+void Sound::effect(std::string name)
+{
+	effects[name]->play();
 }
