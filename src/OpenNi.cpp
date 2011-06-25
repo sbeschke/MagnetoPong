@@ -15,6 +15,7 @@
 #include "TGString.h"
 
 
+
 //---------------------------------------------------------------------------
 // Includes
 //---------------------------------------------------------------------------
@@ -277,6 +278,19 @@ double OpenNi::getWinkel(int nr, int leftArm)
 
   // return atan((p1*p2)/(p1.length()*p2.length())) * 57.295779513082320876798154814105 + 45;
    return acos((p1*p2)/(p1.length()*p2.length())) * 57.295779513082320876798154814105 ;//+ 45;
+}
+//---------------------------------------------------------------------------
+
+double OpenNi::getWinkel(int nr, int pos1, int gelenk, int pos2)
+{
+   if(!init_ok) return 0;
+
+   OpenNiPoint p1, p2;
+
+   p1 = Application::myself->kinect.getPlayerPart(nr, pos1, gelenk);
+   p2 = Application::myself->kinect.getPlayerPart(nr, pos2, gelenk);
+
+   return acos((p1*p2)/(p1.length()*p2.length())) * 57.295779513082320876798154814105;
 }
 //---------------------------------------------------------------------------
 
