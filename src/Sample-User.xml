@@ -6,8 +6,8 @@
 		<Node type="Depth">
 			<Configuration>
 				<MapOutputMode xRes="640" yRes="480" FPS="30"/>
+				<Mirror on="false"/>
 			</Configuration>
-		</Node>
 		<Node type="User" />
 	</ProductionNodes>
 </OpenNI>
