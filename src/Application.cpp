@@ -26,7 +26,7 @@ void PlayerCallback::playerCalibrated(int nr)
 	if(app->players[Application::PLAYER_RIGHT] != 0) {
 		playerSlot = Application::PLAYER_LEFT;
 	}
-	if(app->players[Application::PLAYER_LEFT]) {
+	if(app->players[Application::PLAYER_LEFT] != 0) {
 		return;
 	}
 
@@ -122,10 +122,6 @@ void Application::run(void)
 		osmCenter.tick((float)timediff / 1000.0f);
 
 		gc.clear(CL_Colorf::white);
-		for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++) {
-			(*it)->updateposition(timediff);
-			(*it)->draw();
-		}
 
 		for(std::vector<Player*>::iterator it = players.begin();
 				it != players.end(); it++) {
@@ -135,6 +131,13 @@ void Application::run(void)
 				kinect.drawPlayer(pl->getNumber());
 			}
 		}
+
+		for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++) {
+			(*it)->updateposition(timediff);
+			(*it)->draw();
+		}
+
+		osmCenter.draw();
 
 	//	cout << "b1(" << ball.getPosition().x << "|" << ball.getPosition().y << ") b2(" << ball2.getPosition().x << "|" << ball2.getPosition().y << ")\n";
 
