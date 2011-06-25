@@ -15,10 +15,7 @@
 #include <ClanLib/gl.h>
 
 #ifndef BALLACC
-#define BALLACC 10.0
-#endif
-#ifndef WALLACC
-#define WALLACC 1e-6
+#define BALLACC 5.0
 #endif
 #ifndef RADIUS
 #define RADIUS 15

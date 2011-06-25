@@ -21,7 +21,7 @@ public:
 };
 
 const CL_Colorf playerColors[] = {
-			CL_Colorf::violet,
+			CL_Colorf::orange,
 			CL_Colorf::blue
 	};
 

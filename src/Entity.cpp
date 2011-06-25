@@ -65,12 +65,14 @@ void Entity::draw(void)
 			CL_Colorf(0.0f, 2.0f, 0.0f, 1.0f) : CL_Colorf(2.0f, 0.0f, 0.0f, 1.0f);
 	fieldColor.set_alpha(abs(charge));
 	CL_Pointf center(getX(), getY());
-	if(Application::detail >= 1) {
-		CL_Draw::gradient_circle(application->getGC(), center, radius+20.0f,
+	if(Application::detail >= 1)
+	{
+		CL_Draw::gradient_circle(application->getGC(), center, radius*4.0,
 			CL_Gradient(fieldColor, CL_Colorf::transparent));
 	}
-	else {
-		CL_Draw::circle(application->getGC(), center, radius+20.0f, fieldColor);
+	else
+	{
+		CL_Draw::circle(application->getGC(), center, radius*4.0, fieldColor);
 	}
 	CL_Draw::circle(application->getGC(), center, radius, getColor());
 }
@@ -85,10 +87,12 @@ void Entity::setColor(CL_Colorf color)
 	this->color = color;
 }
 
-float Entity::getRadius(void) {
+float Entity::getRadius(void)
+{
 	return radius;
 }
 
-void Entity::setRadius(float radius) {
+void Entity::setRadius(float radius)
+{
 	this->radius = radius;
 }
