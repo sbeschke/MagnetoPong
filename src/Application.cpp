@@ -11,6 +11,7 @@
 #include "Ball.h"
 #include <exception>
 #include <stdlib.h>
+#include "BoostBar.h"
 
 
 Application* Application::myself;
@@ -159,6 +160,11 @@ void Application::run(void)
 	scoreFont_desc.set_height(80);
 	CL_Font_System scoreFont(gc, scoreFont_desc);
 
+	BoostBar boostbarPL(PLAYER_LEFT);
+	boostbarPL.setMaxValue(BOOSTRELOADTIME);
+	BoostBar boostbarPR(PLAYER_RIGHT);
+	boostbarPR.setMaxValue(BOOSTRELOADTIME);
+
 
 	playersChanged();
 	clearBalls();
@@ -254,6 +260,10 @@ void Application::run(void)
 					startMatch();
 				}
 			}
+			boostbarPL.setValue(players[PLAYER_LEFT]->getBat()->getBoostctr());
+			boostbarPR.setValue(players[PLAYER_RIGHT]->getBat()->getBoostctr());
+			boostbarPL.draw();
+			boostbarPR.draw();
 		}
 
 //		TGString s = TGString("b1(") + ball.getPosition().x + "|" + ball.getPosition().y + ") b2(" + ball2.getPosition().x + "|" + ball2.getPosition().y + ")";

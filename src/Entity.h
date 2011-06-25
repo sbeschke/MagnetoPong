@@ -15,6 +15,8 @@
 #include <ClanLib/gl.h>
 #include <ClanLib/core.h>
 
+#define BOOSTRELOADTIME 10
+
 class Application;
 class Entity;
 
@@ -41,9 +43,11 @@ public:
 	virtual void setRadius(float radius);
 
 	virtual void setBoost(bool active);
+	virtual float getBoostctr();
+	virtual float getBoostRelaod();
 
 	virtual void updateforces(const EntitySet& objects, float timedifference) {}
-	virtual void updateposition(float timedifference) {}
+	virtual void updateposition(float timedifference);
 
 protected:
 	Application* application;
@@ -53,6 +57,8 @@ private:
 	float mass;
 	float radius;
 	float boost;
+	float boostctr;
+
 	CL_Colorf color;
 };
 

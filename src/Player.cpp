@@ -9,6 +9,7 @@
 #include "Bat.h"
 #include "InputDevice.h"
 #include "Application.h"
+#include "BoostBar.h"
 
 Player::Player(Application* application, InputDevice* device)
 : application(application), device(device), score(0)
