@@ -135,27 +135,8 @@ void Application::run(void)
 
 	//	cout << "b1(" << ball.getPosition().x << "|" << ball.getPosition().y << ") b2(" << ball2.getPosition().x << "|" << ball2.getPosition().y << ")\n";
 
-
-
-		/*for(int i=0; i < 5; i++)
-		{
-		   kinect.drawPlayer(i);
-		}*/
-		//draw_sunset(gc);
-
-		//boat_sprite.draw(gc, 70, 252);
-
-		//font.draw_text(gc, 146, 50, "A quiet evening in the pacific...");
-
-
-
-		//player1.getBat()->draw();
-		//std::ostringstream oss;
-		//font.draw_text(gc, 146, 50, oss.str());
-		//boat_sprite.update();
 		window.flip();
 		CL_KeepAlive::process();
-		//CL_System::sleep(10);
 	}
 }
 
