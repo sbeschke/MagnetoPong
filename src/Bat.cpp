@@ -18,4 +18,3 @@ Bat::Bat(Application* application)
 
 Bat::~Bat() {
 }
-
