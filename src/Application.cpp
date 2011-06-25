@@ -221,7 +221,7 @@ void Application::run(void)
 		}
 		if(collision)
 		{
-		   player->effect("collision");
+		   if(playersActive) player->effect("collision");
 		}
 
 		if(spawnBall)
@@ -312,10 +312,6 @@ void Application::run(void)
 			boostbarPL.draw();
 			boostbarPR.draw();
 
-			if(players[PLAYER_LEFT]->getKick())
-			{
-
-			}
 		}
 
 //		TGString s = TGString("b1(") + ball.getPosition().x + "|" + ball.getPosition().y + ") b2(" + ball2.getPosition().x + "|" + ball2.getPosition().y + ")";
@@ -418,8 +414,10 @@ void Application::ballOut(Ball* ball, int playerSlot) {
 			timeToSpawnBall = 3000.0f;
 		}
 	}
-	else {
-		if(entities.size() <= 5) {
+	else
+	{
+		if(entities.size() <= ANZ_BALS_DEMO)
+		{
 			makeBall();
 		}
 	}
