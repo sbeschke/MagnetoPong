@@ -93,8 +93,7 @@ public:
 
 	void clearBalls(void);
 
-	void makeBallNoPlayers(void);
-	void makeBallOnePlayer(void);
+	void makeBall(void);
 };
 
 #endif // APPLICATION_H_

@@ -224,6 +224,21 @@ void Application::addPlayer(Player* player, int playerSlot)
 	playersActive++;
 
 	clearBalls();
+
+	switch(playersActive) {
+	case 0: {
+		break;
+	}
+	case 1: {
+		osmCenter.setMessage("Waiting for Player 2");
+		break;
+	}
+	case 2: {
+		osmCenter.setMessage("FIGHT", 3.0f);
+		break;
+	}
+	default: throw std::exception(); break;
+	}
 }
 
 void Application::remPlayer(int playerSlot)
@@ -257,14 +272,15 @@ bool Application::checkBall(Ball* ball)
 	if(ballOut) {
 		switch(playersActive) {
 		case 0: {
-			makeBallNoPlayers();
+			makeBall();
 			break;
 		}
 		case 1: {
-			makeBallOnePlayer();
+			makeBall();
 			break;
 		}
 		case 2: {
+			makeBall();
 			break;
 		}
 		default: throw std::exception(); break;
@@ -275,11 +291,15 @@ bool Application::checkBall(Ball* ball)
 }
 
 void Application::ballOutLeft(Ball* ball) {
-
+	if(playersActive == 2) {
+		osmCenter.setMessage("Left Player Scores", 2.0f);
+	}
 }
 
 void Application::ballOutRight(Ball* ball) {
-
+	if(playersActive == 2) {
+		osmCenter.setMessage("Right Player Scores", 2.0f);
+	}
 }
 
 void Application::ballGone(Ball* ball) {
@@ -299,35 +319,28 @@ void Application::clearBalls(void) {
 
 	switch(playersActive) {
 	case 0: {
-		makeBallNoPlayers();
-		makeBallNoPlayers();
+		makeBall();
+		makeBall();
 		break;
 	}
 	case 1: {
-		makeBallOnePlayer();
+		makeBall();
 		break;
 	}
 	case 2: {
+		makeBall();
 		break;
 	}
 	default: throw std::exception(); break;
 	}
 }
 
-void Application::makeBallNoPlayers(void)
+void Application::makeBall(void)
 {
 	Ball* b1 = new Ball(this,Vec2d(Application::x_res, Application::y_res));
 	b1->initializePosition();
-	b1->setCharge(2.0f * (float)rand() / (float)RAND_MAX - 1.0f);
-	addEntity(b1);
-
-}
-
-void Application::makeBallOnePlayer(void)
-{
-	Ball* b1 = new Ball(this,Vec2d(Application::x_res, Application::y_res));
-	b1->initializePosition();
-	b1->setCharge(2.0f * (float)rand() / (float)RAND_MAX - 1.0f);
+	int ch = rand() % 2;
+	b1->setCharge(ch ? 1.0f : -1.0f);
 	addEntity(b1);
 
 }
