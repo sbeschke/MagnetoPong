@@ -17,8 +17,8 @@ public:
 		CL_SetupGL setup_gl;
 
 		Application::detail = 1;
-		Application::x_res = 1300;
-		Application::y_res = 600;
+		Application::x_res = 1280;
+		Application::y_res = 940;
 
 		for(std::vector<CL_String>::const_iterator it = args.begin(); it != args.end(); it++) {
 			if(*it == "low") {

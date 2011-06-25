@@ -103,12 +103,15 @@ Application::Application(void)
 	font_desc.set_typeface_name("Verdana");
 	font_desc.set_height(60);
 	CL_FontDescription huge_font_desc;
+	CL_FontDescription font_desc2 = font_desc;
+	font_desc2.set_height(40);
 	huge_font_desc.set_typeface_name("Verdana");
 	huge_font_desc.set_height(200);
 	huge_font_desc.set_weight(5);
-	osmCenter = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.75f), font_desc, CL_Colorf::darkslateblue);
-	osmShout = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.25f), font_desc, CL_Colorf::deeppink);
-	osmHuge = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.5f),
+
+	osmCenter = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.75f), font_desc2, CL_Colorf::darkslateblue);
+	osmShout  = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.25f), font_desc, CL_Colorf::deeppink);
+	osmHuge   = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.5f),
 			huge_font_desc, CL_Colorf::deeppink);
 	osmLeft = OnScreenMessage(CL_Pointf(x_res / 4, y_res / 2), font_desc,
 			playerColors[PLAYER_LEFT]);
