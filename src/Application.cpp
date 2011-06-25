@@ -127,7 +127,10 @@ Application::Application(void)
 
 	effects["on"]="effects/ltsaberon01.wav";
 	effects["collision"]="effects/ltsaberbodyhit01.wav";
+	effects["point"]="effects/Tetris.ogg";
+	effects["win"]="effects/Notice1.ogg";
 	player->loadeffects(effects);
+	player->effect("point");
 
 
 
@@ -355,9 +358,11 @@ bool Application::checkBall(Ball* ball)
 
 void Application::ballOut(Ball* ball, int playerSlot) {
 	if(playersActive == 2) {
+		player->effect("point");
 		players[playerSlot]->incrementScore();
 
 		if(players[playerSlot]->getScore() >= SCORE_TO_WIN) {
+			player->effect("win");
 			endMatch();
 			if(playerSlot == PLAYER_RIGHT) {
 				osmHuge.setMessage("Right WINS", 3.0f);
