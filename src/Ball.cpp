@@ -68,8 +68,8 @@ void Ball::updateforces(const EntitySet& objects, float timedifference)
 void Ball::initializePosition()
 {
 	Vec2d startpos = windowFrame/2;
-	startpos.x += ((float)rand()/RAND_MAX*20)-10;
-	startpos.y= (float)rand()/RAND_MAX*windowFrame.y-(windowFrame.y/2);
+	startpos.x += (rand() % 21)-10;//;/RAND_MAX*20)-10;
+	startpos.y  =  rand() % (int)windowFrame.y;///RAND_MAX*windowFrame.y-(windowFrame.y/2);
 	this->setPosition(startpos);
 
 }
