@@ -7,6 +7,7 @@
 
 #include "Ball.h"
 #include "Application.h"
+#include "stdlib.h"
 
 
 Ball::Ball(Application* application, Vec2d windowFrame)
@@ -66,7 +67,11 @@ void Ball::updateforces(const EntitySet& objects, float timedifference)
 }
 void Ball::initializePosition()
 {
-	this->setPosition(windowFrame/2);
+	Vec2d startpos = windowFrame/2;
+	startpos.x += ((float)rand()/RAND_MAX*20)-10;
+	startpos.y= (float)rand()/RAND_MAX*windowFrame.y-(windowFrame.y/2);
+	this->setPosition(startpos);
+
 }
 void Ball::updateposition(float timedifference)
 {

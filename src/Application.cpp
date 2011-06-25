@@ -75,6 +75,7 @@ void Application::run(void)
 	window_desc.set_title("MagnetoPong!!!11einself");
 	CL_DisplayWindow window(window_desc);
 
+
 	CL_Slot slot_quit = window.sig_window_close().connect(this, &Application::on_window_close);
 
 	graphicContext = window.get_gc();
@@ -97,7 +98,7 @@ void Application::run(void)
 	addEntity(&ball);
 
 	Ball ball2(this,Vec2d(Application::x_res, Application::y_res));
-	ball2.setPosition(Vec2d((x_res/2)-50, y_res/2));
+	ball2.initializePosition();
 	ball2.setCharge(-1);
 	addEntity(&ball2);
 
