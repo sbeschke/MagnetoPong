@@ -17,7 +17,8 @@
 
 class OnScreenMessageList {
 public:
-	OnScreenMessageList();
+	OnScreenMessageList(void);
+	OnScreenMessageList(CL_Pointf textPos, CL_FontDescription font, CL_Colorf color);
 	virtual ~OnScreenMessageList();
 
 	void add(const OnScreenMessage& message);
@@ -26,8 +27,11 @@ public:
 
 private:
 	std::list<OnScreenMessage> messages;
+	CL_Pointf textPos;
 
+	CL_Colorf color;
 	CL_Font_System fontSystem;
+
 };
 
 #endif /* ONSCREENMESSAGELIST_H_ */

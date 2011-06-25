@@ -57,11 +57,15 @@ public:
 	OpenNi kinect;
 
 	OnScreenMessageList osmCenter;
+	OnScreenMessageList osmLeft;
+	OnScreenMessageList osmRight;
 
 	CL_GraphicContext& getGC(void)
 	{
 		return graphicContext;
 	}
+
+	Application(void);
 
 	void run(void);
 

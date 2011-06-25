@@ -8,11 +8,15 @@
 #include "OnScreenMessageList.h"
 #include "Application.h"
 
-OnScreenMessageList::OnScreenMessageList() {
-	CL_FontDescription font_desc;
-	font_desc.set_typeface_name("tahoma");
-	font_desc.set_height(30);
-	fontSystem = CL_Font_System(Application::get()->gc, font_desc);
+OnScreenMessageList::OnScreenMessageList(void)
+{
+
+}
+
+OnScreenMessageList::OnScreenMessageList(CL_Pointf textPos, CL_FontDescription font, CL_Colorf color)
+: textPos(textPos), color(color)
+{
+	fontSystem = CL_Font_System(Application::get()->gc, font);
 }
 
 OnScreenMessageList::~OnScreenMessageList() {
@@ -26,17 +30,24 @@ void OnScreenMessageList::add(const OnScreenMessage& message)
 
 void OnScreenMessageList::tick(float secs)
 {
-	for(std::list<OnScreenMessage>::iterator it = messages.begin(); it != messages.end(); it++) {
+	for(std::list<OnScreenMessage>::iterator it = messages.begin(); it != messages.end();) {
+		std::list<OnScreenMessage>::iterator next = it;
+		next++;
 		it->reduceTimeout(secs);
 		if(it->timedOut()) {
-			//messages.erase(it);
+			messages.erase(it);
 		}
+		it = next;
 	}
 }
 
 void OnScreenMessageList::draw(void)
 {
 	for(std::list<OnScreenMessage>::iterator it = messages.begin(); it != messages.end(); it++) {
-		fontSystem.draw_text(Application::get()->gc, 146, 50, it->getMessage());
+		CL_Size size = fontSystem.get_text_size(Application::get()->gc, it->getMessage());
+
+		fontSystem.draw_text(Application::get()->gc,
+				textPos.x - (size.width/2), textPos.y - (size.height/2),
+				it->getMessage(), color);
 	}
 }
