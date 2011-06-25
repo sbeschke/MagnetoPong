@@ -29,7 +29,7 @@ void OnScreenMessageList::tick(float secs)
 	for(std::list<OnScreenMessage>::iterator it = messages.begin(); it != messages.end(); it++) {
 		it->reduceTimeout(secs);
 		if(it->timedOut()) {
-			messages.erase(it);
+			//messages.erase(it);
 		}
 	}
 }
