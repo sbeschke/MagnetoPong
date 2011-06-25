@@ -31,6 +31,7 @@ void PlayerCallback::playerCalibrated(int nr)
 
 	KinectInputDevice* device = new KinectInputDevice(nr, playerSlot == Application::PLAYER_LEFT);
 	Player* player = new Player(app, device);
+	player->setNumber(nr);
 	player->getBat()->setColor(playerColors[playerSlot]);
 
 	if(playerSlot == Application::PLAYER_LEFT) {
@@ -48,9 +49,9 @@ void PlayerCallback::playerLost(int nr)
 	Application* app = Application::get();
 	for(int playerSlot = 0; playerSlot < app->players.size(); playerSlot++) {
 		Player* player = app->players[playerSlot];
-		if(player && player->getNumber() == nr) {
+		if(player != 0 && player->getNumber() == nr) {
 			std::cout << "Lost player on side " << playerSlot << std::endl;
-			delete player;
+			//delete player;
 			app->players[playerSlot = 0];
 		}
 	}
@@ -113,13 +114,15 @@ void Application::run(void)
 		if(keyboard.get_keycode(CL_KEY_ESCAPE) == true)
 			quit = true;
 
-		if(mouse.get_keycode(CL_MOUSE_WHEEL_DOWN)
-				|| mouse.get_keycode(CL_MOUSE_LEFT)) {
-			//bat.setCharge(bat.getCharge() - 0.1f);
+
+		for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++) {
+			(*it)->updateforces(entities,timediff);
 		}
-		if(mouse.get_keycode(CL_MOUSE_WHEEL_UP)
-				|| mouse.get_keycode(CL_MOUSE_RIGHT)) {
-			//bat.setCharge(bat.getCharge() + 0.1f);
+
+		gc.clear(CL_Colorf::white);
+		for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++) {
+			(*it)->updateposition(timediff);
+			(*it)->draw();
 		}
 
 		for(std::vector<Player*>::iterator it = players.begin();
@@ -127,30 +130,22 @@ void Application::run(void)
 			Player* pl = *it;
 			if(pl != 0) {
 				pl->processInput();
+				kinect.drawPlayer(pl->getNumber());
 			}
 		}
 
 
-		gc.clear(CL_Colorf::white);
 
-		for(int i=0; i < 5; i++)
+		/*for(int i=0; i < 5; i++)
 		{
 		   kinect.drawPlayer(i);
-		}
+		}*/
 		//draw_sunset(gc);
 
 		//boat_sprite.draw(gc, 70, 252);
 
 		//font.draw_text(gc, 146, 50, "A quiet evening in the pacific...");
 
-		for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++) {
-			(*it)->updateforces(entities,timediff);
-		}
-
-		for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++) {
-			(*it)->updateposition(timediff);
-			(*it)->draw();
-		}
 
 
 		//player1.getBat()->draw();
@@ -170,10 +165,7 @@ void Application::addEntity(Entity* entity)
 
 void Application::remEntity(Entity* entity)
 {
-	EntitySet::iterator it = entities.find(entity);
-	if(it != entities.end()) {
-		entities.erase(it);
-	}
+	entities.erase(entity);
 }
 
 void Application::addPlayer(int num)
