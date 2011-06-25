@@ -196,30 +196,30 @@ OpenNiPoint OpenNi::getPlayerPart(int nr, int part)
 
       switch(part)
       {
-      case P_HEAD:      s.GetSkeletonJointPosition(nr, XN_SKEL_HEAD, pos); break;
-      case P_NECK:      s.GetSkeletonJointPosition(nr, XN_SKEL_NECK, pos); break;
-      case P_TORSO:     s.GetSkeletonJointPosition(nr, XN_SKEL_TORSO , pos); break;
+      case P_HEAD:      s.GetSkeletonJointPosition(nr, XN_SKEL_HEAD,  pos); break;
+      case P_NECK:      s.GetSkeletonJointPosition(nr, XN_SKEL_NECK,  pos); break;
+      case P_TORSO:     s.GetSkeletonJointPosition(nr, XN_SKEL_TORSO, pos); break;
       case P_WAIST:     s.GetSkeletonJointPosition(nr, XN_SKEL_WAIST, pos); break;
-      case P_LCOLLAR:   s.GetSkeletonJointPosition(nr, XN_SKEL_LEFT_COLLAR , pos); break;
-      case P_LSHOULDER: s.GetSkeletonJointPosition(nr, XN_SKEL_LEFT_SHOULDER , pos); break;
-      case P_LELBOW:    s.GetSkeletonJointPosition(nr, XN_SKEL_LEFT_ELBOW, pos); break;
-      case P_LWRIST:    s.GetSkeletonJointPosition(nr, XN_SKEL_LEFT_WRIST , pos); break;
-      case P_LHAND:     s.GetSkeletonJointPosition(nr, XN_SKEL_LEFT_HAND , pos); break;
-      case P_LFINGER:   s.GetSkeletonJointPosition(nr, XN_SKEL_LEFT_FINGERTIP , pos); break;
-      case P_RCOLLAR:   s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_COLLAR, pos); break;
-      case P_RSHOULDER: s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_SHOULDER, pos); break;
-      case P_RELBOW:    s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_ELBOW, pos); break;
-      case P_RWRIST:    s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_WRIST , pos); break;
-      case P_RHAND:     s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_HAND, pos); break;
+      case P_LCOLLAR:   s.GetSkeletonJointPosition(nr, XN_SKEL_LEFT_COLLAR,     pos); break;
+      case P_LSHOULDER: s.GetSkeletonJointPosition(nr, XN_SKEL_LEFT_SHOULDER,   pos); break;
+      case P_LELBOW:    s.GetSkeletonJointPosition(nr, XN_SKEL_LEFT_ELBOW,      pos); break;
+      case P_LWRIST:    s.GetSkeletonJointPosition(nr, XN_SKEL_LEFT_WRIST,      pos); break;
+      case P_LHAND:     s.GetSkeletonJointPosition(nr, XN_SKEL_LEFT_HAND,       pos); break;
+      case P_LFINGER:   s.GetSkeletonJointPosition(nr, XN_SKEL_LEFT_FINGERTIP,  pos); break;
+      case P_RCOLLAR:   s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_COLLAR,    pos); break;
+      case P_RSHOULDER: s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_SHOULDER,  pos); break;
+      case P_RELBOW:    s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_ELBOW,     pos); break;
+      case P_RWRIST:    s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_WRIST,     pos); break;
+      case P_RHAND:     s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_HAND,      pos); break;
       case P_RFINGER:   s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_FINGERTIP, pos); break;
-      case P_LHIP:      s.GetSkeletonJointPosition(nr, XN_SKEL_LEFT_HIP,    pos); break;
-      case P_LKNEE:     s.GetSkeletonJointPosition(nr, XN_SKEL_LEFT_KNEE,   pos); break;
-      case P_LANKLE:    s.GetSkeletonJointPosition(nr, XN_SKEL_LEFT_ANKLE,  pos); break;
-      case P_LFOOT:     s.GetSkeletonJointPosition(nr, XN_SKEL_LEFT_FOOT,   pos); break;
-      case P_RHIP:      s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_HIP,   pos); break;
-      case P_RKNEE:     s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_KNEE,  pos); break;
-      case P_RANKLE:    s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_ANKLE, pos); break;
-      case P_RFOOT:     s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_FOOT,  pos); break;
+      case P_LHIP:      s.GetSkeletonJointPosition(nr, XN_SKEL_LEFT_HIP,        pos); break;
+      case P_LKNEE:     s.GetSkeletonJointPosition(nr, XN_SKEL_LEFT_KNEE,       pos); break;
+      case P_LANKLE:    s.GetSkeletonJointPosition(nr, XN_SKEL_LEFT_ANKLE,      pos); break;
+      case P_LFOOT:     s.GetSkeletonJointPosition(nr, XN_SKEL_LEFT_FOOT,       pos); break;
+      case P_RHIP:      s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_HIP,       pos); break;
+      case P_RKNEE:     s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_KNEE,      pos); break;
+      case P_RANKLE:    s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_ANKLE,     pos); break;
+      case P_RFOOT:     s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_FOOT,      pos); break;
       }
       p.x = (pos.position.X * -1.0);//-0.5) + Application::x_res/2;
       p.y = (pos.position.Y * -1.0);//-0.5) + Application::y_res/2;
@@ -289,7 +289,7 @@ void OpenNi::drawPlayer(int nr)
       p.changeForDisplay();
       for(int i=0; i < P_SIZE; i++)
       {
-         if((p.pointList.at(i)->x != 0) || (p.pointList.at(i)->y != 0)) CL_Draw::circle(Application::myself->getGC(), CL_Pointf(p.pointList.at(i)->x, p.pointList.at(i)->y), 5, color);
+         if((p.pointList.at(i)->x != Application::x_res/2) && (p.pointList.at(i)->y != Application::y_res/2)) CL_Draw::circle(Application::myself->getGC(), CL_Pointf(p.pointList.at(i)->x, p.pointList.at(i)->y), 5, color);
       }
 
       CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_HEAD)->x,  p.pointList.at(P_HEAD)->y,  p.pointList.at(P_NECK)->x, p.pointList.at(P_NECK)->y, color);

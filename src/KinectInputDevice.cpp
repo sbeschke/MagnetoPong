@@ -62,13 +62,10 @@ CL_Point KinectInputDevice::getPoint(void)
       double winkel = Application::myself->kinect.getWinkel(playerNr, !leftHand);
       if(winkel < 5)
       {
-       //  cout << "winkel ";
          if((p.z < 100) && (p.z > -20))
          {
-        //    cout << "z";
             if((p.y < 50) && (p.y > -50) && !x_kali)
             {
-          //     cout << "y \n";
                if(p.x > 0)
                {
                   x_max = p.x;
@@ -88,7 +85,6 @@ CL_Point KinectInputDevice::getPoint(void)
             }
    /*         else if((p.x < 50) && (p.x > -50) && !y_kali)
             {
-       //        cout << "x \n";
                if(p.y > 0)
                {
                   y_max = p.y;
@@ -121,10 +117,8 @@ CL_Point KinectInputDevice::getPoint(void)
 float KinectInputDevice::getZ(void)
 {
    double winkel = Application::myself->kinect.getWinkel(playerNr, !leftHand);
-   //cout << winkel << " | ";
    winkel -= 45;
    winkel /= 45;
-   //cout << winkel << "\n";
    if(winkel > 1.0) winkel = 1.0;
    else if(winkel < -1.0) winkel = -1.0;
 
