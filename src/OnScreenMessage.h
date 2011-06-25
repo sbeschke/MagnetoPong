@@ -23,8 +23,8 @@ public:
 	void setMessage(const std::string message, float timeout);
 
 	void tick(float secs);
-	bool timedOut(void);
 	void draw(void);
+	void hide(void);
 
 private:
 	bool show;

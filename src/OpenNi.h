@@ -95,6 +95,8 @@ class OpenNiPlayerCallback
 {
 public:
 	virtual void playerRecognized(int nr) =0;
+	virtual void calibrationStart(int nr) =0;
+	virtual void calibrationFailed(int nr) =0;
 	virtual void playerCalibrated(int nr) =0;
 	virtual void playerLost(int nr) =0;
 };

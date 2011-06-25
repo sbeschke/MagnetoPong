@@ -38,6 +38,10 @@ void OnScreenMessage::tick(float secs) {
 	}
 }
 
+void OnScreenMessage::hide(void) {
+	show = false;
+}
+
 void OnScreenMessage::draw(void)
 {
 	if(show) {

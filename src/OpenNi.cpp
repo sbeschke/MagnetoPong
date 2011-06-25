@@ -60,6 +60,7 @@ void XN_CALLBACK_TYPE LostUser(xn::UserGenerator& generator, XnUserID user, void
 void XN_CALLBACK_TYPE CalibrationStart(xn::SkeletonCapability& skeleton, XnUserID user, void* pCookie)
 {
    printf("Calibration start for user %d\n", user);
+   Application::get()->playerCallback.calibrationStart(user);
 }
 //---------------------------------------------------------------------------
 
@@ -74,6 +75,7 @@ void XN_CALLBACK_TYPE CalibrationEnd(xn::SkeletonCapability& skeleton, XnUserID 
    else
    {
       g_UserGenerator.GetPoseDetectionCap().StartPoseDetection("Psi", user);
+      Application::get()->playerCallback.calibrationFailed(user);
    }
 }
 //---------------------------------------------------------------------------

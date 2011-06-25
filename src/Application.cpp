@@ -18,18 +18,43 @@ void PlayerCallback::playerRecognized(int nr)
 {
 	Application* app = Application::get();
 	if(app->players[Application::PLAYER_RIGHT] == 0) {
-		Application::get()->osmRight.setMessage("Welcome. Please PSI!", 5.0f);
+		Application::get()->osmRight.setMessage("Welcome. Please form a PSI to calibrate.", 5.0f);
 	}
 	else if(app->players[Application::PLAYER_LEFT] == 0) {
-		Application::get()->osmLeft.setMessage("Welcome. Please PSI!", 5.0f);
+		Application::get()->osmLeft.setMessage("Welcome. Please form a PSI to calibrate.", 5.0f);
+	}
+
+}
+
+void PlayerCallback::calibrationStart(int nr)
+{
+	Application* app = Application::get();
+	if(app->players[Application::PLAYER_RIGHT] == 0) {
+		Application::get()->osmRight.setMessage("Calibrating...");
+	}
+	else if(app->players[Application::PLAYER_LEFT] == 0) {
+		Application::get()->osmLeft.setMessage("Calibrating...");
 	}
 	else {
 		Application::get()->osmCenter.setMessage("Too many players, please go away!", 5.0f);
 	}
 }
 
+void PlayerCallback::calibrationFailed(int nr)
+{
+	Application* app = Application::get();
+	if(app->players[Application::PLAYER_RIGHT] == 0) {
+		Application::get()->osmRight.setMessage("Calibration failed", 2.0f);
+	}
+	else if(app->players[Application::PLAYER_LEFT] == 0) {
+		Application::get()->osmLeft.setMessage("Calibration failed", 2.0f);
+	}
+}
+
 void PlayerCallback::playerCalibrated(int nr)
 {
+	Application::get()->osmRight.hide();
+	Application::get()->osmLeft.hide();
 	Application* app = Application::get();
 	unsigned int playerSlot = Application::PLAYER_RIGHT;
 	if(app->players[Application::PLAYER_RIGHT] != 0) {

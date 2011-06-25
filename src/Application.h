@@ -16,6 +16,8 @@ class PlayerCallback : public OpenNiPlayerCallback
 {
 public:
 	void playerRecognized(int nr);
+	void calibrationStart(int nr);
+	void calibrationFailed(int nr);
 	void playerCalibrated(int nr);
 	void playerLost(int nr);
 };
