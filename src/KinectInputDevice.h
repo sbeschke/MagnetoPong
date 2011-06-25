@@ -21,10 +21,13 @@ public:
 
    CL_Point getPoint(void);
    float getZ(void);
+   bool  getJump();
 
 private:
    bool leftHand;
    int  playerNr;
+
+   double lastTorsoY;
 
    double x_offset;
    double x_strech;
@@ -36,10 +39,8 @@ private:
    double y_min;
    double y_max;
 
-
    bool y_kali;
    bool x_kali;
-
 };
 
 #endif /* KINECTINPUTDEVICE_H_ */

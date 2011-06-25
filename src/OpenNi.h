@@ -10,6 +10,7 @@
 
 
 #include <math.h>
+#include "TGString.h"
 
 #include <vector>
 using namespace std;
@@ -59,12 +60,17 @@ public:
 
    double operator*(OpenNiPoint& p)
    {
-      return x+p.x + y*p.y + z*p.z;
+      return x*p.x + y*p.y + z*p.z;
    }
 
    double length()
    {
       return sqrt(x*x + y*y + z*z);
+   }
+
+   TGString toString()
+   {
+      return TGString("(") + x + "|" + y + "|" + z + ")";
    }
 
    double x;
@@ -95,6 +101,8 @@ class OpenNiPlayerCallback
 {
 public:
 	virtual void playerRecognized(int nr) =0;
+	virtual void calibrationStart(int nr) =0;
+	virtual void calibrationFailed(int nr) =0;
 	virtual void playerCalibrated(int nr) =0;
 	virtual void playerLost(int nr) =0;
 };
@@ -112,7 +120,8 @@ public:
    OpenNiPoint  getPlayerPart(int nr, int part1, int part2);
            //pos von Part1 relativ zu Part2
 
-   double getWinkel(int nr, int leftArm);
+   double getWinkelELBOW(int nr, int leftArm);
+   double getWinkel(int nr, int pos1, int gelenk, int pos2);
 
    void drawPlayer(int nr);
 

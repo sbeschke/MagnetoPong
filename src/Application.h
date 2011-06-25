@@ -6,16 +6,21 @@
 #include <ClanLib/gl.h>
 #include <vector>
 #include <set>
+#include <map>
 
 #include "OpenNi.h"
 #include "Player.h"
 #include "Entity.h"
-#include "OnScreenMessageList.h"
+#include "OnScreenMessage.h"
+
+class Ball;
 
 class PlayerCallback : public OpenNiPlayerCallback
 {
 public:
 	void playerRecognized(int nr);
+	void calibrationStart(int nr);
+	void calibrationFailed(int nr);
 	void playerCalibrated(int nr);
 	void playerLost(int nr);
 };
@@ -51,14 +56,15 @@ public:
 
 	EntitySet entities;
 	std::vector<Player*> players;
+	int playersActive;
 
 	CL_GraphicContext gc;
 
 	OpenNi kinect;
 
-	OnScreenMessageList osmCenter;
-	OnScreenMessageList osmLeft;
-	OnScreenMessageList osmRight;
+	OnScreenMessage osmCenter;
+	OnScreenMessage osmLeft;
+	OnScreenMessage osmRight;
 
 	CL_GraphicContext& getGC(void)
 	{
@@ -77,7 +83,17 @@ public:
 	void addEntity(Entity* entity);
 	void remEntity(Entity* entity);
 
-	void addPlayer(int num);
+	void addPlayer(Player* player, int playerSlot);
+	void remPlayer(int playerSlot);
+	bool checkBall(Ball* ball);
+
+	void ballOutLeft(Ball* ball);
+	void ballOutRight(Ball* ball);
+	void ballGone(Ball* ball);
+
+	void clearBalls(void);
+
+	void makeBall(void);
 };
 
 #endif // APPLICATION_H_
