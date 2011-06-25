@@ -11,7 +11,7 @@
 Entity::Entity(Application* application)
 : application(application), charge(0.0f), mass(0.0f), radius(10.0f), color(CL_Colorf::white)
 {
-
+   boost = 1;
 }
 
 Entity::~Entity() {
@@ -40,7 +40,7 @@ void Entity::setPosition(const Vec2d& position)
 
 float Entity::getCharge(void)
 {
-	return this->charge;
+	return this->charge * boost;
 }
 
 void Entity::setCharge(float charge)
@@ -63,11 +63,15 @@ void Entity::draw(void)
 	float charge = getCharge();
 	CL_Colorf fieldColor = charge > 0 ?
 			CL_Colorf(0.0f, 2.0f, 0.0f, 1.0f) : CL_Colorf(2.0f, 0.0f, 0.0f, 1.0f);
-	fieldColor.set_alpha(abs(charge));
+
+	double alpha = abs(charge);
+	if(alpha > 1.0) alpha = 1.0;
+	fieldColor.set_alpha(alpha);
+
 	CL_Pointf center(getX(), getY());
 	if(Application::detail >= 1)
 	{
-		CL_Draw::gradient_circle(application->getGC(), center, radius*4.0,
+		CL_Draw::gradient_circle(application->getGC(), center, radius*4.0*boost,
 			CL_Gradient(fieldColor, CL_Colorf::transparent));
 	}
 	else
@@ -95,4 +99,10 @@ float Entity::getRadius(void)
 void Entity::setRadius(float radius)
 {
 	this->radius = radius;
+}
+
+void Entity::setBoost(bool active)
+{
+   if(active) boost = 2;
+   else       boost = 1;
 }

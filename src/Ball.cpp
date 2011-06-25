@@ -25,6 +25,7 @@ void Ball::draw(void)
 {
 	Entity::draw();
 }
+
 void Ball::updateforces(const EntitySet& objects, float timedifference)
 {
 	this->force = Vec2d(0,0);

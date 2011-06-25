@@ -40,6 +40,8 @@ public:
 	virtual float getRadius(void);
 	virtual void setRadius(float radius);
 
+	virtual void setBoost(bool active);
+
 	virtual void updateforces(const EntitySet& objects, float timedifference) {}
 	virtual void updateposition(float timedifference) {}
 
@@ -50,6 +52,7 @@ private:
 	float charge;
 	float mass;
 	float radius;
+	float boost;
 	CL_Colorf color;
 };
 

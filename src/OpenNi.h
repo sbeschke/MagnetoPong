@@ -120,7 +120,7 @@ public:
    OpenNiPoint  getPlayerPart(int nr, int part1, int part2);
            //pos von Part1 relativ zu Part2
 
-   double getWinkel(int nr, int leftArm);
+   double getWinkelELBOW(int nr, int leftArm);
    double getWinkel(int nr, int pos1, int gelenk, int pos2);
 
    void drawPlayer(int nr);

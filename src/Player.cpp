@@ -30,6 +30,7 @@ void Player::quit(void)
 void Player::processInput(void) {
 	bat->setPosition(device->getPoint());
 	bat->setCharge(device->getZ());
+	bat->setBoost(device->getJump());
 }
 
 Bat* Player::getBat(void) {
