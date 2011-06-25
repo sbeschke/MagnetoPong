@@ -123,7 +123,6 @@ void Application::run(void)
 	window_desc.set_title("MagnetoPong!!!11einself");
 	CL_DisplayWindow window(window_desc);
 
-
 	CL_Slot slot_quit = window.sig_window_close().connect(this, &Application::on_window_close);
 
 	graphicContext = window.get_gc();
@@ -192,7 +191,10 @@ void Application::run(void)
 		osmLeft.draw();
 		osmRight.draw();
 
-	//	cout << "b1(" << ball.getPosition().x << "|" << ball.getPosition().y << ") b2(" << ball2.getPosition().x << "|" << ball2.getPosition().y << ")\n";
+	//	TGString s = "b1(" << ball.getPosition().x << "|" << ball.getPosition().y << ") b2(" << ball2.getPosition().x << "|" << ball2.getPosition().y << ")\n";
+	//	      font.draw_text(Application::myself->gc, 10, 20*nr, s.c_str());
+
+	//	cout <<
 
 		window.flip();
 		CL_KeepAlive::process();
