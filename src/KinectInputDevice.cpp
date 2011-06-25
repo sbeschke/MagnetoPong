@@ -19,7 +19,8 @@ KinectInputDevice::KinectInputDevice(int nr, bool lefthand)
    y_kali = false;
 
    x_offset = 0;
-   x_strech = 1;
+   x_pstrech = 1;
+   x_nstrech = 1;
 
    y_offset = 0;
    y_strech = 1;
@@ -50,16 +51,22 @@ void KinectInputDevice::setPlayer(int nr)
 CL_Point KinectInputDevice::getPoint(void)
 {
    OpenNiPoint p;
+   double x_nwinkel;
+   double x_pwinkel;
    if(leftHand)
    {
       p = Application::myself->kinect.getPlayerPart(playerNr, P_LHAND, P_LSHOULDER);
+      x_pwinkel = 110;
+      x_nwinkel = 160;
    }
    else
    {
       p = Application::myself->kinect.getPlayerPart(playerNr, P_RHAND, P_RSHOULDER);
+      x_pwinkel = 160;
+      x_nwinkel = 110;
    }
 
-   if(!x_kali)// || !y_kali)
+   if(x_max == 0 || x_min == 0)// || !y_kali)
    {
       if((p.z < 100) && (p.z > -20))
       {
@@ -68,33 +75,29 @@ CL_Point KinectInputDevice::getPoint(void)
             double winkel = Application::myself->kinect.getWinkelELBOW(playerNr, leftHand);
             if(p.x > 0)
             {
-               if(winkel > 170)
+               if((winkel > x_pwinkel) && x_max == 0)
                {
                   x_max = p.x;
-                  cout << "x_max " << x_max;
+                  x_pstrech = (Application::x_res/2.0)/abs(x_max);
+                  cout << "player " << playerNr << " x_max calc " << x_pstrech << endl;
                }
             }
             else
             {
-               if(winkel > 140)
+               if((winkel > x_nwinkel) && x_min == 0)
                {
                   x_min = p.x;
-                  cout << "x_min " << x_min;
+                  x_nstrech = (Application::x_res/2.0)/abs(x_min);
+                  cout << "player " << playerNr << " x_min calc " << x_nstrech << endl;
                }
-            }
-
-            if(x_min != 0 && x_max != 0)
-            {
-               double size = x_max - x_min;
-               x_strech = Application::x_res/size;
-               x_kali = true;
-               cout << "x_kalk " << x_strech << "\n";
             }
          }
       }
    }
 
-   p.x = (p.x+(Application::x_res/2.0) + x_offset) * x_strech;
+   if(p.x < 0) p.x = (p.x * x_nstrech +(Application::x_res/2.0) + x_offset);
+   else        p.x = (p.x * x_pstrech +(Application::x_res/2.0) + x_offset);
+
    p.y = (p.y+(Application::y_res/2.0) + y_offset) * y_strech;
 
 

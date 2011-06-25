@@ -30,7 +30,8 @@ private:
    double lastTorsoY;
 
    double x_offset;
-   double x_strech;
+   double x_pstrech;
+   double x_nstrech;
    double x_min;
    double x_max;
 
