@@ -17,6 +17,7 @@ public:
 	Player(Application* application, InputDevice* device);
 	virtual ~Player();
 
+	void quit(void);
 	virtual void processInput(void);
 	virtual Bat* getBat(void);
 
