@@ -94,6 +94,9 @@ public:
 	void clearBalls(void);
 
 	void makeBall(void);
+
+	void startMatch(void);
+	void endMatch(void);
 };
 
 #endif // APPLICATION_H_

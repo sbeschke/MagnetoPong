@@ -78,15 +78,7 @@ void Ball::updateposition(float timedifference)
 	}
 	this->setPosition(newpos);
 
-/*	if(newpos.x > windowFrame.x || newpos.x < 0 || newpos.y > windowFrame.y || newpos.y < 0)
 
-	{
-
-		initializePosition();
-		this->speed = Vec2d(0,0);
-		//TODO emit gameover
-	}
-*/
 }
 Vec2d Ball::getForce()
 {

@@ -142,6 +142,11 @@ void Application::run(void)
 	font_desc.set_height(30);
 	CL_Font_System font(gc, font_desc);
 
+	CL_FontDescription scoreFont_desc;
+	scoreFont_desc.set_typeface_name("tahoma");
+	scoreFont_desc.set_height(30);
+	CL_Font_System scoreFont(gc, scoreFont_desc);
+
 	osmCenter.setMessage("Welcome to MagnetoPong!", 5.0f);
 
 	clearBalls();
@@ -197,6 +202,17 @@ void Application::run(void)
 		osmLeft.draw();
 		osmRight.draw();
 
+		if(playersActive == 2) {
+			// draw scores
+			std::ostringstream scoreLeftTxtStrm;
+			scoreLeftTxtStrm << players[PLAYER_LEFT]->getScore() << " : "
+					<< players[PLAYER_RIGHT]->getScore();
+			std::string scoreLeftTxt = scoreLeftTxtStrm.str();
+			CL_Size scoreSize = scoreFont.get_text_size(Application::get()->gc, scoreLeftTxt);
+			CL_Pointf scoreLeftPos((x_res + scoreSize.width) / 2, scoreSize.height);
+			scoreFont.draw_text(gc, scoreLeftPos, scoreLeftTxt, CL_Colorf::black);
+		}
+
 //		TGString s = TGString("b1(") + ball.getPosition().x + "|" + ball.getPosition().y + ") b2(" + ball2.getPosition().x + "|" + ball2.getPosition().y + ")";
 	//	font.draw_text(Application::myself->gc, 10, 20, s.c_str(), CL_Colorf::black);
 
@@ -234,6 +250,7 @@ void Application::addPlayer(Player* player, int playerSlot)
 		break;
 	}
 	case 2: {
+		startMatch();
 		osmCenter.setMessage("FIGHT", 3.0f);
 		break;
 	}
@@ -248,6 +265,9 @@ void Application::remPlayer(int playerSlot)
 	player->quit();
 	players[playerSlot] = 0;
 	playersActive--;
+
+	osmCenter.setMessage("Player OUT", 3.0f);
+	endMatch();
 }
 
 // return true if ball is out
@@ -293,12 +313,14 @@ bool Application::checkBall(Ball* ball)
 void Application::ballOutLeft(Ball* ball) {
 	if(playersActive == 2) {
 		osmCenter.setMessage("Right Player Scores", 2.0f);
+		players[PLAYER_RIGHT]->incrementScore();
 	}
 }
 
 void Application::ballOutRight(Ball* ball) {
 	if(playersActive == 2) {
 		osmCenter.setMessage("Left Player Scores", 2.0f);
+		players[PLAYER_LEFT]->incrementScore();
 	}
 }
 
@@ -343,4 +365,17 @@ void Application::makeBall(void)
 	b1->setCharge(ch ? 1.0f : -1.0f);
 	addEntity(b1);
 
+}
+
+void Application::startMatch(void)
+{
+	for(std::vector<Player*>::iterator it = players.begin(); it != players.end(); it++) {
+		if(*it != 0) {
+			(*it)->setScore(0);
+		}
+	}
+}
+
+void Application::endMatch(void)
+{
 }
