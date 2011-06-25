@@ -31,7 +31,7 @@ void Sound::effect(std::string name)
 {
 	if(effects.find(name) != effects.end())
 	{
-	   if(name == "collision") effects[name]->set_volume(0.4);
+	   if(name == "collision") effects[name]->set_volume(0.3);
 	   else                    effects[name]->set_volume(1);
 
 	   effects[name]->play();
