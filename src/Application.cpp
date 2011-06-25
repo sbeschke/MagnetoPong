@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "MouseInputDevice.h"
 #include "KinectInputDevice.h"
+#include "OnScreenMessage.h"
 
 
 Application* Application::myself;
@@ -15,17 +16,17 @@ int Application::y_res;
 
 void PlayerCallback::playerRecognized(int nr)
 {
-
+	Application::get()->osmCenter.add(OnScreenMessage("Welcome. Please PSI!", 5.0f));
 }
 
 void PlayerCallback::playerCalibrated(int nr)
 {
 	Application* app = Application::get();
-	unsigned int playerSlot = Application::PLAYER_LEFT;
-	if(app->players[Application::PLAYER_LEFT] != 0) {
-		playerSlot = Application::PLAYER_RIGHT;
+	unsigned int playerSlot = Application::PLAYER_RIGHT;
+	if(app->players[Application::PLAYER_RIGHT] != 0) {
+		playerSlot = Application::PLAYER_LEFT;
 	}
-	if(app->players[Application::PLAYER_RIGHT]) {
+	if(app->players[Application::PLAYER_LEFT]) {
 		return;
 	}
 
@@ -92,8 +93,6 @@ void Application::run(void)
 	font_desc.set_height(30);
 	CL_Font_System font(gc, font_desc);
 
-
-
 	Ball ball(this,Vec2d(Application::x_res, Application::y_res));
 	ball.initializePosition();
 	ball.setCharge(1);
@@ -120,6 +119,8 @@ void Application::run(void)
 			(*it)->updateforces(entities,timediff);
 		}
 
+		osmCenter.tick((float)timediff / 1000.0f);
+
 		gc.clear(CL_Colorf::white);
 		for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++) {
 			(*it)->updateposition(timediff);
@@ -135,27 +136,10 @@ void Application::run(void)
 			}
 		}
 
+	//	cout << "b1(" << ball.getPosition().x << "|" << ball.getPosition().y << ") b2(" << ball2.getPosition().x << "|" << ball2.getPosition().y << ")\n";
 
-
-		/*for(int i=0; i < 5; i++)
-		{
-		   kinect.drawPlayer(i);
-		}*/
-		//draw_sunset(gc);
-
-		//boat_sprite.draw(gc, 70, 252);
-
-		//font.draw_text(gc, 146, 50, "A quiet evening in the pacific...");
-
-
-
-		//player1.getBat()->draw();
-		//std::ostringstream oss;
-		//font.draw_text(gc, 146, 50, oss.str());
-		//boat_sprite.update();
 		window.flip();
 		CL_KeepAlive::process();
-		//CL_System::sleep(10);
 	}
 }
 
