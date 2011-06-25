@@ -29,6 +29,7 @@ KinectInputDevice::KinectInputDevice(int nr, bool lefthand)
    x_max = 0;
 
    lastTorsoY = 0;
+   kicking = false;
 }
 
 KinectInputDevice::~KinectInputDevice()
@@ -127,10 +128,28 @@ bool KinectInputDevice::getJump()
       if(p.y < lastTorsoY - 30)
       {
          jump = true;
-        // cout << "jump\n";
       }
    }
 
    lastTorsoY = p.y;
    return jump;
 }
+//---------------------------------------------------------------------------
+
+bool KinectInputDevice::getKick()
+{
+   double winkel = Application::myself->kinect.getWinkel(playerNr, P_RSHOULDER, P_RHIP, P_RKNEE);
+ //  cout << winkel << endl;
+   if(winkel < 90  && !kicking)
+   {
+      cout << "kick\n";
+      kicking = true;
+      return true;
+   }
+   else if(winkel > 90)
+   {
+      kicking = false;
+   }
+   return false;
+}
+//---------------------------------------------------------------------------

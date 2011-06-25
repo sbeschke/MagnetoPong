@@ -38,6 +38,11 @@ Bat* Player::getBat(void) {
 	return bat;
 }
 
+bool Player::getKick()
+{
+   return device->getKick();
+}
+
 int Player::getNumber(void) {
 	return number;
 }

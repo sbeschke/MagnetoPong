@@ -62,10 +62,12 @@ void PlayerCallback::playerCalibrated(int nr)
 	Application::get()->osmLeft.hide();
 	Application* app = Application::get();
 	unsigned int playerSlot = Application::PLAYER_RIGHT;
-	if(app->players[Application::PLAYER_RIGHT] != 0) {
+	if(app->players[Application::PLAYER_RIGHT] != 0)
+	{
 		playerSlot = Application::PLAYER_LEFT;
 	}
-	if(app->players[Application::PLAYER_LEFT] != 0) {
+	if(app->players[Application::PLAYER_LEFT] != 0)
+	{
 		return;
 	}
 
@@ -87,9 +89,11 @@ void PlayerCallback::playerCalibrated(int nr)
 void PlayerCallback::playerLost(int nr)
 {
 	Application* app = Application::get();
-	for(int playerSlot = 0; playerSlot < app->players.size(); playerSlot++) {
+	for(int playerSlot = 0; playerSlot < app->players.size(); playerSlot++)
+	{
 		Player* player = app->players[playerSlot];
-		if(player != 0 && player->getNumber() == nr) {
+		if(player != 0 && player->getNumber() == nr)
+		{
 			std::cout << "Lost player on side " << playerSlot << std::endl;
 			app->remPlayer(playerSlot);
 		}
@@ -104,13 +108,13 @@ Application::Application(void)
 	font_desc.set_height(60);
 	CL_FontDescription huge_font_desc;
 	CL_FontDescription font_desc2 = font_desc;
-	font_desc2.set_height(40);
+	font_desc2.set_height(50);
 	huge_font_desc.set_typeface_name("Verdana");
 	huge_font_desc.set_height(200);
 	huge_font_desc.set_weight(5);
 
 	osmCenter = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.75f), font_desc2, CL_Colorf::darkslateblue);
-	osmShout  = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.25f), font_desc, CL_Colorf::deeppink);
+	osmShout  = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.25f), font_desc2, CL_Colorf::deeppink);
 	osmHuge   = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.5f),
 			huge_font_desc, CL_Colorf::deeppink);
 	osmLeft = OnScreenMessage(CL_Pointf(x_res / 4, y_res / 2), font_desc,
@@ -125,14 +129,13 @@ Application::Application(void)
 	player = new Sound();
 	std::map<std::string,std::string> effects;
 
-	effects["on"]="effects/ltsaberon01.wav";
-	effects["collision"]="effects/ltsaberbodyhit01.wav";
-	effects["point"]="effects/Tetris.ogg";
-	effects["win"]="effects/applause.ogg";
+	//effects["on"]="effects/ltsaberon01.wav";
+	effects["collision"]="effects/sch.ogg";
+	effects["point"]="effects/ping.ogg";
+	effects["win"]="effects/aus.ogg";
+	effects["fight"]="effects/fight.ogg";
+	effects["boost"]="effects/ohjea.ogg";
 	player->loadeffects(effects);
-
-
-
 
 }
 
@@ -193,15 +196,17 @@ void Application::run(void)
 		start = CL_System::get_time();
 
 
-		if(keyboard.get_keycode(CL_KEY_ESCAPE) == true)
-			quit = true;
+		if(keyboard.get_keycode(CL_KEY_ESCAPE) == true)	quit = true;
 
-		if(keyboard.get_keycode(CL_KEY_SPACE) == true && playersActive < 2) {
+		if(keyboard.get_keycode(CL_KEY_SPACE) == true && playersActive < 2)
+		{
 			int playerSlot = PLAYER_RIGHT;
-			if(players[Application::PLAYER_RIGHT] != 0) {
+			if(players[Application::PLAYER_RIGHT] != 0)
+			{
 				playerSlot = Application::PLAYER_LEFT;
 			}
-			if(players[Application::PLAYER_LEFT] != 0) {
+			if(players[Application::PLAYER_LEFT] != 0)
+			{
 				break;
 			}
 
@@ -214,14 +219,17 @@ void Application::run(void)
 		for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++) {
 			collision = collision || (*it)->updateforces(entities,timediff);
 		}
-		if(collision){
-		player->effect("collision");
+		if(collision)
+		{
+		   player->effect("collision");
 		}
 
-		if(spawnBall) {
+		if(spawnBall)
+		{
 			timeToSpawnBall -= timediff;
-			if(timeToSpawnBall <= 0.0f) {
-				player->effect("on");
+			if(timeToSpawnBall <= 0.0f)
+			{
+				//player->effect("on");
 				doSpawnBall();
 			}
 		}
@@ -235,25 +243,41 @@ void Application::run(void)
 		gc.clear(CL_Colorf::white);
 
 		for(std::vector<Player*>::iterator it = players.begin();
-				it != players.end(); it++) {
+				it != players.end(); it++)
+		{
 			Player* pl = *it;
-			if(pl != 0) {
+			if(pl != 0)
+			{
 				pl->processInput();
 				kinect.drawPlayer(pl->getNumber());
 			}
 		}
 
-		for(EntitySet::iterator it = entities.begin(); it != entities.end();) {
+		for(EntitySet::iterator it = entities.begin(); it != entities.end();)
+		{
 			EntitySet::iterator next = it;
 			next++;
 			(*it)->updateposition(timediff);
 			(*it)->draw();
 
-			if(Ball* ball = dynamic_cast<Ball*>(*it)) {
-				if(checkBall(ball)) {
+			if(Ball* ball = dynamic_cast<Ball*>(*it))
+			{
+				if(checkBall(ball))
+				{
 					remEntity(ball);
 					delete ball;
 				}
+				if(playersActive == 2)
+            {
+				   if(players[PLAYER_LEFT]->getKick())
+               {
+				      ball->setCharge(ball->getCharge()*-1);
+               }
+				   if(players[PLAYER_RIGHT]->getKick())
+               {
+                  ball->setCharge(ball->getCharge()*-1);
+               }
+            }
 			}
 			it = next;
 		}
@@ -264,7 +288,8 @@ void Application::run(void)
 		osmRight.draw();
 		osmHuge.draw();
 
-		if(playersActive == 2) {
+		if(playersActive == 2)
+		{
 			// draw scores
 			std::ostringstream scoreLeftTxtStrm;
 			scoreLeftTxtStrm << players[PLAYER_LEFT]->getScore() << " : "
@@ -273,10 +298,12 @@ void Application::run(void)
 			CL_Size scoreSize = scoreFont.get_text_size(Application::get()->gc, scoreLeftTxt);
 			CL_Pointf scoreLeftPos((x_res - scoreSize.width) / 2, scoreSize.height);
 			scoreFont.draw_text(gc, scoreLeftPos, scoreLeftTxt, CL_Colorf::black);
-			if(!inMatch) {
+			if(!inMatch)
+			{
 				clearBalls();
 				timeToMatch -= timediff;
-				if(timeToMatch <= 0.0f) {
+				if(timeToMatch <= 0.0f)
+				{
 					startMatch();
 				}
 			}
@@ -284,6 +311,11 @@ void Application::run(void)
 			boostbarPR.setValue(players[PLAYER_RIGHT]->getBat()->getBoostctr());
 			boostbarPL.draw();
 			boostbarPR.draw();
+
+			if(players[PLAYER_LEFT]->getKick())
+			{
+
+			}
 		}
 
 //		TGString s = TGString("b1(") + ball.getPosition().x + "|" + ball.getPosition().y + ") b2(" + ball2.getPosition().x + "|" + ball2.getPosition().y + ")";
@@ -306,7 +338,8 @@ void Application::remEntity(Entity* entity)
 
 void Application::addPlayer(Player* player, int playerSlot)
 {
-	if(players[playerSlot] != 0) {
+	if(players[playerSlot] != 0)
+	{
 		remPlayer(playerSlot);
 	}
 	players[playerSlot] = player;
@@ -340,15 +373,18 @@ bool Application::checkBall(Ball* ball)
 	bool ballOut = false;
 	Vec2d pos = ball->getPosition();
 
-	if(pos.x < 0) {
+	if(pos.x < 0)
+	{
 		this->ballOut(ball, PLAYER_RIGHT);
 		ballOut = true;
 	}
-	else if(pos.x >= x_res) {
+	else if(pos.x >= x_res)
+	{
 		this->ballOut(ball, PLAYER_LEFT);
 		ballOut = true;
 	}
-	else if(!(pos.y >= 0 && pos.y < y_res)) {
+	else if(!(pos.y >= 0 && pos.y < y_res))
+	{
 		ballGone(ball);
 		ballOut = true;
 	}
@@ -419,6 +455,7 @@ void Application::startMatch(void)
 {
 	inMatch = true;
 	osmShout.setMessage("FIGHT", 3.0f);
+	player->effect("fight");
 	std::ostringstream centerText;
 	centerText << "Score " << SCORE_TO_WIN << " points to win";
 	osmCenter.setMessage(centerText.str(), 3.0f);

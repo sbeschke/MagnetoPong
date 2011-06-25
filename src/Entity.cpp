@@ -109,6 +109,7 @@ void Entity::setBoost(bool active)
    {
       if(boost != 1)
       {
+         Application::get()->player->effect("boost");
          boostctr = BOOSTRELOADTIME;
       }
       boost = 1;

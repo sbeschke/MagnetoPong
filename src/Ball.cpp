@@ -42,23 +42,31 @@ bool Ball::updateforces(const EntitySet& objects, float timedifference)
 			float length = distance.length();
 			float charge = object->getCharge() * this->getCharge();
 
+			bool positiv1 = getCharge() > 0;
+			bool positiv2 = object->getCharge() > 0;
+			if(positiv1 != positiv2) charge *= 1.5;
+
 			if( 2*RADIUS < length)
 			{
 				float forceAmount = charge * BALLACC / (length * length);
 				//std::cout << "Force amount: " << forceAmount << std::endl;
 				this->force += (distance/length) * forceAmount;
 			}
-			if (4*RADIUS < length)
+			else
 			{
 				//no inteaction because of overlap
-				overlap = true;
-
 			}
 
+			//sound
+			if(object->getRadius()*4*(object->getBoost()) + this->getRadius()*4*this->getBoost() > length)
+			{
+			   overlap = true;
+			}
 		}
 	}
 	return overlap;
 }
+
 void Ball::initializePosition()
 {
 	Vec2d startpos = windowFrame/2;

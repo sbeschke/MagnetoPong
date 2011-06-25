@@ -15,7 +15,7 @@
 #include <ClanLib/gl.h>
 #include <ClanLib/core.h>
 
-#define BOOSTRELOADTIME 10
+#define BOOSTRELOADTIME 5
 
 class Application;
 class Entity;
@@ -45,6 +45,7 @@ public:
 	virtual void setBoost(bool active);
 	virtual float getBoostctr();
 	virtual float getBoostRelaod();
+	virtual float getBoost() {return boost;}
 
 	virtual bool updateforces(const EntitySet& objects, float timedifference) {return false;}
 	virtual void updateposition(float timedifference);

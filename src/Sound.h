@@ -12,7 +12,7 @@
 #ifndef SOUND_H_
 #define SOUND_H_
 //Hashmap for the effects
-typedef std::map<std::string,CL_SoundBuffer*> EffectMap;
+typedef std::map<std::string, CL_SoundBuffer*> EffectMap;
 
 class Sound {
 public:

@@ -39,8 +39,8 @@ void BoostBar::draw()
    double x1;
    double x2;
    double x3;
-   double y1 = Application::y_res - 15;
-   double y2 = y1 - BB_HEIGHT;
+   double y1 = 15;
+   double y2 = y1 + BB_HEIGHT;
 
    double pos = BB_WIDTH * (akt_val/max_val);
 

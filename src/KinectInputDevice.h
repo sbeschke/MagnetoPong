@@ -22,15 +22,18 @@ public:
    CL_Point getPoint(void);
    float getZ(void);
    bool  getJump();
+   bool  getKick();
 
 private:
    bool leftHand;
    int  playerNr;
 
+   bool kicking;
+
    double lastTorsoY;
 
    double x_offset;
-   double x_pstrech;
+      double x_pstrech;
    double x_nstrech;
    double x_min;
    double x_max;
