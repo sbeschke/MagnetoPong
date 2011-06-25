@@ -20,7 +20,7 @@
 //---------------------------------------------------------------------------
 
 //#define RECORD_FILE     "../../../Data/Recording.oni"
-//#define SAMPLE_XML_PATH "Sample-User.xml"
+#define SAMPLE_XML_PATH "Sample-User.xml"
 
 #define POSE_TO_USE "Psi"
 
@@ -101,7 +101,10 @@ OpenNi::OpenNi()
 
    rc = g_Context.Init();
    CHECK_RC(rc, "init");
-
+   XnLicense license = {"PrimeSense", "0KOIk2JeIBYClPWVnMoRKn5cdY4="};
+   rc = g_Context.AddLicense(license);
+   CHECK_RC(rc, "Licence");
+   if(rc != XN_STATUS_OK) return;
    rc = g_DepthGenerator.Create(g_Context);
 
    rc = g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator);
