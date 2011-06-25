@@ -99,13 +99,19 @@ Application::Application(void)
 {
 
 	CL_FontDescription font_desc;
-	font_desc.set_typeface_name("tahoma");
-	font_desc.set_height(30);
-	osmCenter = OnScreenMessage(CL_Pointf(x_res / 2, y_res / 2), font_desc, CL_Colorf::darkslateblue);
+	font_desc.set_typeface_name("DejaVu Sans");
+	font_desc.set_height(50);
+	osmCenter = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.75f), font_desc, CL_Colorf::darkslateblue);
+	osmShout = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.25f), font_desc, CL_Colorf::deeppink);
 	osmLeft = OnScreenMessage(CL_Pointf(x_res / 4, y_res / 2), font_desc,
 			playerColors[PLAYER_LEFT]);
 	osmRight = OnScreenMessage(CL_Pointf(x_res * 3 / 4, y_res / 2),
 			font_desc, playerColors[PLAYER_RIGHT]);
+
+	spawnBall = false;
+	timeToSpawnBall = 0.0f;
+	inMatch = false;
+	timeToMatch = 0.0f;
 }
 
 void Application::run(void)
@@ -138,8 +144,8 @@ void Application::run(void)
 	CL_Sprite boat_sprite(gc, "Boat", &resources);
 
 	CL_FontDescription font_desc;
-	font_desc.set_typeface_name("tahoma");
-	font_desc.set_height(30);
+	font_desc.set_typeface_name("Verdana Sans");
+	font_desc.set_height(80);
 	CL_Font_System font(gc, font_desc);
 
 	CL_FontDescription scoreFont_desc;
@@ -147,8 +153,8 @@ void Application::run(void)
 	scoreFont_desc.set_height(30);
 	CL_Font_System scoreFont(gc, scoreFont_desc);
 
-	osmCenter.setMessage("Welcome to MagnetoPong!", 5.0f);
 
+	playersChanged();
 	clearBalls();
 
 	void addPlayer(int num);
@@ -168,7 +174,15 @@ void Application::run(void)
 			(*it)->updateforces(entities,timediff);
 		}
 
+		if(spawnBall) {
+			timeToSpawnBall -= timediff;
+			if(timeToSpawnBall <= 0.0f) {
+				doSpawnBall();
+			}
+		}
+
 		osmCenter.tick((float)timediff / 1000.0f);
+		osmShout.tick((float)timediff / 1000.0f);
 		osmLeft.tick((float)timediff / 1000.0f);
 		osmRight.tick((float)timediff / 1000.0f);
 
@@ -199,18 +213,28 @@ void Application::run(void)
 		}
 
 		osmCenter.draw();
+		osmShout.draw();
 		osmLeft.draw();
 		osmRight.draw();
 
 		if(playersActive == 2) {
-			// draw scores
-			std::ostringstream scoreLeftTxtStrm;
-			scoreLeftTxtStrm << players[PLAYER_LEFT]->getScore() << " : "
-					<< players[PLAYER_RIGHT]->getScore();
-			std::string scoreLeftTxt = scoreLeftTxtStrm.str();
-			CL_Size scoreSize = scoreFont.get_text_size(Application::get()->gc, scoreLeftTxt);
-			CL_Pointf scoreLeftPos((x_res + scoreSize.width) / 2, scoreSize.height);
-			scoreFont.draw_text(gc, scoreLeftPos, scoreLeftTxt, CL_Colorf::black);
+			if(inMatch) {
+				// draw scores
+				std::ostringstream scoreLeftTxtStrm;
+				scoreLeftTxtStrm << players[PLAYER_LEFT]->getScore() << " : "
+						<< players[PLAYER_RIGHT]->getScore();
+				std::string scoreLeftTxt = scoreLeftTxtStrm.str();
+				CL_Size scoreSize = scoreFont.get_text_size(Application::get()->gc, scoreLeftTxt);
+				CL_Pointf scoreLeftPos((x_res + scoreSize.width) / 2, scoreSize.height);
+				scoreFont.draw_text(gc, scoreLeftPos, scoreLeftTxt, CL_Colorf::black);
+			}
+			else {
+				clearBalls();
+				timeToMatch -= timediff;
+				if(timeToMatch <= 0.0f) {
+					startMatch();
+				}
+			}
 		}
 
 //		TGString s = TGString("b1(") + ball.getPosition().x + "|" + ball.getPosition().y + ") b2(" + ball2.getPosition().x + "|" + ball2.getPosition().y + ")";
@@ -239,23 +263,7 @@ void Application::addPlayer(Player* player, int playerSlot)
 	players[playerSlot] = player;
 	playersActive++;
 
-	clearBalls();
-
-	switch(playersActive) {
-	case 0: {
-		break;
-	}
-	case 1: {
-		osmCenter.setMessage("Waiting for Player 2");
-		break;
-	}
-	case 2: {
-		startMatch();
-		osmCenter.setMessage("FIGHT", 3.0f);
-		break;
-	}
-	default: throw std::exception(); break;
-	}
+	playersChanged();
 }
 
 void Application::remPlayer(int playerSlot)
@@ -266,8 +274,15 @@ void Application::remPlayer(int playerSlot)
 	players[playerSlot] = 0;
 	playersActive--;
 
-	osmCenter.setMessage("Player OUT", 3.0f);
+	if(playerSlot == PLAYER_LEFT) {
+		osmLeft.setMessage("Player OUT", 5.0f);
+	}
+	if(playerSlot == PLAYER_RIGHT) {
+		osmRight.setMessage("Player OUT", 5.0f);
+	}
+
 	endMatch();
+	playersChanged();
 }
 
 // return true if ball is out
@@ -277,11 +292,11 @@ bool Application::checkBall(Ball* ball)
 	Vec2d pos = ball->getPosition();
 
 	if(pos.x < 0) {
-		ballOutLeft(ball);
+		this->ballOut(ball, PLAYER_RIGHT);
 		ballOut = true;
 	}
 	else if(pos.x >= x_res) {
-		ballOutRight(ball);
+		this->ballOut(ball, PLAYER_LEFT);
 		ballOut = true;
 	}
 	else if(!(pos.y >= 0 && pos.y < y_res)) {
@@ -291,16 +306,16 @@ bool Application::checkBall(Ball* ball)
 
 	if(ballOut) {
 		switch(playersActive) {
-		case 0: {
-			makeBall();
-			break;
-		}
-		case 1: {
-			makeBall();
+		case 0:
+		case 1:{
+			if(entities.size() <= 5) {
+				makeBall();
+			}
 			break;
 		}
 		case 2: {
-			makeBall();
+			spawnBall = true;
+			timeToSpawnBall = 3000.0f;
 			break;
 		}
 		default: throw std::exception(); break;
@@ -310,20 +325,29 @@ bool Application::checkBall(Ball* ball)
 	return ballOut;
 }
 
-void Application::ballOutLeft(Ball* ball) {
+void Application::ballOut(Ball* ball, int playerSlot) {
 	if(playersActive == 2) {
-		osmCenter.setMessage("Right Player Scores", 2.0f);
-		players[PLAYER_RIGHT]->incrementScore();
+		players[playerSlot]->incrementScore();
+
+		if(players[playerSlot]->getScore() >= SCORE_TO_WIN) {
+			endMatch();
+			if(playerSlot == PLAYER_RIGHT) {
+				osmShout.setMessage("Right WINS", 5.0f);
+			}
+			else if(playerSlot == PLAYER_LEFT) {
+				osmShout.setMessage("Left WINS", 5.0f);
+			}
+		}
+		else {
+			if(playerSlot == PLAYER_RIGHT) {
+				osmShout.setMessage("Right Scores", 2.0f);
+			}
+			else if(playerSlot == PLAYER_LEFT) {
+				osmShout.setMessage("Left Scores", 2.0f);
+			}
+		}
 	}
 }
-
-void Application::ballOutRight(Ball* ball) {
-	if(playersActive == 2) {
-		osmCenter.setMessage("Left Player Scores", 2.0f);
-		players[PLAYER_LEFT]->incrementScore();
-	}
-}
-
 void Application::ballGone(Ball* ball) {
 
 }
@@ -339,22 +363,6 @@ void Application::clearBalls(void) {
 		it = next;
 	}
 
-	switch(playersActive) {
-	case 0: {
-		makeBall();
-		makeBall();
-		break;
-	}
-	case 1: {
-		makeBall();
-		break;
-	}
-	case 2: {
-		makeBall();
-		break;
-	}
-	default: throw std::exception(); break;
-	}
 }
 
 void Application::makeBall(void)
@@ -369,13 +377,67 @@ void Application::makeBall(void)
 
 void Application::startMatch(void)
 {
+	inMatch = true;
+	osmShout.setMessage("FIGHT", 3.0f);
 	for(std::vector<Player*>::iterator it = players.begin(); it != players.end(); it++) {
 		if(*it != 0) {
 			(*it)->setScore(0);
 		}
 	}
+	makeBall();
 }
 
 void Application::endMatch(void)
 {
+	prepareMatch();
+}
+
+void Application::doSpawnBall(void)
+{
+	switch(playersActive) {
+		case 0:
+		case 1:{
+			makeBall();
+			spawnBall = false;
+			//spawnBall = true;
+			//timeToSpawnBall = 3000.0f;
+			break;
+		}
+		case 2: {
+			makeBall();
+			spawnBall = false;
+			break;
+		}
+		default: throw std::exception(); break;
+		}
+}
+
+void Application::prepareMatch(void)
+{
+	spawnBall = false;
+	inMatch = false;
+	timeToMatch = 5000.0f;
+}
+
+void Application::playersChanged(void)
+{
+	switch(playersActive) {
+		case 0:
+			osmCenter.setMessage("Stand in front of camera to play MagnetoPong!");
+			spawnBall = true;
+			timeToSpawnBall = 3000.0f;
+			break;
+		case 1:{
+			osmCenter.setMessage("Waiting for player 2 – Stand in front of camera to play MagnetoPong!");
+//			spawnBall = true;
+//			timeToSpawnBall = 3000.0f;
+			break;
+		}
+		case 2: {
+			osmCenter.setMessage("Get ready...", 3.0f);
+			prepareMatch();
+			break;
+		}
+		default: throw std::exception(); break;
+	}
 }

@@ -78,6 +78,7 @@ void Ball::updateposition(float timedifference)
 	}
 	this->setPosition(newpos);
 
+
 }
 Vec2d Ball::getForce()
 {
