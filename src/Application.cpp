@@ -122,6 +122,15 @@ Application::Application(void)
 	timeToSpawnBall = 0.0f;
 	inMatch = false;
 	timeToMatch = 0.0f;
+	player = new Sound();
+	std::map<std::string,std::string> effects;
+
+	effects["on"]="effects/ltsaberon01.wav";
+	effects["collision"]="effects/ltsaberbodyhit01.wav";
+	player->loadeffects(effects);
+
+
+
 }
 
 void Application::run(void)
@@ -174,6 +183,7 @@ void Application::run(void)
 
 	while (!quit)
 	{
+
 		kinect.update();
 
 		int timediff = CL_System::get_time() - start ;
@@ -197,14 +207,18 @@ void Application::run(void)
 			addPlayer(player, playerSlot);
 		}
 
-
+		bool collision = false;
 		for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++) {
-			(*it)->updateforces(entities,timediff);
+			collision = collision || (*it)->updateforces(entities,timediff);
+		}
+		if(collision){
+		player->effect("collision");
 		}
 
 		if(spawnBall) {
 			timeToSpawnBall -= timediff;
 			if(timeToSpawnBall <= 0.0f) {
+				player->effect("on");
 				doSpawnBall();
 			}
 		}

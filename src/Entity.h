@@ -46,7 +46,7 @@ public:
 	virtual float getBoostctr();
 	virtual float getBoostRelaod();
 
-	virtual void updateforces(const EntitySet& objects, float timedifference) {}
+	virtual bool updateforces(const EntitySet& objects, float timedifference) {return false;}
 	virtual void updateposition(float timedifference);
 
 protected:
