@@ -292,13 +292,13 @@ bool Application::checkBall(Ball* ball)
 
 void Application::ballOutLeft(Ball* ball) {
 	if(playersActive == 2) {
-		osmCenter.setMessage("Left Player Scores", 2.0f);
+		osmCenter.setMessage("Right Player Scores", 2.0f);
 	}
 }
 
 void Application::ballOutRight(Ball* ball) {
 	if(playersActive == 2) {
-		osmCenter.setMessage("Right Player Scores", 2.0f);
+		osmCenter.setMessage("Left Player Scores", 2.0f);
 	}
 }
 
