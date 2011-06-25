@@ -18,8 +18,13 @@ Player::Player(Application* application, InputDevice* device)
 }
 
 Player::~Player() {
-	application->remEntity(bat);
+
 	delete bat;
+}
+
+void Player::quit(void)
+{
+	application->remEntity(bat);
 }
 
 void Player::processInput(void) {

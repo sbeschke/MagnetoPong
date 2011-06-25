@@ -52,7 +52,8 @@ void PlayerCallback::playerLost(int nr)
 		if(player != 0 && player->getNumber() == nr) {
 			std::cout << "Lost player on side " << playerSlot << std::endl;
 			//delete player;
-			app->players[playerSlot = 0];
+			player->quit();
+			app->players[playerSlot] = 0;
 		}
 	}
 }
