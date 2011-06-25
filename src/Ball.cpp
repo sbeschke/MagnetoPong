@@ -49,22 +49,11 @@ void Ball::updateforces(const EntitySet& objects, float timedifference)
 			}
 			else
 			{
-
-
-
+				//no inteaction because of overlap
 			}
 
 		}
 	}
-	//borderforces
-
-	/*int distance_to_middle = 240 - position.y;
-	float borderparam = 1e-6;
-	float borderforce = borderparam*(distance_to_middle);
-	this->force.y += borderforce;*/
-
-
-
 }
 void Ball::initializePosition()
 {
@@ -88,7 +77,11 @@ void Ball::updateposition(float timedifference)
 		newpos.y= RADIUS;
 	}
 	this->setPosition(newpos);
+<<<<<<< HEAD
+	if(!( 0 < newpos.x  && newpos.x < windowFrame.x && 0 < newpos.y  && newpos.y < windowFrame.y))
+=======
 /*	if(newpos.x > windowFrame.x || newpos.x < 0 || newpos.y > windowFrame.y || newpos.y < 0)
+>>>>>>> d5ca8863468891b7e47f95d00b1f395b9e88c8df
 	{
 
 		initializePosition();
