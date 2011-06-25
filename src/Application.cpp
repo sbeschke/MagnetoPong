@@ -7,6 +7,7 @@
 #include "MouseInputDevice.h"
 #include "KinectInputDevice.h"
 #include "OnScreenMessage.h"
+#include "TGString.h"
 
 
 Application* Application::myself;
@@ -166,10 +167,8 @@ void Application::run(void)
 		osmLeft.draw();
 		osmRight.draw();
 
-	//	TGString s = "b1(" << ball.getPosition().x << "|" << ball.getPosition().y << ") b2(" << ball2.getPosition().x << "|" << ball2.getPosition().y << ")\n";
-	//	      font.draw_text(Application::myself->gc, 10, 20*nr, s.c_str());
-
-	//	cout <<
+//		TGString s = TGString("b1(") + ball.getPosition().x + "|" + ball.getPosition().y + ") b2(" + ball2.getPosition().x + "|" + ball2.getPosition().y + ")";
+	//	font.draw_text(Application::myself->gc, 10, 20, s.c_str(), CL_Colorf::black);
 
 		window.flip();
 		CL_KeepAlive::process();
