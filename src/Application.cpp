@@ -273,6 +273,10 @@ void Application::run(void)
                {
 				      ball->setCharge(ball->getCharge()*-1);
                }
+				   if(players[PLAYER_RIGHT]->getKick())
+               {
+                  ball->setCharge(ball->getCharge()*-1);
+               }
             }
 			}
 			it = next;

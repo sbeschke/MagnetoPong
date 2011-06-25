@@ -138,15 +138,15 @@ bool KinectInputDevice::getJump()
 
 bool KinectInputDevice::getKick()
 {
-   double winkel = Application::myself->kinect.getWinkel(playerNr, P_LHIP, P_RHIP, P_RKNEE);
-   cout << winkel << endl;
-   if(winkel > 170 && !kicking)
+   double winkel = Application::myself->kinect.getWinkel(playerNr, P_RSHOULDER, P_RHIP, P_RKNEE);
+ //  cout << winkel << endl;
+   if(winkel < 90  && !kicking)
    {
       cout << "kick\n";
       kicking = true;
       return true;
    }
-   else if(winkel < 170)
+   else if(winkel > 90)
    {
       kicking = false;
    }
