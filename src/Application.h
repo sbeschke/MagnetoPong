@@ -37,8 +37,10 @@ class Application
 private:
 	bool quit;
 	CL_GraphicContext graphicContext;
-	Sound *player;
+
 public:
+
+	Sound *player;
 
 	PlayerCallback playerCallback;
 

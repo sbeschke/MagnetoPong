@@ -45,6 +45,7 @@ public:
 	virtual void setBoost(bool active);
 	virtual float getBoostctr();
 	virtual float getBoostRelaod();
+	virtual float getBoost() {return boost;}
 
 	virtual bool updateforces(const EntitySet& objects, float timedifference) {return false;}
 	virtual void updateposition(float timedifference);

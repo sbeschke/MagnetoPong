@@ -19,7 +19,7 @@ public:
 	CL_Point getPoint(void);
 	float getZ(void);
 	bool getJump(void) { return false; }
-
+	bool  getKick() {return false;}
 
 private:
 

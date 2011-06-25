@@ -52,17 +52,21 @@ bool Ball::updateforces(const EntitySet& objects, float timedifference)
 				//std::cout << "Force amount: " << forceAmount << std::endl;
 				this->force += (distance/length) * forceAmount;
 			}
-			if (4*RADIUS < length)
+			else
 			{
 				//no inteaction because of overlap
-				overlap = true;
-
 			}
 
+			//sound
+			if(object->getRadius()*4*(object->getBoost()) + this->getRadius()*4*this->getBoost() > length)
+			{
+			   overlap = true;
+			}
 		}
 	}
 	return overlap;
 }
+
 void Ball::initializePosition()
 {
 	Vec2d startpos = windowFrame/2;

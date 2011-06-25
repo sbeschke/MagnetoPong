@@ -20,6 +20,7 @@ public:
 	virtual CL_Point getPoint(void) =0;
 	virtual float getZ(void) =0;
 	virtual bool  getJump() =0;
+	virtual bool  getKick() =0;
 };
 
 #endif /* INPUTDEVICE_H_ */
