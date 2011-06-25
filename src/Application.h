@@ -63,6 +63,7 @@ public:
 	OpenNi kinect;
 
 	OnScreenMessage osmCenter;
+	OnScreenMessage osmShout;
 	OnScreenMessage osmLeft;
 	OnScreenMessage osmRight;
 
@@ -97,6 +98,12 @@ public:
 
 	void startMatch(void);
 	void endMatch(void);
+
+	float timeToSpawnBall;
+	bool spawnBall;
+	void doSpawnBall(void);
+
+	void playersChanged(void);
 };
 
 #endif // APPLICATION_H_
