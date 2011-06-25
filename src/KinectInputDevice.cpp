@@ -57,9 +57,9 @@ CL_Point KinectInputDevice::getPoint(void)
       p = Application::myself->kinect.getPlayerPart(playerNr, P_LHAND, P_LSHOULDER);
    }
 
-   if(!x_kali || !y_kali)
+   if(!x_kali)// || !y_kali)
    {
-      double winkel = Application::myself->kinect.getWinkel(playerNr, !leftHand);
+      double winkel = Application::myself->kinect.getWinkel(playerNr, leftHand);
       if(winkel < 5)
       {
          if((p.z < 100) && (p.z > -20))
@@ -83,7 +83,7 @@ CL_Point KinectInputDevice::getPoint(void)
                   cout << "x_kalk " << x_strech << "\n";
                }
             }
-   /*         else if((p.x < 50) && (p.x > -50) && !y_kali)
+    /*        else if((p.x < 50) && (p.x > -50) && !y_kali)
             {
                if(p.y > 0)
                {
@@ -117,8 +117,8 @@ CL_Point KinectInputDevice::getPoint(void)
 float KinectInputDevice::getZ(void)
 {
    double winkel = Application::myself->kinect.getWinkel(playerNr, !leftHand);
-   winkel -= 45;
-   winkel /= 45;
+   winkel -= 90.0;
+   winkel /= 90.0;
    if(winkel > 1.0) winkel = 1.0;
    else if(winkel < -1.0) winkel = -1.0;
 
