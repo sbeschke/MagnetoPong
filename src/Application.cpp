@@ -19,18 +19,43 @@ void PlayerCallback::playerRecognized(int nr)
 {
 	Application* app = Application::get();
 	if(app->players[Application::PLAYER_RIGHT] == 0) {
-		Application::get()->osmRight.add(OnScreenMessage("Welcome. Please PSI!", 5.0f));
+		Application::get()->osmRight.setMessage("Welcome. Please form a PSI to calibrate.", 5.0f);
 	}
 	else if(app->players[Application::PLAYER_LEFT] == 0) {
-		Application::get()->osmLeft.add(OnScreenMessage("Welcome. Please PSI!", 5.0f));
+		Application::get()->osmLeft.setMessage("Welcome. Please form a PSI to calibrate.", 5.0f);
+	}
+
+}
+
+void PlayerCallback::calibrationStart(int nr)
+{
+	Application* app = Application::get();
+	if(app->players[Application::PLAYER_RIGHT] == 0) {
+		Application::get()->osmRight.setMessage("Calibrating...");
+	}
+	else if(app->players[Application::PLAYER_LEFT] == 0) {
+		Application::get()->osmLeft.setMessage("Calibrating...");
 	}
 	else {
-		Application::get()->osmCenter.add(OnScreenMessage("Too many players, please go away!", 5.0f));
+		Application::get()->osmCenter.setMessage("Too many players, please go away!", 5.0f);
+	}
+}
+
+void PlayerCallback::calibrationFailed(int nr)
+{
+	Application* app = Application::get();
+	if(app->players[Application::PLAYER_RIGHT] == 0) {
+		Application::get()->osmRight.setMessage("Calibration failed", 2.0f);
+	}
+	else if(app->players[Application::PLAYER_LEFT] == 0) {
+		Application::get()->osmLeft.setMessage("Calibration failed", 2.0f);
 	}
 }
 
 void PlayerCallback::playerCalibrated(int nr)
 {
+	Application::get()->osmRight.hide();
+	Application::get()->osmLeft.hide();
 	Application* app = Application::get();
 	unsigned int playerSlot = Application::PLAYER_RIGHT;
 	if(app->players[Application::PLAYER_RIGHT] != 0) {
@@ -75,10 +100,10 @@ Application::Application(void)
 	CL_FontDescription font_desc;
 	font_desc.set_typeface_name("tahoma");
 	font_desc.set_height(30);
-	osmCenter = OnScreenMessageList(CL_Pointf(x_res / 2, y_res / 2), font_desc, CL_Colorf::darkslateblue);
-	osmLeft = OnScreenMessageList(CL_Pointf(x_res / 4, y_res / 2), font_desc,
+	osmCenter = OnScreenMessage(CL_Pointf(x_res / 2, y_res / 2), font_desc, CL_Colorf::darkslateblue);
+	osmLeft = OnScreenMessage(CL_Pointf(x_res / 4, y_res / 2), font_desc,
 			playerColors[PLAYER_LEFT]);
-	osmRight = OnScreenMessageList(CL_Pointf(x_res * 3 / 4, y_res / 2),
+	osmRight = OnScreenMessage(CL_Pointf(x_res * 3 / 4, y_res / 2),
 			font_desc, playerColors[PLAYER_RIGHT]);
 }
 
@@ -115,7 +140,7 @@ void Application::run(void)
 	font_desc.set_height(30);
 	CL_Font_System font(gc, font_desc);
 
-	Application::get()->osmCenter.add(OnScreenMessage("Welcome to MagnetoPong!", 5.0f));
+	Application::get()->osmCenter.setMessage("Welcome to MagnetoPong!", 5.0f);
 
 	Ball ball(this,Vec2d(Application::x_res, Application::y_res));
 	ball.initializePosition();

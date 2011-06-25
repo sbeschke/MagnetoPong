@@ -10,12 +10,14 @@
 #include "OpenNi.h"
 #include "Player.h"
 #include "Entity.h"
-#include "OnScreenMessageList.h"
+#include "OnScreenMessage.h"
 
 class PlayerCallback : public OpenNiPlayerCallback
 {
 public:
 	void playerRecognized(int nr);
+	void calibrationStart(int nr);
+	void calibrationFailed(int nr);
 	void playerCalibrated(int nr);
 	void playerLost(int nr);
 };
@@ -56,9 +58,9 @@ public:
 
 	OpenNi kinect;
 
-	OnScreenMessageList osmCenter;
-	OnScreenMessageList osmLeft;
-	OnScreenMessageList osmRight;
+	OnScreenMessage osmCenter;
+	OnScreenMessage osmLeft;
+	OnScreenMessage osmRight;
 
 	CL_GraphicContext& getGC(void)
 	{
