@@ -15,8 +15,17 @@ public:
 		CL_SetupCore setup_core;
 		CL_SetupDisplay setup_display;
 		CL_SetupGL setup_gl;
+
+		Application::detail = 1;
 		Application::x_res = 1300;
 		Application::y_res = 600;
+
+		for(std::vector<CL_String>::const_iterator it = args.begin(); it != args.end(); it++) {
+			if(*it == "low") {
+				Application::detail = 0;
+			}
+		}
+
 		try
 		{
 			Application example;
