@@ -112,6 +112,7 @@ Application::Application(void)
 	timeToSpawnBall = 0.0f;
 	inMatch = false;
 	timeToMatch = 0.0f;
+	player = new Sound();
 }
 
 void Application::run(void)

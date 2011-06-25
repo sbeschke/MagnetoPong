@@ -12,6 +12,7 @@
 #include "Player.h"
 #include "Entity.h"
 #include "OnScreenMessage.h"
+#include "Sound.h"
 
 class Ball;
 
@@ -36,7 +37,7 @@ class Application
 private:
 	bool quit;
 	CL_GraphicContext graphicContext;
-
+	Sound *player;
 public:
 
 	PlayerCallback playerCallback;
