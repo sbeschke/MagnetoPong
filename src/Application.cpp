@@ -137,6 +137,7 @@ Application::Application(void)
 	effects["boost"]="effects/ohjea.ogg";
 	player->loadeffects(effects);
 
+
 }
 
 void Application::run(void)

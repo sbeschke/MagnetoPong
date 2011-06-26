@@ -21,14 +21,7 @@
 
 //#define RECORD_FILE     "../../../Data/Recording.oni"
 #define SAMPLE_XML_PATH "Sample-User.xml"
-#define CHECK_ERRORS(rc, errors, what)		\
-	if (rc == XN_STATUS_NO_NODE_PRESENT)	\
-{										\
-	XnChar strError[1024];				\
-	errors.ToString(strError, 1024);	\
-	printf("%s\n", strError);			\
-	return ;						\
-}
+
 
 #define POSE_TO_USE "Psi"
 
@@ -124,12 +117,14 @@ void OpenNi::init()
 
    rc = g_Context.Init();
    CHECK_RC(rc, "Context.init");
+//   This should work but does not perhaps further information is needed
 //   XnLicense license = {"PrimeSense", "0KOIk2JeIBYClPWVnMoRKn5cdY4="};
 //   rc = g_Context.AddLicense(license);
+//  CHECK_RC(rc, "Licence");
+   //the legacy way of initializing from xml Path
    rc = g_Context.InitFromXmlFile(SAMPLE_XML_PATH);
-  // CHECK_ERRORS(rc, errors, "InitFromXmlFile");
    CHECK_RC(rc, "InitFromXml");
- //  CHECK_RC(rc, "Licence");
+
    if(rc != XN_STATUS_OK) return;
    rc = g_DepthGenerator.Create(g_Context);
 

@@ -31,6 +31,12 @@ If the booster is charged (see color bar in the respective player`s corner) the 
 So jumping up is one possibility to start the boost.
 Beding knees and then jumping up covers a bigger distance and icreases the boost.
 
+Callibration of the screen
+-------------------------
+The game can measure the length of each player`s arm radius to recallibrate the game display. 
+This is done automatically when you stretch your ball moving arm to the left, to the right and back to the left while not moving your shoulder part. 
+Basically the game measures the angle of your ellbow here (near 180° degrees) and maps the size of the box to the distance your leading arm can stretch.
+
 Have fun and don´t twist your ankles or punch your adversary while playing! :D
 
 
