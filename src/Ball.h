@@ -34,6 +34,8 @@ public:
 
 	Vec2d getForce();
 
+	void  setSpeed(Vec2d v);
+
 private:
 	Vec2d speed;
 	Vec2d force;

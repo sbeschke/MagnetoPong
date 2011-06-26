@@ -29,7 +29,11 @@ KinectInputDevice::KinectInputDevice(int nr, bool lefthand)
    x_max = 0;
 
    lastTorsoY = 0;
-   kicking = false;
+   kickingR = false;
+   kickingL = false;
+   invert   = false;
+   jumping  = false;
+   invertTimeout = 0;
 }
 
 KinectInputDevice::~KinectInputDevice()
@@ -49,7 +53,7 @@ void KinectInputDevice::setPlayer(int nr)
 }
 //---------------------------------------------------------------------------
 
-CL_Point KinectInputDevice::getPoint(void)
+CL_Point KinectInputDevice::getPoint(float timepast)
 {
    OpenNiPoint p;
    double x_nwinkel;
@@ -66,8 +70,15 @@ CL_Point KinectInputDevice::getPoint(void)
       x_pwinkel = 160;
       x_nwinkel = 110;
    }
-
-   if(x_max == 0 || x_min == 0)// || !y_kali)
+   if(invert)
+   {
+      invertTimeout += timepast;
+      cout << invert;
+      p.x *= -1.0;
+      p.y *= -1.0;
+      if(invertTimeout > 20000) invert = false;
+   }
+   else if(x_max == 0 || x_min == 0)// || !y_kali)
    {
       if((p.z < 100) && (p.z > -20))
       {
@@ -122,34 +133,84 @@ float KinectInputDevice::getZ(void)
 bool KinectInputDevice::getJump()
 {
    OpenNiPoint p = Application::myself->kinect.getPlayerPart(playerNr, P_TORSO);
-   bool jump = false;
+   jumping = false;
    if(lastTorsoY)
    {
       if(p.y < lastTorsoY - 30)
       {
-         jump = true;
+         jumping = true;
       }
    }
 
    lastTorsoY = p.y;
-   return jump;
+   return jumping;
 }
 //---------------------------------------------------------------------------
 
-bool KinectInputDevice::getKick()
+int KinectInputDevice::getEsterEgg()
 {
-   double winkel = Application::myself->kinect.getWinkel(playerNr, P_RSHOULDER, P_RHIP, P_RKNEE);
- //  cout << winkel << endl;
-   if(winkel < 90  && !kicking)
+   int egg = 0;
+   double winkel;
+   winkel = Application::myself->kinect.getWinkel(playerNr, P_RSHOULDER, P_RHIP, P_RKNEE);
+
+   if(winkel < 90  && !kickingR)
    {
-      cout << "kick\n";
-      kicking = true;
-      return true;
+      if(jumping)
+      {
+         egg = EGG_MEGA;
+         cout << "Mega Egg\n";
+         if(!leftHand)
+         {
+            Application::get()->osmRight.setMessage("you found the megaEgg", 2);
+         }
+         else
+         {
+            Application::get()->osmLeft.setMessage("you found the megaEgg", 2);
+         }
+
+      }
+      else
+      {
+         egg = EGG_POL;
+      }
+      kickingR = true;
    }
    else if(winkel > 90)
    {
-      kicking = false;
+      kickingR = false;
    }
-   return false;
+
+   if(!egg)
+   {
+      winkel = Application::myself->kinect.getWinkel(playerNr, P_LSHOULDER, P_LHIP, P_LKNEE);
+
+      if(winkel < 90  && !kickingL)
+      {
+         if(jumping)
+         {
+         /*   cout << "Mega Egg\n";
+            if(!leftHand)
+            {
+               Application::get()->osmRight.setMessage("you found the megaEgg", 2);
+            }
+            else
+            {
+               Application::get()->osmLeft.setMessage("you found the megaEgg", 2);
+            }
+            egg = EGG_MEGA;*/
+         }
+         else
+         {
+            egg = EGG_STOP;
+         }
+         kickingL = true;
+      }
+      else if(winkel > 90)
+      {
+         kickingL = false;
+      }
+   }
+
+   return egg;
 }
 //---------------------------------------------------------------------------
