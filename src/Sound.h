@@ -18,13 +18,13 @@ class Sound {
 public:
 	virtual ~Sound();
 	Sound();
-	void setmusik(std::string filename);
+	void setmusic(std::string filename);
 	void play();
 	void effect(std::string name);
 	void loadeffects(std::map<std::string,std::string> &effects);
 private:
 	EffectMap effects;
-	CL_SoundBuffer_Session musik;
+	CL_SoundBuffer_Session music;
 	CL_SetupSound setup_sound;
 	CL_SetupMikMod setup_mikmod;
 	CL_SetupVorbis setup_vorbis;
