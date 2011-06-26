@@ -87,6 +87,7 @@ void PlayerCallback::playerCalibrated(int nr)
 	}
 
 	app->addPlayer(player, playerSlot);
+	Application::get()->soundPlayer->effect("playeron");
 }
 //---------------------------------------------------------------------------
 
@@ -139,7 +140,8 @@ Application::Application(void)
 	effects["point"]="effects/ping.ogg";
 	effects["win"]="effects/aus.ogg";
 	effects["fight"]="effects/fight.ogg";
-	effects["boost"]="effects/ohjea.ogg";
+//	effects["boost"]="effects/ohjea.ogg";
+	effects["playeron"]="effects/ohjea.ogg";
 	soundPlayer->loadeffects(effects);
 }
 //---------------------------------------------------------------------------
