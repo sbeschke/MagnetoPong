@@ -56,9 +56,7 @@ public:
 	const static unsigned int PLAYER_LEFT = 0;
 	const static unsigned int PLAYER_RIGHT = 1;
 
-	static Application* get(void) {
-		return myself;
-	}
+	static Application* get(void) {return myself;}
 
 
 	EntitySet entities;
