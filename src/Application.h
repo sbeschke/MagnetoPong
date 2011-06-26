@@ -40,7 +40,7 @@ private:
 
 public:
 
-	Sound *player;
+	Sound *soundPlayer;
 
 	PlayerCallback playerCallback;
 
@@ -113,6 +113,8 @@ public:
 
 	void playersChanged(void);
 	void prepareMatch(void);
+
+	void doEsterEgg(int playerNr, int egg);
 };
 
 #endif // APPLICATION_H_
