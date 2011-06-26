@@ -18,7 +18,8 @@ Player::Player(Application* application, InputDevice* device)
 	application->addEntity(bat);
 }
 
-Player::~Player() {
+Player::~Player()
+{
 
 	delete bat;
 }
@@ -35,7 +36,8 @@ void Player::processInput(float timepast)
 	bat->setBoost(device->getJump());
 }
 
-Bat* Player::getBat(void) {
+Bat* Player::getBat(void)
+{
 	return bat;
 }
 
@@ -44,11 +46,13 @@ int Player::getEsterEgg()
    return device->getEsterEgg();
 }
 
-int Player::getNumber(void) {
+int Player::getNumber(void)
+{
 	return number;
 }
 
-void Player::setNumber(int number) {
+void Player::setNumber(int number)
+{
 	this->number = number;
 }
 

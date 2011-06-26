@@ -30,6 +30,7 @@ void PlayerCallback::playerRecognized(int nr)
 	}
 
 }
+//---------------------------------------------------------------------------
 
 void PlayerCallback::calibrationStart(int nr)
 {
@@ -44,6 +45,7 @@ void PlayerCallback::calibrationStart(int nr)
 		Application::get()->osmCenter.setMessage("Too many players, please go away!", 5.0f);
 	}
 }
+//---------------------------------------------------------------------------
 
 void PlayerCallback::calibrationFailed(int nr)
 {
@@ -55,6 +57,7 @@ void PlayerCallback::calibrationFailed(int nr)
 		Application::get()->osmLeft.setMessage("Calibration failed", 2.0f);
 	}
 }
+//---------------------------------------------------------------------------
 
 void PlayerCallback::playerCalibrated(int nr)
 {
@@ -85,6 +88,7 @@ void PlayerCallback::playerCalibrated(int nr)
 
 	app->addPlayer(player, playerSlot);
 }
+//---------------------------------------------------------------------------
 
 void PlayerCallback::playerLost(int nr)
 {
@@ -99,6 +103,7 @@ void PlayerCallback::playerLost(int nr)
 		}
 	}
 }
+//---------------------------------------------------------------------------
 
 Application::Application(void)
 {
@@ -136,9 +141,8 @@ Application::Application(void)
 	effects["fight"]="effects/fight.ogg";
 	effects["boost"]="effects/ohjea.ogg";
 	soundPlayer->loadeffects(effects);
-
-
 }
+//---------------------------------------------------------------------------
 
 void Application::run(void)
 {
@@ -285,7 +289,7 @@ void Application::run(void)
 		osmRight.draw();
 		osmHuge.draw();
 
-
+		//--Spieler Verarbeiten
 		if(playersActive == 2)
 		{
 			// draw scores
@@ -296,6 +300,7 @@ void Application::run(void)
 			CL_Size scoreSize = scoreFont.get_text_size(Application::get()->gc, scoreLeftTxt);
 			CL_Pointf scoreLeftPos((x_res - scoreSize.width) / 2, scoreSize.height);
 			scoreFont.draw_text(gc, scoreLeftPos, scoreLeftTxt, CL_Colorf::black);
+
 			if(!inMatch)
 			{
 				clearBalls();
@@ -319,16 +324,19 @@ void Application::run(void)
 		CL_KeepAlive::process();
 	}
 }
+//---------------------------------------------------------------------------
 
 void Application::addEntity(Entity* entity)
 {
 	entities.insert(entity);
 }
+//---------------------------------------------------------------------------
 
 void Application::remEntity(Entity* entity)
 {
 	entities.erase(entity);
 }
+//---------------------------------------------------------------------------
 
 void Application::addPlayer(Player* player, int playerSlot)
 {
@@ -341,6 +349,7 @@ void Application::addPlayer(Player* player, int playerSlot)
 
 	playersChanged();
 }
+//---------------------------------------------------------------------------
 
 void Application::remPlayer(int playerSlot)
 {
@@ -360,6 +369,7 @@ void Application::remPlayer(int playerSlot)
 	endMatch();
 	playersChanged();
 }
+//---------------------------------------------------------------------------
 
 // return true if ball is out
 bool Application::checkBall(Ball* ball)
@@ -385,6 +395,7 @@ bool Application::checkBall(Ball* ball)
 
 	return ballOut;
 }
+//---------------------------------------------------------------------------
 
 void Application::ballOut(Ball* ball, int playerSlot)
 {
@@ -422,10 +433,13 @@ void Application::ballOut(Ball* ball, int playerSlot)
 		}
 	}
 }
+//---------------------------------------------------------------------------
+
 void Application::ballGone(Ball* ball)
 {
 	makeBall();
 }
+//---------------------------------------------------------------------------
 
 void Application::clearBalls(void)
 {
@@ -440,6 +454,7 @@ void Application::clearBalls(void)
 	}
 
 }
+//---------------------------------------------------------------------------
 
 void Application::makeBall(void)
 {
@@ -449,6 +464,7 @@ void Application::makeBall(void)
 	b1->setCharge(ch ? 1.0f : -1.0f);
 	addEntity(b1);
 }
+//---------------------------------------------------------------------------
 
 void Application::startMatch(void)
 {
@@ -465,11 +481,13 @@ void Application::startMatch(void)
 	}
 	makeBall();
 }
+//---------------------------------------------------------------------------
 
 void Application::endMatch(void)
 {
 	prepareMatch();
 }
+//---------------------------------------------------------------------------
 
 void Application::doSpawnBall(void)
 {
@@ -492,6 +510,7 @@ void Application::doSpawnBall(void)
    default: throw std::exception(); break;
    }
 }
+//---------------------------------------------------------------------------
 
 void Application::prepareMatch(void)
 {
@@ -500,6 +519,7 @@ void Application::prepareMatch(void)
 	timeToMatch = 5000.0f;
 	osmCenter.setMessage("Get ready...", 3.0f);
 }
+//---------------------------------------------------------------------------
 
 void Application::playersChanged(void)
 {
@@ -522,6 +542,7 @@ void Application::playersChanged(void)
 		default: throw std::exception(); break;
 	}
 }
+//---------------------------------------------------------------------------
 
 void Application::doEsterEgg(int playerNr, int egg)
 {
@@ -549,6 +570,14 @@ void Application::doEsterEgg(int playerNr, int egg)
          }
       }
       break;
-   case EGG_MEGA: players[playerNr]->setInvert(!(players[playerNr]->getInvert())); break;
+   case EGG_MEGA:
+      {
+         if(playerNr == PLAYER_LEFT) playerNr = PLAYER_RIGHT;
+         else                        playerNr = PLAYER_LEFT;
+
+         players[playerNr]->setInvert(!(players[playerNr]->getInvert()));
+      }
+      break;
    }
 }
+//---------------------------------------------------------------------------

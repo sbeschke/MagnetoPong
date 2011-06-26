@@ -19,6 +19,7 @@ Sound::Sound()
 {
 	output = CL_SoundOutput(44100);
 }
+
 void Sound::loadeffects(std::map<std::string, std::string> &effects)
 {
 	std::map<std::string,std::string>::iterator it = effects.begin();
@@ -36,6 +37,7 @@ void Sound::loadeffects(std::map<std::string, std::string> &effects)
 	}
 
 }
+
 void Sound::effect(std::string name)
 {
 	if(effects.find(name) != effects.end())
@@ -51,6 +53,7 @@ void Sound::effect(std::string name)
 	}
 
 }
+
 void Sound::setmusic(std::string filename)
 {
 	this->music.stop();
@@ -65,6 +68,7 @@ void Sound::setmusic(std::string filename)
 		std::cout << "setmusic:File not found:"<< filename<< std::endl;
 	}
 }
+
 void Sound::play()
 {
 	music.set_looping(true);
