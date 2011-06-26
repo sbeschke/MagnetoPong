@@ -76,7 +76,7 @@ CL_Point KinectInputDevice::getPoint(void)
             double winkel = Application::myself->kinect.getWinkelELBOW(playerNr, leftHand);
             if(p.x > 0)
             {
-               if((winkel > x_pwinkel) && x_max == 0)
+               if((winkel > x_pwinkel))// && x_max == 0)
                {
                   x_max = p.x;
                   x_pstrech = (Application::x_res/2.0)/abs(x_max);
@@ -85,7 +85,7 @@ CL_Point KinectInputDevice::getPoint(void)
             }
             else
             {
-               if((winkel > x_nwinkel) && x_min == 0)
+               if((winkel > x_nwinkel)) //&& x_min == 0)
                {
                   x_min = p.x;
                   x_nstrech = (Application::x_res/2.0)/abs(x_min);
