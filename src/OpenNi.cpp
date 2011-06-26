@@ -172,7 +172,7 @@ void OpenNi::update()
 
 int OpenNi::getAnzPlayer()
 {
-   if(init_ok)return g_UserGenerator.GetNumberOfUsers();
+   if(init_ok) return g_UserGenerator.GetNumberOfUsers();
    else return 0;
 }
 //---------------------------------------------------------------------------
@@ -268,13 +268,13 @@ double OpenNi::getWinkelELBOW(int nr, int leftArm)
 
    if(leftArm)
    {
-      p1 = Application::myself->kinect.getPlayerPart(nr, P_LHAND,     P_LELBOW);
-      p2 = Application::myself->kinect.getPlayerPart(nr, P_LSHOULDER, P_LELBOW);
+      p1 = getPlayerPart(nr, P_LHAND,     P_LELBOW);
+      p2 = getPlayerPart(nr, P_LSHOULDER, P_LELBOW);
    }
    else
    {
-      p1 = Application::myself->kinect.getPlayerPart(nr, P_RHAND,     P_RELBOW);
-      p2 = Application::myself->kinect.getPlayerPart(nr, P_RSHOULDER, P_RELBOW);
+      p1 = getPlayerPart(nr, P_RHAND,     P_RELBOW);
+      p2 = getPlayerPart(nr, P_RSHOULDER, P_RELBOW);
    }
 
    return acos((p1*p2)/(p1.length()*p2.length())) * 57.295779513082320876798154814105;
@@ -287,8 +287,8 @@ double OpenNi::getWinkel(int nr, int pos1, int gelenk, int pos2)
 
    OpenNiPoint p1, p2;
 
-   p1 = Application::myself->kinect.getPlayerPart(nr, pos1, gelenk);
-   p2 = Application::myself->kinect.getPlayerPart(nr, pos2, gelenk);
+   p1 = getPlayerPart(nr, pos1, gelenk);
+   p2 = getPlayerPart(nr, pos2, gelenk);
 
    return acos((p1*p2)/(p1.length()*p2.length())) * 57.295779513082320876798154814105;
 }
@@ -301,7 +301,7 @@ void OpenNi::drawPlayer(int nr)
    CL_FontDescription font_desc;
    font_desc.set_typeface_name("tahoma");
    font_desc.set_height(30);
-   CL_Font_System font(Application::myself->gc, font_desc);
+   CL_Font_System font(Application::get()->getGC(), font_desc);
 
    CL_Colorf color;
    OpenNiPlayer p = getPlayer(nr);
@@ -309,11 +309,11 @@ void OpenNi::drawPlayer(int nr)
    {
       color = CL_Colorf::grey;
 
-      for(int i=0; i < Application::myself->players.size(); i++)
+      for(int i=0; i < Application::get()->players.size(); i++)
       {
-         if(Application::myself->players.at(i) != NULL)
+         if(Application::get()->players.at(i) != NULL)
          {
-            if(Application::myself->players.at(i)->getNumber() == nr)
+            if(Application::get()->players.at(i)->getNumber() == nr)
             {
                color = playerColors[i];
             }
@@ -323,31 +323,27 @@ void OpenNi::drawPlayer(int nr)
       p.changeForDisplay();
       for(int i=0; i < P_SIZE; i++)
       {
-         if((p.pointList.at(i)->x != Application::x_res/2) && (p.pointList.at(i)->y != Application::y_res/2)) CL_Draw::circle(Application::myself->getGC(), CL_Pointf(p.pointList.at(i)->x, p.pointList.at(i)->y), 5, color);
+         if((p.pointList.at(i)->x != Application::x_res/2) && (p.pointList.at(i)->y != Application::y_res/2)) CL_Draw::circle(Application::get()->getGC(), CL_Pointf(p.pointList.at(i)->x, p.pointList.at(i)->y), 5, color);
       }
 
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_HEAD)->x,  p.pointList.at(P_HEAD)->y,  p.pointList.at(P_NECK)->x, p.pointList.at(P_NECK)->y, color);
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_TORSO)->x, p.pointList.at(P_TORSO)->y, p.pointList.at(P_NECK)->x, p.pointList.at(P_NECK)->y, color);
+      CL_Draw::line(Application::get()->getGC(), p.pointList.at(P_HEAD)->x,  p.pointList.at(P_HEAD)->y,  p.pointList.at(P_NECK)->x, p.pointList.at(P_NECK)->y, color);
+      CL_Draw::line(Application::get()->getGC(), p.pointList.at(P_TORSO)->x, p.pointList.at(P_TORSO)->y, p.pointList.at(P_NECK)->x, p.pointList.at(P_NECK)->y, color);
 
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LSHOULDER)->x, p.pointList.at(P_LSHOULDER)->y, p.pointList.at(P_RSHOULDER)->x, p.pointList.at(P_RSHOULDER)->y, color);
+      CL_Draw::line(Application::get()->getGC(), p.pointList.at(P_LSHOULDER)->x, p.pointList.at(P_LSHOULDER)->y, p.pointList.at(P_RSHOULDER)->x, p.pointList.at(P_RSHOULDER)->y, color);
 
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LELBOW)->x,    p.pointList.at(P_LELBOW)->y,    p.pointList.at(P_LHAND)->x,  p.pointList.at(P_LHAND)->y,  color);
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LSHOULDER)->x, p.pointList.at(P_LSHOULDER)->y, p.pointList.at(P_LELBOW)->x, p.pointList.at(P_LELBOW)->y, color);
+      CL_Draw::line(Application::get()->getGC(), p.pointList.at(P_LELBOW)->x,    p.pointList.at(P_LELBOW)->y,    p.pointList.at(P_LHAND)->x,  p.pointList.at(P_LHAND)->y,  color);
+      CL_Draw::line(Application::get()->getGC(), p.pointList.at(P_LSHOULDER)->x, p.pointList.at(P_LSHOULDER)->y, p.pointList.at(P_LELBOW)->x, p.pointList.at(P_LELBOW)->y, color);
 
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RELBOW)->x,    p.pointList.at(P_RELBOW)->y,    p.pointList.at(P_RHAND)->x,  p.pointList.at(P_RHAND)->y,  color);
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RSHOULDER)->x, p.pointList.at(P_RSHOULDER)->y, p.pointList.at(P_RELBOW)->x, p.pointList.at(P_RELBOW)->y, color);
+      CL_Draw::line(Application::get()->getGC(), p.pointList.at(P_RELBOW)->x,    p.pointList.at(P_RELBOW)->y,    p.pointList.at(P_RHAND)->x,  p.pointList.at(P_RHAND)->y,  color);
+      CL_Draw::line(Application::get()->getGC(), p.pointList.at(P_RSHOULDER)->x, p.pointList.at(P_RSHOULDER)->y, p.pointList.at(P_RELBOW)->x, p.pointList.at(P_RELBOW)->y, color);
 
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LHIP)->x,  p.pointList.at(P_LHIP)->y,  p.pointList.at(P_TORSO)->x, p.pointList.at(P_TORSO)->y, color);
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_TORSO)->x, p.pointList.at(P_TORSO)->y, p.pointList.at(P_RHIP)->x,  p.pointList.at(P_RHIP)->y,  color);
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LHIP)->x,  p.pointList.at(P_LHIP)->y,  p.pointList.at(P_RHIP)->x,  p.pointList.at(P_RHIP)->y,  color);
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LHIP)->x,  p.pointList.at(P_LHIP)->y,  p.pointList.at(P_LKNEE)->x, p.pointList.at(P_LKNEE)->y, color);
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RHIP)->x,  p.pointList.at(P_RHIP)->y,  p.pointList.at(P_RKNEE)->x, p.pointList.at(P_RKNEE)->y, color);
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_RFOOT)->x, p.pointList.at(P_RFOOT)->y, p.pointList.at(P_RKNEE)->x, p.pointList.at(P_RKNEE)->y, color);
-      CL_Draw::line(Application::myself->getGC(), p.pointList.at(P_LFOOT)->x, p.pointList.at(P_LFOOT)->y, p.pointList.at(P_LKNEE)->x, p.pointList.at(P_LKNEE)->y, color);
-
-  //    TGString s = TGString("Winkel L: ") + getWinkel(nr, true) + " R Hand:(" + p.pointList.at(P_LHAND)->x + "|" + p.pointList.at(P_LHAND)->y + "|" + p.pointList.at(P_LHAND)->z +")" ;
-  //    font.draw_text(Application::myself->gc, 10, 20*nr, s.c_str());
-
+      CL_Draw::line(Application::get()->getGC(), p.pointList.at(P_LHIP)->x,  p.pointList.at(P_LHIP)->y,  p.pointList.at(P_TORSO)->x, p.pointList.at(P_TORSO)->y, color);
+      CL_Draw::line(Application::get()->getGC(), p.pointList.at(P_TORSO)->x, p.pointList.at(P_TORSO)->y, p.pointList.at(P_RHIP)->x,  p.pointList.at(P_RHIP)->y,  color);
+      CL_Draw::line(Application::get()->getGC(), p.pointList.at(P_LHIP)->x,  p.pointList.at(P_LHIP)->y,  p.pointList.at(P_RHIP)->x,  p.pointList.at(P_RHIP)->y,  color);
+      CL_Draw::line(Application::get()->getGC(), p.pointList.at(P_LHIP)->x,  p.pointList.at(P_LHIP)->y,  p.pointList.at(P_LKNEE)->x, p.pointList.at(P_LKNEE)->y, color);
+      CL_Draw::line(Application::get()->getGC(), p.pointList.at(P_RHIP)->x,  p.pointList.at(P_RHIP)->y,  p.pointList.at(P_RKNEE)->x, p.pointList.at(P_RKNEE)->y, color);
+      CL_Draw::line(Application::get()->getGC(), p.pointList.at(P_RFOOT)->x, p.pointList.at(P_RFOOT)->y, p.pointList.at(P_RKNEE)->x, p.pointList.at(P_RKNEE)->y, color);
+      CL_Draw::line(Application::get()->getGC(), p.pointList.at(P_LFOOT)->x, p.pointList.at(P_LFOOT)->y, p.pointList.at(P_LKNEE)->x, p.pointList.at(P_LKNEE)->y, color);
    }
 }
 //---------------------------------------------------------------------------

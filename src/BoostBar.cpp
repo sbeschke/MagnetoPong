@@ -57,7 +57,7 @@ void BoostBar::draw()
       x3 = x1 - (BB_WIDTH - pos);
    }
 
-   CL_Draw::box(Application::myself->getGC(), x1, y1, x2, y2, CL_Colorf::black);
-   if(akt_val == 0) CL_Draw::fill(Application::myself->getGC(), x1, y1, x3, y2, playerColors[playerNr]);
-   else CL_Draw::fill(Application::myself->getGC(), x1, y1, x3, y2, CL_Colorf::grey);
+   CL_Draw::box(Application::get()->getGC(), x1, y1, x2, y2, CL_Colorf::black);
+   if(akt_val == 0) CL_Draw::fill(Application::get()->getGC(), x1, y1, x3, y2, playerColors[playerNr]);
+   else CL_Draw::fill(Application::get()->getGC(), x1, y1, x3, y2, CL_Colorf::grey);
 }

@@ -60,13 +60,13 @@ CL_Point KinectInputDevice::getPoint(float timepast)
    double x_pwinkel;
    if(leftHand)
    {
-      p = Application::myself->kinect.getPlayerPart(playerNr, P_LHAND, P_LSHOULDER);
+      p = Application::get()->kinect.getPlayerPart(playerNr, P_LHAND, P_LSHOULDER);
       x_pwinkel = 110;
       x_nwinkel = 160;
    }
    else
    {
-      p = Application::myself->kinect.getPlayerPart(playerNr, P_RHAND, P_RSHOULDER);
+      p = Application::get()->kinect.getPlayerPart(playerNr, P_RHAND, P_RSHOULDER);
       x_pwinkel = 160;
       x_nwinkel = 110;
    }
@@ -84,7 +84,7 @@ CL_Point KinectInputDevice::getPoint(float timepast)
       {
          if((p.y < 50) && (p.y > -50))
          {
-            double winkel = Application::myself->kinect.getWinkelELBOW(playerNr, leftHand);
+            double winkel = Application::get()->kinect.getWinkelELBOW(playerNr, leftHand);
             if(p.x > 0)
             {
                if((winkel > x_pwinkel))// && x_max == 0)
@@ -119,7 +119,7 @@ CL_Point KinectInputDevice::getPoint(float timepast)
 
 float KinectInputDevice::getZ(void)
 {
-   double winkel = Application::myself->kinect.getWinkelELBOW(playerNr, !leftHand);
+   double winkel = Application::get()->kinect.getWinkelELBOW(playerNr, !leftHand);
 
    winkel -= 90.0;
    winkel /= 80.0;
@@ -132,7 +132,7 @@ float KinectInputDevice::getZ(void)
 
 bool KinectInputDevice::getJump()
 {
-   OpenNiPoint p = Application::myself->kinect.getPlayerPart(playerNr, P_TORSO);
+   OpenNiPoint p = Application::get()->kinect.getPlayerPart(playerNr, P_TORSO);
    jumping = false;
    if(lastTorsoY)
    {
@@ -151,7 +151,7 @@ int KinectInputDevice::getEsterEgg()
 {
    int egg = 0;
    double winkel;
-   winkel = Application::myself->kinect.getWinkel(playerNr, P_RSHOULDER, P_RHIP, P_RKNEE);
+   winkel = Application::get()->kinect.getWinkel(playerNr, P_RSHOULDER, P_RHIP, P_RKNEE);
 
    if(winkel < 90  && !kickingR)
    {
@@ -182,7 +182,7 @@ int KinectInputDevice::getEsterEgg()
 
    if(!egg)
    {
-      winkel = Application::myself->kinect.getWinkel(playerNr, P_LSHOULDER, P_LHIP, P_LKNEE);
+      winkel = Application::get()->kinect.getWinkel(playerNr, P_LSHOULDER, P_LHIP, P_LKNEE);
 
       if(winkel < 90  && !kickingL)
       {

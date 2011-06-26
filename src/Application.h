@@ -37,6 +37,7 @@ class Application
 private:
 	bool quit;
 	CL_GraphicContext graphicContext;
+	static Application* myself;
 
 public:
 
@@ -44,7 +45,7 @@ public:
 
 	PlayerCallback playerCallback;
 
-	static Application* myself;
+
 	static int detail;
 	static int x_res;
 	static int y_res;
@@ -63,8 +64,6 @@ public:
 	EntitySet entities;
 	std::vector<Player*> players;
 	int playersActive;
-
-	CL_GraphicContext gc;
 
 	OpenNi kinect;
 

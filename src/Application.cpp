@@ -165,23 +165,22 @@ void Application::run(void)
 	CL_Slot slot_quit = window.sig_window_close().connect(this, &Application::on_window_close);
 
 	graphicContext = window.get_gc();
-	gc = graphicContext;
 	CL_InputDevice keyboard = window.get_ic().get_keyboard();
-	CL_InputDevice mouse = window.get_ic().get_mouse(0);
+	CL_InputDevice mouse    = window.get_ic().get_mouse(0);
 
 	CL_ResourceManager resources("resources.xml");
 
-	CL_Sprite boat_sprite(gc, "Boat", &resources);
+	CL_Sprite boat_sprite(graphicContext, "Boat", &resources);
 
 	CL_FontDescription font_desc;
 	font_desc.set_typeface_name("Verdana");
 	font_desc.set_height(80);
-	CL_Font_System font(gc, font_desc);
+	CL_Font_System font(graphicContext, font_desc);
 
 	CL_FontDescription scoreFont_desc;
 	scoreFont_desc.set_typeface_name("Verdana");
 	scoreFont_desc.set_height(80);
-	CL_Font_System scoreFont(gc, scoreFont_desc);
+	CL_Font_System scoreFont(graphicContext, scoreFont_desc);
 
 	BoostBar boostbarPL(PLAYER_LEFT);
 	boostbarPL.setMaxValue(BOOSTRELOADTIME);
@@ -243,7 +242,7 @@ void Application::run(void)
 			}
 		}
 
-		gc.clear(CL_Colorf::white); //Fenster mit Weiß löschen
+		graphicContext.clear(CL_Colorf::white); //Fenster mit Weiß löschen
 
 		//--Spieler input verarbeiten und Spielerskelett Zeichnen
 		for(std::vector<Player*>::iterator it = players.begin();
@@ -297,9 +296,9 @@ void Application::run(void)
 			scoreLeftTxtStrm << players[PLAYER_LEFT]->getScore() << " : "
 					<< players[PLAYER_RIGHT]->getScore();
 			std::string scoreLeftTxt = scoreLeftTxtStrm.str();
-			CL_Size scoreSize = scoreFont.get_text_size(Application::get()->gc, scoreLeftTxt);
+			CL_Size scoreSize = scoreFont.get_text_size(graphicContext, scoreLeftTxt);
 			CL_Pointf scoreLeftPos((x_res - scoreSize.width) / 2, scoreSize.height);
-			scoreFont.draw_text(gc, scoreLeftPos, scoreLeftTxt, CL_Colorf::black);
+			scoreFont.draw_text(graphicContext, scoreLeftPos, scoreLeftTxt, CL_Colorf::black);
 
 			if(!inMatch)
 			{
@@ -316,7 +315,7 @@ void Application::run(void)
 			boostbarPL.draw();
 			boostbarPR.draw();
 
-			doEsterEgg(PLAYER_LEFT, players[PLAYER_LEFT]->getEsterEgg());
+			doEsterEgg(PLAYER_LEFT,  players[PLAYER_LEFT]->getEsterEgg());
 			doEsterEgg(PLAYER_RIGHT, players[PLAYER_RIGHT]->getEsterEgg());
 		}
 
