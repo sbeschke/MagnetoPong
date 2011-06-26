@@ -51,3 +51,22 @@ void Sound::effect(std::string name)
 	}
 
 }
+void Sound::setmusic(std::string filename)
+{
+	this->music.stop();
+
+	if(CL_FileHelp::file_exists(filename))
+	{
+		CL_SoundBuffer tempbuffer(filename);
+		this->music = tempbuffer.prepare();
+	}
+	else
+	{
+		std::cout << "setmusic:File not found:"<< filename<< std::endl;
+	}
+}
+void Sound::play()
+{
+	music.set_looping(true);
+	music.play();
+}
