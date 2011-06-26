@@ -18,9 +18,9 @@ public:
 	virtual ~Player();
 
 	void quit(void);
-	virtual void processInput(void);
+	virtual void processInput(float timepast);
 	virtual Bat* getBat(void);
-	virtual bool getKick();
+	virtual int getEsterEgg();
 
 	virtual int  getNumber(void);
 	virtual void setNumber(int number);
@@ -28,6 +28,9 @@ public:
 	virtual void incrementScore(void);
 	virtual int  getScore(void);
 	virtual void setScore(int score);
+
+	virtual void setInvert(bool activate);
+	virtual bool getInvert();
 
 private:
 	Application* application;

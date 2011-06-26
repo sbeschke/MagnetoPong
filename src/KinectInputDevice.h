@@ -10,6 +10,10 @@
 
 #include "InputDevice.h"
 
+#define EGG_POL    1
+#define EGG_STOP   2
+#define EGG_MEGA  42
+
 class KinectInputDevice : public InputDevice
 {
 public:
@@ -18,22 +22,28 @@ public:
 
    void setHand(bool lefthand);
    void setPlayer(int nr);
+   void setInvert(bool aktivate){invert = aktivate; invertTimeout = 0;};
+   bool getInvert() { return invert;};
 
-   CL_Point getPoint(void);
+   CL_Point getPoint(float timepast);
    float getZ(void);
    bool  getJump();
-   bool  getKick();
+   int   getEsterEgg();
 
 private:
+   bool invert;
+   float invertTimeout;
    bool leftHand;
    int  playerNr;
 
-   bool kicking;
+   bool kickingL;
+   bool kickingR;
+   bool jumping;
 
    double lastTorsoY;
 
    double x_offset;
-      double x_pstrech;
+   double x_pstrech;
    double x_nstrech;
    double x_min;
    double x_max;

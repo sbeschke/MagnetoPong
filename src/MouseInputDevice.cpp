@@ -19,11 +19,13 @@ MouseInputDevice::MouseInputDevice(CL_InputDevice* mouse)
 MouseInputDevice::~MouseInputDevice() {
 }
 
-CL_Point MouseInputDevice::getPoint(void) {
+CL_Point MouseInputDevice::getPoint(float timepast)
+{
 	return mouse->get_position();
 }
 
-float MouseInputDevice::getZ(void) {
+float MouseInputDevice::getZ(void)
+{
 	return zValue;
 }
 

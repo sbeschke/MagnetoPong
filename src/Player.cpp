@@ -28,8 +28,9 @@ void Player::quit(void)
 	application->remEntity(bat);
 }
 
-void Player::processInput(void) {
-	bat->setPosition(device->getPoint());
+void Player::processInput(float timepast)
+{
+	bat->setPosition(device->getPoint(timepast));
 	bat->setCharge(device->getZ());
 	bat->setBoost(device->getJump());
 }
@@ -38,9 +39,9 @@ Bat* Player::getBat(void) {
 	return bat;
 }
 
-bool Player::getKick()
+int Player::getEsterEgg()
 {
-   return device->getKick();
+   return device->getEsterEgg();
 }
 
 int Player::getNumber(void) {
@@ -64,4 +65,14 @@ int Player::getScore(void)
 void Player::setScore(int score)
 {
 	this->score = score;
+}
+
+void Player::setInvert(bool activate)
+{
+   device->setInvert(activate);
+}
+
+bool Player::getInvert()
+{
+   return device->getInvert();
 }

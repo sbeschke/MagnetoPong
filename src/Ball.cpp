@@ -96,3 +96,8 @@ Vec2d Ball::getForce()
 {
 	return this->force;
 }
+
+void Ball::setSpeed(Vec2d v)
+{
+   speed = v;
+}

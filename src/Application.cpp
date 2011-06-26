@@ -249,7 +249,7 @@ void Application::run(void)
 			Player* pl = *it;
 			if(pl != 0)
 			{
-				pl->processInput();
+				pl->processInput(timediff);
 				kinect.drawPlayer(pl->getNumber());
 			}
 		}
@@ -263,21 +263,28 @@ void Application::run(void)
 
 			if(Ball* ball = dynamic_cast<Ball*>(*it))
 			{
-				if(checkBall(ball))
-				{
-					remEntity(ball);
-					delete ball;
-				}
 				if(playersActive == 2)
             {
-				   if(players[PLAYER_LEFT]->getKick())
+				   int egg = players[PLAYER_LEFT]->getEsterEgg();
+				   switch(egg)
                {
-				      ball->setCharge(ball->getCharge()*-1);
+				   case EGG_POL:  ball->setCharge(ball->getCharge()*-1); break;
+				   case EGG_STOP: ball->setSpeed(Vec2d(0,0));            break;
+				   case EGG_MEGA: players[PLAYER_RIGHT]->setInvert(!(players[PLAYER_RIGHT]->getInvert())); break;
                }
-				   if(players[PLAYER_RIGHT]->getKick())
+
+				   egg = players[PLAYER_RIGHT]->getEsterEgg();
+               switch(egg)
                {
-                  ball->setCharge(ball->getCharge()*-1);
+               case EGG_POL:  ball->setCharge(ball->getCharge()*-1); break;
+               case EGG_STOP: ball->setSpeed(Vec2d(0,0));            break;
+               case EGG_MEGA: players[PLAYER_LEFT]->setInvert(!(players[PLAYER_LEFT]->getInvert())); break;
                }
+            }
+				if(checkBall(ball))
+            {
+               remEntity(ball);
+               delete ball;
             }
 			}
 			it = next;

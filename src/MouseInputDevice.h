@@ -16,10 +16,12 @@ public:
 	MouseInputDevice(CL_InputDevice* mouse);
 	virtual ~MouseInputDevice();
 
-	CL_Point getPoint(void);
+	CL_Point getPoint(float timepast);
 	float getZ(void);
 	bool getJump(void) { return false; }
-	bool  getKick() {return false;}
+	int  getEsterEgg() {return 0;}
+	void setInvert(bool aktivate) {};
+   bool getInvert(){return false;}
 
 private:
 
