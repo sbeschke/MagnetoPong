@@ -31,6 +31,7 @@ void PlayerCallback::playerRecognized(int nr)
 	}
 
 }
+//---------------------------------------------------------------------------
 
 void PlayerCallback::calibrationStart(int nr)
 {
@@ -45,6 +46,7 @@ void PlayerCallback::calibrationStart(int nr)
 		Application::get()->osmCenter.setMessage("Too many players, please go away!", 5.0f);
 	}
 }
+//---------------------------------------------------------------------------
 
 void PlayerCallback::calibrationFailed(int nr)
 {
@@ -56,6 +58,7 @@ void PlayerCallback::calibrationFailed(int nr)
 		Application::get()->osmLeft.setMessage("Calibration failed", 2.0f);
 	}
 }
+//---------------------------------------------------------------------------
 
 void PlayerCallback::playerCalibrated(int nr)
 {
@@ -85,7 +88,9 @@ void PlayerCallback::playerCalibrated(int nr)
 	}
 
 	app->addPlayer(player, playerSlot);
+	Application::get()->soundPlayer->effect("playeron");
 }
+//---------------------------------------------------------------------------
 
 void PlayerCallback::playerLost(int nr)
 {
@@ -100,6 +105,7 @@ void PlayerCallback::playerLost(int nr)
 		}
 	}
 }
+//---------------------------------------------------------------------------
 
 Application::Application(void)
 {
@@ -127,7 +133,7 @@ Application::Application(void)
 	timeToSpawnBall = 0.0f;
 	inMatch = false;
 	timeToMatch = 0.0f;
-	player = new Sound();
+	soundPlayer = new Sound();
 	std::map<std::string,std::string> effects;
 
 	//effects["on"]="effects/ltsaberon01.wav";
@@ -135,11 +141,11 @@ Application::Application(void)
 	effects["point"]="effects/ping.ogg";
 	effects["win"]="effects/aus.ogg";
 	effects["fight"]="effects/fight.ogg";
-	effects["boost"]="effects/ohjea.ogg";
-	player->loadeffects(effects);
-
-
+//	effects["boost"]="effects/ohjea.ogg";
+	effects["playeron"]="effects/ohjea.ogg";
+	soundPlayer->loadeffects(effects);
 }
+//---------------------------------------------------------------------------
 
 void Application::run(void)
 {
@@ -147,7 +153,7 @@ void Application::run(void)
 	Application::myself = this;
 
 	players.resize(2);
-	players[PLAYER_LEFT] = 0;
+	players[PLAYER_LEFT]  = 0;
 	players[PLAYER_RIGHT] = 0;
 	playersActive = 0;
 
@@ -163,23 +169,22 @@ void Application::run(void)
 	CL_Slot slot_quit = window.sig_window_close().connect(this, &Application::on_window_close);
 
 	graphicContext = window.get_gc();
-	gc = graphicContext;
 	CL_InputDevice keyboard = window.get_ic().get_keyboard();
-	CL_InputDevice mouse = window.get_ic().get_mouse(0);
+	CL_InputDevice mouse    = window.get_ic().get_mouse(0);
 
 	CL_ResourceManager resources("resources.xml");
 
-	CL_Sprite boat_sprite(gc, "Boat", &resources);
+	CL_Sprite boat_sprite(graphicContext, "Boat", &resources);
 
 	CL_FontDescription font_desc;
 	font_desc.set_typeface_name("Verdana");
 	font_desc.set_height(80);
-	CL_Font_System font(gc, font_desc);
+	CL_Font_System font(graphicContext, font_desc);
 
 	CL_FontDescription scoreFont_desc;
 	scoreFont_desc.set_typeface_name("Verdana");
 	scoreFont_desc.set_height(80);
-	CL_Font_System scoreFont(gc, scoreFont_desc);
+	CL_Font_System scoreFont(graphicContext, scoreFont_desc);
 
 	BoostBar boostbarPL(PLAYER_LEFT);
 	boostbarPL.setMaxValue(BOOSTRELOADTIME);
@@ -190,7 +195,8 @@ void Application::run(void)
 	playersChanged();
 	clearBalls();
 
-	while (!quit)
+	//---------------------------------------------------------------------------
+	while (!quit)//schleife-schleife-schleife-schleife-schleife-schleife-schleife
 	{
 
 		kinect.update();
@@ -198,9 +204,10 @@ void Application::run(void)
 		int timediff = CL_System::get_time() - start ;
 		start = CL_System::get_time();
 
-
+		//--Beenden-----------------------
 		if(keyboard.get_keycode(CL_KEY_ESCAPE) == true)	quit = true;
 
+		//--Leertaste aktiviert Maussteuerung
 		if(keyboard.get_keycode(CL_KEY_SPACE) == true && playersActive < 2)
 		{
 			int playerSlot = PLAYER_RIGHT;
@@ -218,33 +225,30 @@ void Application::run(void)
 			addPlayer(player, playerSlot);
 		}
 
+		//--Kräfte berechnen und Kollisionen erkennen
 		bool collision = false;
-		for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++) {
+		for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++)
+		{
 			collision = collision || (*it)->updateforces(entities,timediff);
 		}
-		if(collision)
+		if(collision) //--bei Kollision sound ausgeben (nur wenn Spieler drin sind)
 		{
-		   if(playersActive) player->effect("collision");
+		   if(playersActive) soundPlayer->effect("collision");
 		}
 
+		//--Ball einfügen
 		if(spawnBall)
 		{
 			timeToSpawnBall -= timediff;
 			if(timeToSpawnBall <= 0.0f)
 			{
-				//player->effect("on");
 				doSpawnBall();
 			}
 		}
 
-		osmCenter.tick((float)timediff / 1000.0f);
-		osmShout.tick((float)timediff / 1000.0f);
-		osmHuge.tick((float)timediff / 1000.0f);
-		osmLeft.tick((float)timediff / 1000.0f);
-		osmRight.tick((float)timediff / 1000.0f);
+		graphicContext.clear(CL_Colorf::white); //Fenster mit Weiß löschen
 
-		gc.clear(CL_Colorf::white);
-
+		//--Spieler input verarbeiten und Spielerskelett Zeichnen
 		for(std::vector<Player*>::iterator it = players.begin();
 				it != players.end(); it++)
 		{
@@ -256,6 +260,7 @@ void Application::run(void)
 			}
 		}
 
+		//--Bälle berechnen, zeichnen, und position überprüfen
 		for(EntitySet::iterator it = entities.begin(); it != entities.end();)
 		{
 			EntitySet::iterator next = it;
@@ -265,25 +270,7 @@ void Application::run(void)
 
 			if(Ball* ball = dynamic_cast<Ball*>(*it))
 			{
-				if(playersActive == 2)
-            {
-				   int egg = players[PLAYER_LEFT]->getEsterEgg();
-				   switch(egg)
-               {
-				   case EGG_POL:  ball->setCharge(ball->getCharge()*-1); break;
-				   case EGG_STOP: ball->setSpeed(Vec2d(0,0));            break;
-				   case EGG_MEGA: players[PLAYER_RIGHT]->setInvert(!(players[PLAYER_RIGHT]->getInvert())); break;
-               }
-
-				   egg = players[PLAYER_RIGHT]->getEsterEgg();
-               switch(egg)
-               {
-               case EGG_POL:  ball->setCharge(ball->getCharge()*-1); break;
-               case EGG_STOP: ball->setSpeed(Vec2d(0,0));            break;
-               case EGG_MEGA: players[PLAYER_LEFT]->setInvert(!(players[PLAYER_LEFT]->getInvert())); break;
-               }
-            }
-				if(checkBall(ball))
+			   if(checkBall(ball))
             {
                remEntity(ball);
                delete ball;
@@ -292,12 +279,20 @@ void Application::run(void)
 			it = next;
 		}
 
+		//--Textausgabe
+		osmCenter.tick((float)timediff / 1000.0f);
+      osmShout.tick((float)timediff / 1000.0f);
+      osmHuge.tick((float)timediff / 1000.0f);
+      osmLeft.tick((float)timediff / 1000.0f);
+      osmRight.tick((float)timediff / 1000.0f);
+
 		osmCenter.draw();
 		osmShout.draw();
 		osmLeft.draw();
 		osmRight.draw();
 		osmHuge.draw();
 
+		//--Spieler Verarbeiten
 		if(playersActive == 2)
 		{
 			// draw scores
@@ -305,9 +300,10 @@ void Application::run(void)
 			scoreLeftTxtStrm << players[PLAYER_LEFT]->getScore() << " : "
 					<< players[PLAYER_RIGHT]->getScore();
 			std::string scoreLeftTxt = scoreLeftTxtStrm.str();
-			CL_Size scoreSize = scoreFont.get_text_size(Application::get()->gc, scoreLeftTxt);
+			CL_Size scoreSize = scoreFont.get_text_size(graphicContext, scoreLeftTxt);
 			CL_Pointf scoreLeftPos((x_res - scoreSize.width) / 2, scoreSize.height);
-			scoreFont.draw_text(gc, scoreLeftPos, scoreLeftTxt, CL_Colorf::black);
+			scoreFont.draw_text(graphicContext, scoreLeftPos, scoreLeftTxt, CL_Colorf::black);
+
 			if(!inMatch)
 			{
 				clearBalls();
@@ -317,30 +313,33 @@ void Application::run(void)
 					startMatch();
 				}
 			}
+
 			boostbarPL.setValue(players[PLAYER_LEFT]->getBat()->getBoostctr());
 			boostbarPR.setValue(players[PLAYER_RIGHT]->getBat()->getBoostctr());
 			boostbarPL.draw();
 			boostbarPR.draw();
 
+			doEsterEgg(PLAYER_LEFT,  players[PLAYER_LEFT]->getEsterEgg());
+			doEsterEgg(PLAYER_RIGHT, players[PLAYER_RIGHT]->getEsterEgg());
 		}
-
-//		TGString s = TGString("b1(") + ball.getPosition().x + "|" + ball.getPosition().y + ") b2(" + ball2.getPosition().x + "|" + ball2.getPosition().y + ")";
-	//	font.draw_text(Application::myself->gc, 10, 20, s.c_str(), CL_Colorf::black);
 
 		window.flip();
 		CL_KeepAlive::process();
 	}
 }
+//---------------------------------------------------------------------------
 
 void Application::addEntity(Entity* entity)
 {
 	entities.insert(entity);
 }
+//---------------------------------------------------------------------------
 
 void Application::remEntity(Entity* entity)
 {
 	entities.erase(entity);
 }
+//---------------------------------------------------------------------------
 
 void Application::addPlayer(Player* player, int playerSlot)
 {
@@ -353,6 +352,7 @@ void Application::addPlayer(Player* player, int playerSlot)
 
 	playersChanged();
 }
+//---------------------------------------------------------------------------
 
 void Application::remPlayer(int playerSlot)
 {
@@ -372,6 +372,7 @@ void Application::remPlayer(int playerSlot)
 	endMatch();
 	playersChanged();
 }
+//---------------------------------------------------------------------------
 
 // return true if ball is out
 bool Application::checkBall(Ball* ball)
@@ -397,14 +398,17 @@ bool Application::checkBall(Ball* ball)
 
 	return ballOut;
 }
+//---------------------------------------------------------------------------
 
-void Application::ballOut(Ball* ball, int playerSlot) {
-	if(playersActive == 2) {
-		player->effect("point");
+void Application::ballOut(Ball* ball, int playerSlot)
+{
+	if(playersActive == 2)
+	{
+		soundPlayer->effect("point");
 		players[playerSlot]->incrementScore();
 
 		if(players[playerSlot]->getScore() >= SCORE_TO_WIN) {
-			player->effect("win");
+			soundPlayer->effect("win");
 			endMatch();
 			if(playerSlot == PLAYER_RIGHT) {
 				osmHuge.setMessage("Right WINS", 3.0f);
@@ -432,11 +436,16 @@ void Application::ballOut(Ball* ball, int playerSlot) {
 		}
 	}
 }
-void Application::ballGone(Ball* ball) {
+//---------------------------------------------------------------------------
+
+void Application::ballGone(Ball* ball)
+{
 	makeBall();
 }
+//---------------------------------------------------------------------------
 
-void Application::clearBalls(void) {
+void Application::clearBalls(void)
+{
 	for(EntitySet::iterator it = entities.begin(); it != entities.end();) {
 		EntitySet::iterator next = it;
 		next++;
@@ -448,6 +457,7 @@ void Application::clearBalls(void) {
 	}
 
 }
+//---------------------------------------------------------------------------
 
 void Application::makeBall(void)
 {
@@ -456,14 +466,14 @@ void Application::makeBall(void)
 	int ch = rand() % 2;
 	b1->setCharge(ch ? 1.0f : -1.0f);
 	addEntity(b1);
-
 }
+//---------------------------------------------------------------------------
 
 void Application::startMatch(void)
 {
 	inMatch = true;
 	osmShout.setMessage("FIGHT", 3.0f);
-	player->effect("fight");
+	soundPlayer->effect("fight");
 	std::ostringstream centerText;
 	centerText << "Score " << SCORE_TO_WIN << " points to win";
 	osmCenter.setMessage(centerText.str(), 3.0f);
@@ -474,30 +484,36 @@ void Application::startMatch(void)
 	}
 	makeBall();
 }
+//---------------------------------------------------------------------------
 
 void Application::endMatch(void)
 {
 	prepareMatch();
 }
+//---------------------------------------------------------------------------
 
 void Application::doSpawnBall(void)
 {
-	switch(playersActive) {
-		case 0:
-		case 1:{
-			makeBall();
-			spawnBall = true;
-			timeToSpawnBall = 3000.0f;
-			break;
-		}
-		case 2: {
-			makeBall();
-			spawnBall = false;
-			break;
-		}
-		default: throw std::exception(); break;
-		}
+	switch(playersActive)
+	{
+   case 0:
+   case 1:
+      {
+         makeBall();
+         spawnBall = true;
+         timeToSpawnBall = 3000.0f;
+      }
+      break;
+   case 2:
+      {
+         makeBall();
+         spawnBall = false;
+      }
+      break;
+   default: throw std::exception(); break;
+   }
 }
+//---------------------------------------------------------------------------
 
 void Application::prepareMatch(void)
 {
@@ -506,6 +522,7 @@ void Application::prepareMatch(void)
 	timeToMatch = 5000.0f;
 	osmCenter.setMessage("Get ready...", 3.0f);
 }
+//---------------------------------------------------------------------------
 
 void Application::playersChanged(void)
 {
@@ -528,3 +545,42 @@ void Application::playersChanged(void)
 		default: throw std::exception(); break;
 	}
 }
+//---------------------------------------------------------------------------
+
+void Application::doEsterEgg(int playerNr, int egg)
+{
+   switch(egg)
+   {
+   case EGG_POL:
+      {
+         for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++)
+         {
+            if(Ball* ball = dynamic_cast<Ball*>(*it))
+            {
+               ball->setCharge(ball->getCharge()*-1);
+            }
+         }
+      }
+      break;
+   case EGG_STOP:
+      {
+         for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++)
+         {
+            if(Ball* ball = dynamic_cast<Ball*>(*it))
+            {
+               ball->setSpeed(Vec2d(0,0));
+            }
+         }
+      }
+      break;
+   case EGG_MEGA:
+      {
+         if(playerNr == PLAYER_LEFT) playerNr = PLAYER_RIGHT;
+         else                        playerNr = PLAYER_LEFT;
+
+         players[playerNr]->setInvert(!(players[playerNr]->getInvert()));
+      }
+      break;
+   }
+}
+//---------------------------------------------------------------------------

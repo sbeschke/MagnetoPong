@@ -37,14 +37,15 @@ class Application
 private:
 	bool quit;
 	CL_GraphicContext graphicContext;
+	static Application* myself;
 
 public:
 
-	Sound *player;
+	Sound *soundPlayer;
 
 	PlayerCallback playerCallback;
 
-	static Application* myself;
+
 	static int detail;
 	static int x_res;
 	static int y_res;
@@ -56,16 +57,12 @@ public:
 	const static unsigned int PLAYER_LEFT = 0;
 	const static unsigned int PLAYER_RIGHT = 1;
 
-	static Application* get(void) {
-		return myself;
-	}
+	static Application* get(void) {return myself;}
 
 
 	EntitySet entities;
 	std::vector<Player*> players;
 	int playersActive;
-
-	CL_GraphicContext gc;
 
 	OpenNi kinect;
 
@@ -114,6 +111,8 @@ public:
 
 	void playersChanged(void);
 	void prepareMatch(void);
+
+	void doEsterEgg(int playerNr, int egg);
 };
 
 #endif // APPLICATION_H_
