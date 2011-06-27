@@ -48,6 +48,7 @@ public:
 	static int detail;
 	static int x_res;
 	static int y_res;
+	static bool fullscreen;
 
 	const static int ANZ_BALS_DEMO = 8;
 	const static int SCORE_TO_WIN = 11;

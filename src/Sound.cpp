@@ -12,6 +12,11 @@
 
 Sound::~Sound()
 {
+	for(EffectMap::iterator it = this->effects.begin(); it != this->effects.end(); it++)
+	{
+		delete it->second;
+	}
+	this->effects.clear();
 
 }
 
@@ -21,8 +26,13 @@ Sound::Sound()
 }
 void Sound::loadeffects(std::map<std::string, std::string> &effects)
 {
-	std::map<std::string,std::string>::iterator it = effects.begin();
-	for(;it != effects.end();it++)
+	for(EffectMap::iterator it = this->effects.begin(); it != this->effects.end(); it++)
+	{
+		delete it->second;
+	}
+	this->effects.clear();
+
+	for(std::map<std::string,std::string>::iterator it = effects.begin();it != effects.end();it++)
 	{
 		if(CL_FileHelp::file_exists(it->second.c_str()))
 		{

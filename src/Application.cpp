@@ -18,6 +18,7 @@ Application* Application::myself;
 int Application::detail;
 int Application::x_res;
 int Application::y_res;
+bool Application::fullscreen;
 
 void PlayerCallback::playerRecognized(int nr)
 {
@@ -155,6 +156,7 @@ void Application::run(void)
 	unsigned int start =  CL_System::get_time();
 	CL_DisplayWindowDescription window_desc;
 	window_desc.set_size(CL_Size(Application::x_res, Application::y_res), true);
+	window_desc.set_fullscreen(Application::fullscreen,0);
 	window_desc.set_title("MagnetoPong!!!11einself");
 	CL_DisplayWindow window(window_desc);
 
