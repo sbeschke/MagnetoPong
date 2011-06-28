@@ -10,6 +10,8 @@
 #include <XnOpenNI.h>
 #include <XnCodecIDs.h>
 #include <XnCppWrapper.h>
+#include <XnTypes.h>
+#include <XnPlatform.h>
 
 #include "Application.h"
 #include "Player.h"
@@ -23,6 +25,9 @@
 xn::Context        g_Context;
 xn::DepthGenerator g_DepthGenerator;
 xn::UserGenerator  g_UserGenerator;
+
+xn::ImageGenerator g_Image;
+xn::ImageMetaData  g_ImageMD;
 
 XnCallbackHandle h;
 XnCallbackHandle hCalib;
@@ -144,6 +149,9 @@ void OpenNi::init()
    CHECK_RC(rc, "RegisterToPoseCallbacks");
    if(rc != XN_STATUS_OK) return;
 
+   rc = g_Image.Create(g_Context);
+   CHECK_RC(rc, "CreateImageGenerator");
+
    rc = g_Context.StartGeneratingAll();
    CHECK_RC(rc, "StartGeneratingAll");
    if(rc != XN_STATUS_OK) return;
@@ -154,7 +162,12 @@ void OpenNi::init()
 
 void OpenNi::update()
 {
-   if(init_ok) g_Context.WaitAndUpdateAll();
+   if(init_ok)
+   {
+      g_Context.WaitAndUpdateAll();
+      pixels = (unsigned short*)g_Image.GetImageMap();
+
+   }
    else init();
 }
 //---------------------------------------------------------------------------
@@ -262,7 +275,6 @@ double OpenNi::getWinkelELBOW(int nr, int leftArm)
       p2 = getPlayerPart(nr, P_RSHOULDER, P_RELBOW);
    }
 
-   //return acos((p1*p2)/(p1.length()*p2.length()))* 57.295779513082320876798154814105;
    return Calculation::getWinkel(p1,p2);
 }
 //---------------------------------------------------------------------------
@@ -276,7 +288,6 @@ double OpenNi::getWinkel(int nr, int pos1, int gelenk, int pos2)
    p1 = getPlayerPart(nr, pos1, gelenk);
    p2 = getPlayerPart(nr, pos2, gelenk);
 
- //  return acos((p1*p2)/(p1.length()*p2.length()))* 57.295779513082320876798154814105;
    return Calculation::getWinkel(p1,p2);
 }
 //---------------------------------------------------------------------------

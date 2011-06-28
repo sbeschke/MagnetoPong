@@ -65,7 +65,7 @@ public:
    }
 
    OpenNiPoint operator-(OpenNiPoint& p)
-   {
+{
       OpenNiPoint np = *this;
       np.x -= p.x;
       np.y -= p.y;
@@ -140,6 +140,7 @@ public:
    OpenNiPoint  getPlayerPart(int nr, int part1, int part2);
            //pos von Part1 relativ zu Part2
 
+   unsigned short* getRGBPicture(){return pixels;}
    double getWinkelELBOW(int nr, int leftArm);
    double getWinkel(int nr, int pos1, int gelenk, int pos2);
 
@@ -153,7 +154,7 @@ private:
 
    bool init_ok;
 
-
+   unsigned short* pixels;
    OpenNiPlayerCallback* playerCallback;
 };
 

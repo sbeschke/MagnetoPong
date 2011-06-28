@@ -12,6 +12,7 @@
 #include <exception>
 #include <stdlib.h>
 #include "BoostBar.h"
+#include "VideoWindow.h"
 
 
 Application* Application::myself;
@@ -197,13 +198,14 @@ void Application::run(void)
 	quit = false;
 	Application::myself = this;
 
-
 	players.resize(2);
 	players[PLAYER_LEFT]  = 0;
 	players[PLAYER_RIGHT] = 0;
 	playersActive = 0;
 
 	kinect.setPlayerCallback(&playerCallback);
+
+	VideoWindow vwindow(&kinect);
 
 	unsigned int start =  CL_System::get_time();
 	CL_DisplayWindowDescription window_desc;
@@ -279,6 +281,7 @@ void Application::run(void)
 
 		window.flip();
 		CL_KeepAlive::process();
+		vwindow.refresh();
 	}
 }
 //---------------------------------------------------------------------------
