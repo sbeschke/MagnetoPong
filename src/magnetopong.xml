@@ -4,7 +4,7 @@
         <width>1980</width>
         <height>1200</height>
         <fullscreen>true</fullscreen>
-        <fullscreendisplay>0</fullscreendisplay>
+        <fullscreenmonitor>0</fullscreendisplaymonitor>
     </display>
     <sound>
         <volume>1</volume>
@@ -13,7 +13,7 @@
            <effect name="collision">effects/sch.ogg</effect>
            <effect name="win">effects/aus.ogg</effect>
            <effect name="fight">effects/fight.ogg</effect>
-           <effect name="boost">effects/ohjeah.ogg</effect>
+           <effect name="boost">effects/ohjea.ogg</effect>
 	</effects>
     </sound>
     <physics>

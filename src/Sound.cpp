@@ -9,7 +9,11 @@
 #include "ClanLib/core.h"
 #include <iostream>
 
-
+Sound::Sound()
+{
+	output = CL_SoundOutput(44100);
+}
+//---------------------------------------------------------------------------
 Sound::~Sound()
 {
 	for(EffectMap::iterator it = this->effects.begin(); it != this->effects.end(); it++)
@@ -20,11 +24,25 @@ Sound::~Sound()
 
 }
 
-Sound::Sound()
+//---------------------------------------------------------------------------
+void Sound::domLoad(CL_DomElement config)
 {
-	output = CL_SoundOutput(44100);
-}
+	CL_DomElement domeffects = config.named_item("effects").to_element();
+	CL_DomNode dom_iterator= domeffects.get_first_child();
+	std::map<std::string,std::string> effects;
+	while(!dom_iterator.is_null())
+	{
+		//dereferencing the dom node
+		CL_DomElement current = dom_iterator.to_element();
+		CL_String name = current.get_attribute("name");
+		CL_String path = current.get_text();
+		effects[name]=path;
+		dom_iterator = dom_iterator.get_next_sibling();
+	}
+	this->loadeffects(effects);
 
+}
+//---------------------------------------------------------------------------
 void Sound::loadeffects(std::map<std::string, std::string> &effects)
 {
 	for(EffectMap::iterator it = this->effects.begin(); it != this->effects.end(); it++)
@@ -47,7 +65,7 @@ void Sound::loadeffects(std::map<std::string, std::string> &effects)
 	}
 
 }
-
+//---------------------------------------------------------------------------
 void Sound::effect(std::string name)
 {
 	if(effects.find(name) != effects.end())
@@ -63,7 +81,7 @@ void Sound::effect(std::string name)
 	}
 
 }
-
+//---------------------------------------------------------------------------
 void Sound::setmusic(std::string filename)
 {
 	this->music.stop();
@@ -78,7 +96,7 @@ void Sound::setmusic(std::string filename)
 		std::cout << "setmusic:File not found:"<< filename<< std::endl;
 	}
 }
-
+//---------------------------------------------------------------------------
 void Sound::play()
 {
 	music.set_looping(true);

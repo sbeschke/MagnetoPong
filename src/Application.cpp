@@ -19,6 +19,7 @@ int Application::detail;
 int Application::x_res;
 int Application::y_res;
 bool Application::fullscreen;
+int Application::fullscreenmonitor;
 
 void PlayerCallback::playerRecognized(int nr)
 {
@@ -106,10 +107,66 @@ void PlayerCallback::playerLost(int nr)
 	}
 }
 //---------------------------------------------------------------------------
+void Application::domsetup()
+{
+	CL_String filename = "";
+	if(CL_FileHelp::file_exists("magnetopong.xml"))
+	{
+		filename = "magnetopong.xml";
+	}
+	else if(CL_FileHelp::file_exists("~/.magnetopong/config.xml"))
+	{
+		filename = "~/.magnetopong.xml";
+	}
+	else if(CL_FileHelp::file_exists("/etc/magnetopong.xml"))
+	{
+		filename = "/etc/magnetopong.xml";
+	}
+	else
+	{
+		CL_Console::write_line("Could not find magnetopong.xml");
 
+	}
+	if(filename.length() > 0)try
+	{
+		CL_File file(filename);
+		CL_String ns_magnetopong = "http://magnetopong.org/config";
+		CL_DomDocument document(file);
+		CL_DomNode root = document.named_item_ns(ns_magnetopong,"config");
+		CL_DomElement display = root.named_item("display").to_element();
+		//CL_DomElement display = Application::domconfig.named_item("display").to_element();
+		Application::x_res = display.get_child_int("width",Application::x_res);
+		Application::y_res = display.get_child_int("height",Application::y_res);
+		Application::fullscreen = display.get_child_bool("fullscreen",Application::fullscreen);
+		Application::fullscreenmonitor = display.get_child_bool("fullscreenmonitor",Application::fullscreenmonitor);
+
+		CL_DomElement sound = root.named_item("sound").to_element();
+		this->soundPlayer->domLoad(sound);
+
+
+
+
+		file.close();
+
+
+	}
+	catch(CL_Exception &exception)
+	{
+		// Create a console window for text-output if not available
+		CL_ConsoleWindow console("Console", 80, 160);
+		CL_Console::write_line("DOM Error: " + exception.get_message_and_stack_trace());
+		console.display_close_message();
+
+
+	}
+
+}
+//---------------------------------------------------------------------------
 Application::Application(void)
 {
+	soundPlayer = new Sound();
 
+	domsetup();
 	CL_FontDescription font_desc;
 	font_desc.set_typeface_name("Verdana");
 	font_desc.set_height(60);
@@ -119,6 +176,7 @@ Application::Application(void)
 	huge_font_desc.set_typeface_name("Verdana");
 	huge_font_desc.set_height(200);
 	huge_font_desc.set_weight(5);
+
 
 	osmCenter = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.75f), font_desc2, CL_Colorf::darkslateblue);
 	osmShout  = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.25f), font_desc2, CL_Colorf::deeppink);
@@ -133,17 +191,7 @@ Application::Application(void)
 	timeToSpawnBall = 0.0f;
 	inMatch = false;
 	timeToMatch = 0.0f;
-	soundPlayer = new Sound();
-	std::map<std::string,std::string> effects;
 
-	//effects["on"]="effects/ltsaberon01.wav";
-	effects["collision"]="effects/sch.ogg";
-	effects["point"]="effects/ping.ogg";
-	effects["win"]="effects/aus.ogg";
-	effects["fight"]="effects/fight.ogg";
-//	effects["boost"]="effects/ohjea.ogg";
-	effects["playeron"]="effects/ohjea.ogg";
-	soundPlayer->loadeffects(effects);
 }
 //---------------------------------------------------------------------------
 
@@ -151,6 +199,7 @@ void Application::run(void)
 {
 	quit = false;
 	Application::myself = this;
+
 
 	players.resize(2);
 	players[PLAYER_LEFT]  = 0;
@@ -161,9 +210,11 @@ void Application::run(void)
 
 	unsigned int start =  CL_System::get_time();
 	CL_DisplayWindowDescription window_desc;
-	window_desc.set_size(CL_Size(Application::x_res, Application::y_res), true);
+
+	window_desc.set_size(CL_Size(Application::x_res,Application::y_res), true);
 	window_desc.set_fullscreen(Application::fullscreen,0);
 	window_desc.set_title("MagnetoPong!!!11einself");
+
 	CL_DisplayWindow window(window_desc);
 
 	CL_Slot slot_quit = window.sig_window_close().connect(this, &Application::on_window_close);

@@ -50,6 +50,7 @@ public:
 	static int x_res;
 	static int y_res;
 	static bool fullscreen;
+	static int  fullscreenmonitor;
 
 	const static int ANZ_BALS_DEMO = 8;
 	const static int SCORE_TO_WIN = 11;
@@ -78,6 +79,7 @@ public:
 	}
 
 	Application(void);
+	void domsetup();
 
 	void run(void);
 
