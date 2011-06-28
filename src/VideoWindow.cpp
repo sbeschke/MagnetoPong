@@ -32,20 +32,26 @@ VideoWindow::VideoWindow(OpenNi *kinect)
    window->flip();
    window->set_visible(true, false);
    window_open = true;
+   timepast = 42; //24fps;
 }
 
 VideoWindow::~VideoWindow()
 {
-   // TODO Auto-generated destructor stub
+
 }
 
 
-void VideoWindow::refresh()
+void VideoWindow::refresh(float timediff)
 {
-   unsigned short* pixels = kinect->getRGBPicture();
+   timepast += timediff;
+   if(timepast > 42) //24fps
+   {
+      unsigned short* pixels = kinect->getRGBPicture();
 
-   CL_PixelBuffer buffer(640, 480, cl_bgr8, pixels);
-   graphicContext.draw_pixels(0,0,buffer,CL_Rect(0,0,640,480));
+      CL_PixelBuffer buffer(640, 480, cl_bgr8, pixels);
+      graphicContext.draw_pixels(0,0,buffer,CL_Rect(0,0,640,480));
 
-   window->flip();
+      window->flip();
+      timepast = 0;
+   }
 }

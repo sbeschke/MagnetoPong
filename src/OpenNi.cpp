@@ -156,16 +156,19 @@ void OpenNi::init()
    CHECK_RC(rc, "StartGeneratingAll");
    if(rc != XN_STATUS_OK) return;
 
+   timepast = 42;
    init_ok = true;
 }
 //---------------------------------------------------------------------------
 
-void OpenNi::update()
+void OpenNi::update(float timediff)
 {
    if(init_ok)
    {
+      timepast += timediff;
+
       g_Context.WaitAndUpdateAll();
-      pixels = (unsigned short*)g_Image.GetImageMap();
+      if(timepast > 42) pixels = (unsigned short*)g_Image.GetImageMap();
 
    }
    else init();

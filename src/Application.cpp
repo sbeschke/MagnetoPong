@@ -230,10 +230,10 @@ void Application::run(void)
 	//---------------------------------------------------------------------------
 	while (!quit)//schleife-schleife-schleife-schleife-schleife-schleife-schleife
 	{
-		kinect.update();
-
 		int timediff = CL_System::get_time() - start ;
 		start = CL_System::get_time();
+
+		kinect.update(timediff);
 
 		//--Beenden-----------------------
 		if(keyboard.get_keycode(CL_KEY_ESCAPE) == true)	quit = true;
@@ -281,7 +281,7 @@ void Application::run(void)
 
 		window.flip();
 		CL_KeepAlive::process();
-		vwindow.refresh();
+		vwindow.refresh(timediff);
 	}
 }
 //---------------------------------------------------------------------------

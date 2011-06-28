@@ -133,7 +133,7 @@ public:
    virtual ~OpenNi();
 
    void init();
-   void update();
+   void update(float timediff);
    int  getAnzPlayer();
    OpenNiPlayer getPlayer(int nr);
    OpenNiPoint  getPlayerPart(int nr, int part);
@@ -156,6 +156,8 @@ private:
 
    unsigned short* pixels;
    OpenNiPlayerCallback* playerCallback;
+
+   float timepast;
 };
 
 #endif /* OPENNI_H_ */

@@ -19,7 +19,7 @@ public:
    VideoWindow(OpenNi *kinect);
    virtual ~VideoWindow();
 
-   void refresh();
+   void refresh(float timediff);
 
    void on_window_close()
    {
@@ -32,6 +32,7 @@ private:
    CL_DisplayWindow* window;
 
    bool window_open;
+   float timepast;
 };
 
 #endif /* VIDEOWINDOW_H_ */
