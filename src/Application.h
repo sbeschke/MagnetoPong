@@ -48,6 +48,8 @@ public:
 	static int detail;
 	static int x_res;
 	static int y_res;
+	static bool fullscreen;
+	static int  fullscreenmonitor;
 
 	int gamestatus;
 
@@ -82,6 +84,7 @@ public:
 	}
 
 	Application(void);
+	void domsetup();
 
 	void run(void);
 	void runPong(float timediff);

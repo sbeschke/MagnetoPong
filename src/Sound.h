@@ -12,6 +12,7 @@
 #include <ClanLib/sound.h>
 #include <ClanLib/vorbis.h>
 #include <ClanLib/mikmod.h>
+#include <ClanLib/core.h>
 
 //Hashmap for the effects
 typedef std::map<std::string, CL_SoundBuffer*> EffectMap;
@@ -21,10 +22,12 @@ class Sound
 public:
 	virtual ~Sound();
 	Sound();
+	void domLoad(CL_DomElement config);
 	void setmusic(std::string filename);
 	void play();
 	void effect(std::string name);
 	void loadeffects(std::map<std::string,std::string> &effects);
+
 
 private:
 	EffectMap effects;

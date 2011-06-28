@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mp:config xmlns:mp="http://magnetopong.org/config">
+    <display>
+        <width>1920</width>
+        <height>1200</height>
+        <fullscreen>false</fullscreen>
+        <fullscreenmonitor>1</fullscreendisplaymonitor>
+    </display>
+    <sound>
+        <volume>1</volume>
+	<effects>
+           <effect name="point">effects/ping.ogg</effect>
+           <effect name="collision">effects/sch.ogg</effect>
+           <effect name="win">effects/aus.ogg</effect>
+           <effect name="fight">effects/fight.ogg</effect>
+           <effect name="boost">effects/bam.ogg</effect>
+           <effect name="playeron">effects/ohjea.ogg</effect>
+           <effect name="playeroff">effects/tschuess.ogg</effect>
+           <effect name="Egg0">effects/lach0.ogg</effect>
+           <effect name="Egg1">effects/lach1.ogg</effect>
+           <effect name="Egg2">effects/lach2.ogg</effect>
+           <effect name="Egg3">effects/lach3.ogg</effect>
+           <effect name="Egg4">effects/lach4.ogg</effect>
+           <effect name="Egg5">effects/lach5.ogg</effect>
+	</effects>
+    </sound>
+    <physics>
+	<ball>
+           <acceleration>5.0</acceleration>
+           <radius>15</radius>
+        </ball>
+	<bat>
+           <radius>15</radius>
+        </bat>
+    </physics>
+    <gameplay>
+        <winpoints>11</winpoints>
+        <enableeastereggs>true</enableeastereggs>
+    </gameplay>
+    <openniconfigfile>Sample-User.xml</openniconfigfile>
+</mp:config>

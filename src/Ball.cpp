@@ -44,12 +44,13 @@ bool Ball::updateforces(const EntitySet& objects, float timedifference)
 
 			bool positiv1 = getCharge() > 0;
 			bool positiv2 = object->getCharge() > 0;
+			//TODO what is this for? seems to be evil!
 			if(positiv1 != positiv2) charge *= 1.5;
-
+			//if the ball does not touch the object
 			if( 2*RADIUS < length)
 			{
 				float forceAmount = charge * BALLACC / (length * length);
-				//std::cout << "Force amount: " << forceAmount << std::endl;
+
 				this->force += (distance/length) * forceAmount;
 			}
 			else
@@ -70,8 +71,8 @@ bool Ball::updateforces(const EntitySet& objects, float timedifference)
 void Ball::initializePosition()
 {
 	Vec2d startpos = windowFrame/2;
-	startpos.x += (rand() % 21)-10;//;/RAND_MAX*20)-10;
-	startpos.y  =  rand() % (int)windowFrame.y;///RAND_MAX*windowFrame.y-(windowFrame.y/2);
+	startpos.x += (rand() % 21)-10;
+	startpos.y  =  rand() % (int)windowFrame.y;
 	this->setPosition(startpos);
 
 }

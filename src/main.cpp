@@ -16,9 +16,11 @@ public:
 		CL_SetupDisplay setup_display;
 		CL_SetupGL setup_gl;
 
+		Application::x_res = 800;
+		Application::y_res = 600;
+		Application::fullscreen = false;
+		Application::fullscreenmonitor = 0;
 		Application::detail = 1;
-		Application::x_res = 1280;
-		Application::y_res = 940;
 
 		for(std::vector<CL_String>::const_iterator it = args.begin(); it != args.end(); it++) {
 			if(*it == "low") {
