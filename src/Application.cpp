@@ -75,7 +75,7 @@ void PlayerCallback::playerCalibrated(int nr)
 	}
 
 	KinectInputDevice* device = new KinectInputDevice(nr, playerSlot == Application::PLAYER_LEFT);
-	Player* player = new Player(app, device);
+	Player* player = new Player(app, device, playerSlot);
 	player->setNumber(nr);
 	player->getBat()->setColor(playerColors[playerSlot]);
 
@@ -102,12 +102,16 @@ void PlayerCallback::playerLost(int nr)
 			std::cout << "Lost player on side " << playerSlot << std::endl;
 			app->remPlayer(playerSlot);
 		}
+		Application::get()->soundPlayer->effect("playeroff");
 	}
 }
 //---------------------------------------------------------------------------
 
 Application::Application(void)
 {
+   gamestatus = GS_PONG;
+
+   srand(time(NULL));
 
 	CL_FontDescription font_desc;
 	font_desc.set_typeface_name("Verdana");
@@ -140,8 +144,15 @@ Application::Application(void)
 	effects["point"]="effects/ping.ogg";
 	effects["win"]="effects/aus.ogg";
 	effects["fight"]="effects/fight.ogg";
-//	effects["boost"]="effects/ohjea.ogg";
+	effects["boost"]="effects/bam.ogg";
 	effects["playeron"]="effects/ohjea.ogg";
+	effects["playeroff"]="effects/tschuess.ogg";
+	effects["Egg0"]="effects/lach0.ogg";
+	effects["Egg1"]="effects/lach1.ogg";
+	effects["Egg2"]="effects/lach2.ogg";
+	effects["Egg3"]="effects/lach3.ogg";
+	effects["Egg4"]="effects/lach4.ogg";
+	effects["Egg5"]="effects/lach5.ogg";
 	soundPlayer->loadeffects(effects);
 }
 //---------------------------------------------------------------------------
@@ -172,31 +183,12 @@ void Application::run(void)
 
 	CL_ResourceManager resources("resources.xml");
 
-	CL_Sprite boat_sprite(graphicContext, "Boat", &resources);
-
-	CL_FontDescription font_desc;
-	font_desc.set_typeface_name("Verdana");
-	font_desc.set_height(80);
-	CL_Font_System font(graphicContext, font_desc);
-
-	CL_FontDescription scoreFont_desc;
-	scoreFont_desc.set_typeface_name("Verdana");
-	scoreFont_desc.set_height(80);
-	CL_Font_System scoreFont(graphicContext, scoreFont_desc);
-
-	BoostBar boostbarPL(PLAYER_LEFT);
-	boostbarPL.setMaxValue(BOOSTRELOADTIME);
-	BoostBar boostbarPR(PLAYER_RIGHT);
-	boostbarPR.setMaxValue(BOOSTRELOADTIME);
-
-
 	playersChanged();
 	clearBalls();
 
 	//---------------------------------------------------------------------------
 	while (!quit)//schleife-schleife-schleife-schleife-schleife-schleife-schleife
 	{
-
 		kinect.update();
 
 		int timediff = CL_System::get_time() - start ;
@@ -219,111 +211,110 @@ void Application::run(void)
 			}
 
 			MouseInputDevice* device = new MouseInputDevice(&mouse);
-			Player* player = new Player(this, device);
+			Player* player = new Player(this, device, playerSlot);
 			addPlayer(player, playerSlot);
-		}
-
-		//--Kräfte berechnen und Kollisionen erkennen
-		bool collision = false;
-		for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++)
-		{
-			collision = collision || (*it)->updateforces(entities,timediff);
-		}
-		if(collision) //--bei Kollision sound ausgeben (nur wenn Spieler drin sind)
-		{
-		   if(playersActive) soundPlayer->effect("collision");
-		}
-
-		//--Ball einfügen
-		if(spawnBall)
-		{
-			timeToSpawnBall -= timediff;
-			if(timeToSpawnBall <= 0.0f)
-			{
-				doSpawnBall();
-			}
 		}
 
 		graphicContext.clear(CL_Colorf::white); //Fenster mit Weiß löschen
 
-		//--Spieler input verarbeiten und Spielerskelett Zeichnen
-		for(std::vector<Player*>::iterator it = players.begin();
-				it != players.end(); it++)
+		//--Spielmodus
+		switch(gamestatus)
 		{
-			Player* pl = *it;
-			if(pl != 0)
-			{
-				pl->processInput(timediff);
-				kinect.drawPlayer(pl->getNumber());
-			}
-		}
-
-		//--Bälle berechnen, zeichnen, und position überprüfen
-		for(EntitySet::iterator it = entities.begin(); it != entities.end();)
-		{
-			EntitySet::iterator next = it;
-			next++;
-			(*it)->updateposition(timediff);
-			(*it)->draw();
-
-			if(Ball* ball = dynamic_cast<Ball*>(*it))
-			{
-			   if(checkBall(ball))
-            {
-               remEntity(ball);
-               delete ball;
-            }
-			}
-			it = next;
+		case GS_MENUE:
+		case GS_PONG:   runPong(timediff); break;
+		case GS_SQUASH: break;
 		}
 
 		//--Textausgabe
-		osmCenter.tick((float)timediff / 1000.0f);
+      osmCenter.tick((float)timediff / 1000.0f);
       osmShout.tick((float)timediff / 1000.0f);
       osmHuge.tick((float)timediff / 1000.0f);
       osmLeft.tick((float)timediff / 1000.0f);
       osmRight.tick((float)timediff / 1000.0f);
 
-		osmCenter.draw();
-		osmShout.draw();
-		osmLeft.draw();
-		osmRight.draw();
-		osmHuge.draw();
-
-		//--Spieler Verarbeiten
-		if(playersActive == 2)
-		{
-			// draw scores
-			std::ostringstream scoreLeftTxtStrm;
-			scoreLeftTxtStrm << players[PLAYER_LEFT]->getScore() << " : "
-					<< players[PLAYER_RIGHT]->getScore();
-			std::string scoreLeftTxt = scoreLeftTxtStrm.str();
-			CL_Size scoreSize = scoreFont.get_text_size(graphicContext, scoreLeftTxt);
-			CL_Pointf scoreLeftPos((x_res - scoreSize.width) / 2, scoreSize.height);
-			scoreFont.draw_text(graphicContext, scoreLeftPos, scoreLeftTxt, CL_Colorf::black);
-
-			if(!inMatch)
-			{
-				clearBalls();
-				timeToMatch -= timediff;
-				if(timeToMatch <= 0.0f)
-				{
-					startMatch();
-				}
-			}
-
-			boostbarPL.setValue(players[PLAYER_LEFT]->getBat()->getBoostctr());
-			boostbarPR.setValue(players[PLAYER_RIGHT]->getBat()->getBoostctr());
-			boostbarPL.draw();
-			boostbarPR.draw();
-
-			doEsterEgg(PLAYER_LEFT,  players[PLAYER_LEFT]->getEsterEgg());
-			doEsterEgg(PLAYER_RIGHT, players[PLAYER_RIGHT]->getEsterEgg());
-		}
+      osmCenter.draw();
+      osmShout.draw();
+      osmLeft.draw();
+      osmRight.draw();
+      osmHuge.draw();
 
 		window.flip();
 		CL_KeepAlive::process();
 	}
+}
+//---------------------------------------------------------------------------
+
+void Application::runPong(float timediff)
+{
+   //--Kräfte berechnen und Kollisionen erkennen
+   bool collision = false;
+   for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++)
+   {
+      collision = collision || (*it)->updateforces(entities,timediff);
+   }
+   if(collision) //--bei Kollision sound ausgeben (nur wenn Spieler drin sind)
+   {
+      if(playersActive) soundPlayer->effect("collision");
+   }
+
+   //--Ball einfügen
+   if(spawnBall)
+   {
+      timeToSpawnBall -= timediff;
+      if(timeToSpawnBall <= 0.0f)
+      {
+         doSpawnBall();
+      }
+   }
+
+   //--Spieler input verarbeiten und Spielerskelett Zeichnen
+   for(std::vector<Player*>::iterator it = players.begin();
+         it != players.end(); it++)
+   {
+      Player* pl = *it;
+      if(pl != 0)
+      {
+         pl->processInput(timediff);
+         kinect.drawPlayer(pl->getNumber());
+      }
+   }
+
+   //--Bälle berechnen, zeichnen, und position überprüfen
+   for(EntitySet::iterator it = entities.begin(); it != entities.end();)
+   {
+      EntitySet::iterator next = it;
+      next++;
+      (*it)->updateposition(timediff);
+      (*it)->draw();
+
+      if(Ball* ball = dynamic_cast<Ball*>(*it))
+      {
+         if(checkBall(ball))
+         {
+            remEntity(ball);
+            delete ball;
+         }
+      }
+      it = next;
+   }
+
+   //--Spieler Verarbeiten
+   if(playersActive == 2)
+   {
+      drawScores(players[PLAYER_LEFT]->getScore(), players[PLAYER_RIGHT]->getScore());
+
+      if(!inMatch)
+      {
+         clearBalls();
+         timeToMatch -= timediff;
+         if(timeToMatch <= 0.0f)
+         {
+            startMatch();
+         }
+      }
+      doEsterEgg(PLAYER_LEFT,  players[PLAYER_LEFT]->getEsterEgg());
+      doEsterEgg(PLAYER_RIGHT, players[PLAYER_RIGHT]->getEsterEgg());
+   }
 }
 //---------------------------------------------------------------------------
 
@@ -545,6 +536,20 @@ void Application::playersChanged(void)
 }
 //---------------------------------------------------------------------------
 
+void Application::drawScores(int s1, int s2)
+{
+   CL_FontDescription scoreFont_desc;
+   scoreFont_desc.set_typeface_name("Verdana");
+   scoreFont_desc.set_height(80);
+   CL_Font_System scoreFont(graphicContext, scoreFont_desc);
+
+   TGString txt = TGString(s1) + " : " + s2;
+   CL_Size scoreSize = scoreFont.get_text_size(graphicContext, txt);
+   CL_Pointf scoreLeftPos((x_res - scoreSize.width) / 2, scoreSize.height);
+   scoreFont.draw_text(graphicContext, scoreLeftPos, txt, CL_Colorf::black);
+}
+//---------------------------------------------------------------------------
+
 void Application::doEsterEgg(int playerNr, int egg)
 {
    switch(egg)
@@ -573,10 +578,20 @@ void Application::doEsterEgg(int playerNr, int egg)
       break;
    case EGG_MEGA:
       {
-         if(playerNr == PLAYER_LEFT) playerNr = PLAYER_RIGHT;
-         else                        playerNr = PLAYER_LEFT;
-
-         players[playerNr]->setInvert(!(players[playerNr]->getInvert()));
+         cout << "Mega Egg\n";
+         if(playerNr == PLAYER_LEFT)
+         {
+            players[PLAYER_RIGHT]->setInvert(!(players[PLAYER_RIGHT]->getInvert()));
+            Application::get()->osmLeft.setMessage("you found the megaEgg", 2);
+         }
+         else
+         {
+            players[PLAYER_LEFT]->setInvert(!(players[PLAYER_LEFT]->getInvert()));
+            Application::get()->osmRight.setMessage("you found the megaEgg", 2);
+         }
+         int i = rand() % 6;
+         TGString s = TGString("Egg") + i;
+         soundPlayer->effect(s);
       }
       break;
    }

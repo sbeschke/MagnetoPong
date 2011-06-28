@@ -2,7 +2,7 @@
  * BoostBaar.cpp
  *
  *  Created on: 25.06.2011
- *      Author: matthas
+ *      Author: matthias
  */
 
 #include "BoostBar.h"

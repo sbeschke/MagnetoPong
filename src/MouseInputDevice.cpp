@@ -19,7 +19,7 @@ MouseInputDevice::MouseInputDevice(CL_InputDevice* mouse)
 MouseInputDevice::~MouseInputDevice() {
 }
 
-CL_Point MouseInputDevice::getPoint(float timepast)
+CL_Point MouseInputDevice::getPoint()
 {
 	return mouse->get_position();
 }

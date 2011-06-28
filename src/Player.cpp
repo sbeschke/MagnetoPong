@@ -11,16 +11,19 @@
 #include "Application.h"
 #include "BoostBar.h"
 
-Player::Player(Application* application, InputDevice* device)
+Player::Player(Application* application, InputDevice* device, int playerSlot)
 : application(application), device(device), score(0)
 {
+   this->playerSlot = playerSlot;
 	bat = new Bat(application);
 	application->addEntity(bat);
+	bar = new BoostBar(playerSlot);
+   bar->setMaxValue(BOOSTRELOADTIME);
 }
 
 Player::~Player()
 {
-
+   delete bar;
 	delete bat;
 }
 
@@ -31,9 +34,12 @@ void Player::quit(void)
 
 void Player::processInput(float timepast)
 {
-	bat->setPosition(device->getPoint(timepast));
+   device->processInput(timepast);
+	bat->setPosition(device->getPoint());
 	bat->setCharge(device->getZ());
 	bat->setBoost(device->getJump());
+	bar->setValue(bat->getBoostctr());
+	bar->draw();
 }
 
 Bat* Player::getBat(void)
@@ -54,6 +60,16 @@ int Player::getNumber(void)
 void Player::setNumber(int number)
 {
 	this->number = number;
+}
+
+int Player::getPlayerSlot()
+{
+   return playerSlot;
+}
+
+void Player::setPlayerSlot(int playerSlot)
+{
+   this->playerSlot = playerSlot;
 }
 
 void Player::incrementScore(void)

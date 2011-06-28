@@ -2,11 +2,10 @@
  * KinectInputDevice.cpp
  *
  *  Created on: 24.06.2011
- *      Author: matthas
+ *      Author: matthias
  */
 
 #include "KinectInputDevice.h"
-#include "OpenNi.h"
 #include "Application.h"
 #include <iostream>
 
@@ -29,11 +28,16 @@ KinectInputDevice::KinectInputDevice(int nr, bool lefthand)
    x_max = 0;
 
    lastTorsoY = 0;
-   kickingR = false;
-   kickingL = false;
+   kickingR = 0;
+   kickingL = 0;
+
    invert   = false;
    jumping  = false;
    invertTimeout = 0;
+   feldWinkel = 0;
+
+   egg = 0;
+   eggRead = false;
 }
 
 KinectInputDevice::~KinectInputDevice()
@@ -53,84 +57,136 @@ void KinectInputDevice::setPlayer(int nr)
 }
 //---------------------------------------------------------------------------
 
-CL_Point KinectInputDevice::getPoint(float timepast)
+void KinectInputDevice::processInput(float timepast)
 {
-   OpenNiPoint p;
+   if(invert)
+   {
+      invertTimeout += timepast;
+      if(invertTimeout > 20000) invert = false;
+   }
+
+   calcPos();
+   calcFeldWinkel();
+   calcJump();
+   calcKicking();
+   calcEgg();
+}
+//---------------------------------------------------------------------------
+
+CL_Point KinectInputDevice::getPoint()
+{
+   return CL_Point(handPoint.x, handPoint.y);
+}
+//---------------------------------------------------------------------------
+
+float KinectInputDevice::getZ()
+{
+   return feldWinkel;
+}
+//---------------------------------------------------------------------------
+
+bool KinectInputDevice::getJump()
+{
+   return jumping;
+}
+//---------------------------------------------------------------------------
+
+int KinectInputDevice::getEsterEgg()
+{
+   if(egg == 0)
+   {
+      return 0;
+   }
+   else if(!eggRead)
+   {
+      eggRead = true;
+      return egg;
+   }
+   else
+   {
+      return 0;
+   }
+}
+//---------------------------------------------------------------------------
+
+void KinectInputDevice::calcPos()
+{
    double x_nwinkel;
    double x_pwinkel;
+
    if(leftHand)
    {
-      p = Application::get()->kinect.getPlayerPart(playerNr, P_LHAND, P_LSHOULDER);
+      handPoint = Application::get()->kinect.getPlayerPart(playerNr, P_LHAND, P_LSHOULDER);
       x_pwinkel = 110;
       x_nwinkel = 160;
    }
    else
    {
-      p = Application::get()->kinect.getPlayerPart(playerNr, P_RHAND, P_RSHOULDER);
+      handPoint = Application::get()->kinect.getPlayerPart(playerNr, P_RHAND, P_RSHOULDER);
       x_pwinkel = 160;
       x_nwinkel = 110;
    }
+
    if(invert)
    {
-      invertTimeout += timepast;
-      cout << invert;
-      p.x *= -1.0;
-      p.y *= -1.0;
-      if(invertTimeout > 20000) invert = false;
+      handPoint.x *= -1.0;
+      handPoint.y *= -1.0;
    }
-   else if(x_max == 0 || x_min == 0)// || !y_kali)
+   else if(x_max == 0 || x_min == 0)//Kalibrierung
    {
-      if((p.z < 100) && (p.z > -20))
+      calibrate(handPoint, x_nwinkel, x_pwinkel);
+   }
+
+   if(handPoint.x < 0) handPoint.x = (handPoint.x * x_nstrech +(Application::x_res/2.0) + x_offset);
+   else                handPoint.x = (handPoint.x * x_pstrech +(Application::x_res/2.0) + x_offset);
+
+   handPoint.y = (handPoint.y+(Application::y_res/2.0) + y_offset) * y_strech;
+}
+//---------------------------------------------------------------------------
+
+void KinectInputDevice::calibrate(OpenNiPoint p, double xnw, double xpw)
+{
+   if((p.z < 100) && (p.z > -20))
+   {
+      if((p.y < 50) && (p.y > -50))
       {
-         if((p.y < 50) && (p.y > -50))
+         double winkel = Application::get()->kinect.getWinkelELBOW(playerNr, leftHand);
+         if(p.x > 0)
          {
-            double winkel = Application::get()->kinect.getWinkelELBOW(playerNr, leftHand);
-            if(p.x > 0)
+            if((winkel > xpw) && (winkel < xpw+10))
             {
-               if((winkel > x_pwinkel))// && x_max == 0)
-               {
-                  x_max = p.x;
-                  x_pstrech = (Application::x_res/2.0)/abs(x_max);
-                  cout << "player " << playerNr << " x_max calc " << x_pstrech << endl;
-               }
+               x_max = p.x;
+               x_pstrech = (Application::x_res/2.0)/abs(x_max);
+               cout << "player " << playerNr << " x_max calc " << x_pstrech << endl;
             }
-            else
+         }
+         else
+         {
+            if((winkel > xnw) && (winkel < xnw+10))
             {
-               if((winkel > x_nwinkel)) //&& x_min == 0)
-               {
-                  x_min = p.x;
-                  x_nstrech = (Application::x_res/2.0)/abs(x_min);
-                  cout << "player " << playerNr << " x_min calc " << x_nstrech << endl;
-               }
+               x_min = p.x;
+               x_nstrech = (Application::x_res/2.0)/abs(x_min);
+               cout << "player " << playerNr << " x_min calc " << x_nstrech << endl;
             }
          }
       }
    }
-
-   if(p.x < 0) p.x = (p.x * x_nstrech +(Application::x_res/2.0) + x_offset);
-   else        p.x = (p.x * x_pstrech +(Application::x_res/2.0) + x_offset);
-
-   p.y = (p.y+(Application::y_res/2.0) + y_offset) * y_strech;
-
-
-   return CL_Point(p.x, p.y);
 }
 //---------------------------------------------------------------------------
 
-float KinectInputDevice::getZ(void)
+void KinectInputDevice::calcFeldWinkel()
 {
-   double winkel = Application::get()->kinect.getWinkelELBOW(playerNr, !leftHand);
+   feldWinkel = Application::get()->kinect.getWinkelELBOW(playerNr, !leftHand);
+   cout << feldWinkel << endl;
 
-   winkel -= 90.0;
-   winkel /= 80.0;
-   if(winkel > 1.0) winkel = 1.0;
-   else if(winkel < -1.0) winkel = -1.0;
-
-   return winkel;
+   feldWinkel -= 90.0;
+   feldWinkel /= 80.0;
+   if(feldWinkel > 1.0) feldWinkel = 1.0;
+   else if(feldWinkel < -1.0) feldWinkel = -1.0;
 }
 //---------------------------------------------------------------------------
 
-bool KinectInputDevice::getJump()
+void KinectInputDevice::calcJump()
 {
    OpenNiPoint p = Application::get()->kinect.getPlayerPart(playerNr, P_TORSO);
    jumping = false;
@@ -141,76 +197,52 @@ bool KinectInputDevice::getJump()
          jumping = true;
       }
    }
-
    lastTorsoY = p.y;
-   return jumping;
 }
 //---------------------------------------------------------------------------
 
-int KinectInputDevice::getEsterEgg()
+void KinectInputDevice::calcKicking()
 {
-   int egg = 0;
-   double winkel;
-   winkel = Application::get()->kinect.getWinkel(playerNr, P_RSHOULDER, P_RHIP, P_RKNEE);
+   double winkel = Application::get()->kinect.getWinkel(playerNr, P_RSHOULDER, P_RHIP, P_RKNEE);
 
-   if(winkel < 90  && !kickingR)
+   if(winkel < 90  ) kickingR = 1;
+   else              kickingR = 0;
+
+   winkel = Application::get()->kinect.getWinkel(playerNr, P_LSHOULDER, P_LHIP, P_LKNEE);
+
+   if(winkel < 90  ) kickingL = 1;
+   else              kickingL = 0;
+}
+//---------------------------------------------------------------------------
+
+void KinectInputDevice::calcEgg()
+{
+   if(kickingR)
    {
       if(jumping)
       {
          egg = EGG_MEGA;
-         cout << "Mega Egg\n";
-         if(!leftHand)
-         {
-            Application::get()->osmRight.setMessage("you found the megaEgg", 2);
-         }
-         else
-         {
-            Application::get()->osmLeft.setMessage("you found the megaEgg", 2);
-         }
-
       }
       else
       {
          egg = EGG_POL;
       }
-      kickingR = true;
    }
-   else if(winkel > 90)
+   else if(kickingL)
    {
-      kickingR = false;
-   }
-
-   if(!egg)
-   {
-      winkel = Application::get()->kinect.getWinkel(playerNr, P_LSHOULDER, P_LHIP, P_LKNEE);
-
-      if(winkel < 90  && !kickingL)
+      if(jumping)
       {
-         if(jumping)
-         {
-         /*   cout << "Mega Egg\n";
-            if(!leftHand)
-            {
-               Application::get()->osmRight.setMessage("you found the megaEgg", 2);
-            }
-            else
-            {
-               Application::get()->osmLeft.setMessage("you found the megaEgg", 2);
-            }
-            egg = EGG_MEGA;*/
-         }
-         else
-         {
-            egg = EGG_STOP;
-         }
-         kickingL = true;
       }
-      else if(winkel > 90)
+      else
       {
-         kickingL = false;
+         egg = EGG_STOP;
       }
    }
-
-   return egg;
+   else
+   {
+      eggRead = false;
+      egg = 0;
+   }
 }
 //---------------------------------------------------------------------------
+

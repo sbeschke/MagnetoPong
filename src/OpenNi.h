@@ -11,6 +11,7 @@
 
 #include <math.h>
 #include "TGString.h"
+#include <iostream>
 
 #include <vector>
 using namespace std;
@@ -61,6 +62,24 @@ public:
    double operator*(OpenNiPoint& p)
    {
       return x*p.x + y*p.y + z*p.z;
+   }
+
+   OpenNiPoint operator-(OpenNiPoint& p)
+   {
+      OpenNiPoint np = *this;
+      np.x -= p.x;
+      np.y -= p.y;
+      np.z = p.z  - np.z;
+      return np;
+   }
+
+   OpenNiPoint operator+(OpenNiPoint& p)
+   {
+      OpenNiPoint np = *this;
+      np.x += p.x;
+      np.y += p.y;
+      np.z += p.z;
+      return np;
    }
 
    double length()
@@ -136,8 +155,6 @@ private:
 
 
    OpenNiPlayerCallback* playerCallback;
-
-
 };
 
 #endif /* OPENNI_H_ */

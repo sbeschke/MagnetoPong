@@ -11,19 +11,22 @@
 class Application;
 class Bat;
 class InputDevice;
+class BoostBar;
 
 class Player {
 public:
-	Player(Application* application, InputDevice* device);
+	Player(Application* application, InputDevice* device, int playerSlot);
 	virtual ~Player();
 
 	void quit(void);
 	virtual void processInput(float timepast);
 	virtual Bat* getBat(void);
-	virtual int getEsterEgg();
+	virtual int  getEsterEgg();
 
 	virtual int  getNumber(void);
 	virtual void setNumber(int number);
+	virtual int  getPlayerSlot();
+	virtual void setPlayerSlot(int playerSlot);
 
 	virtual void incrementScore(void);
 	virtual int  getScore(void);
@@ -35,10 +38,13 @@ public:
 private:
 	Application* application;
 	Bat* bat;
+	BoostBar* bar;
 	// todo should be using a ref-counting pointer here
 	InputDevice* device;
 
+
 	int number;
+	int playerSlot;
 
 	int score;
 };

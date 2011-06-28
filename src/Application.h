@@ -45,10 +45,15 @@ public:
 
 	PlayerCallback playerCallback;
 
-
 	static int detail;
 	static int x_res;
 	static int y_res;
+
+	int gamestatus;
+
+	const static int GS_MENUE = 0;
+	const static int GS_PONG  = 1;
+	const static int GS_SQUASH = 2;
 
 	const static int ANZ_BALS_DEMO = 8;
 	const static int SCORE_TO_WIN = 11;
@@ -79,6 +84,7 @@ public:
 	Application(void);
 
 	void run(void);
+	void runPong(float timediff);
 
 	void on_window_close()
 	{
@@ -96,7 +102,6 @@ public:
 	void ballGone(Ball* ball);
 
 	void clearBalls(void);
-
 	void makeBall(void);
 
 	bool inMatch;
@@ -111,6 +116,7 @@ public:
 	void playersChanged(void);
 	void prepareMatch(void);
 
+	void drawScores(int s1, int s2);
 	void doEsterEgg(int playerNr, int egg);
 };
 

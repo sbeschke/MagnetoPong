@@ -10,24 +10,17 @@
 #include <XnOpenNI.h>
 #include <XnCodecIDs.h>
 #include <XnCppWrapper.h>
+
 #include "Application.h"
 #include "Player.h"
 #include "TGString.h"
+#include "Calculation.h"
 
-
-//---------------------------------------------------------------------------
-// Includes
-//---------------------------------------------------------------------------
-
-//#define RECORD_FILE     "../../../Data/Recording.oni"
 #define SAMPLE_XML_PATH "Sample-User.xml"
-
-
-#define POSE_TO_USE "Psi"
 
 #define CHECK_RC(nRetVal, what) printf("%s : %s\n", what, xnGetStatusString(nRetVal));
 
-xn::Context g_Context;
+xn::Context        g_Context;
 xn::DepthGenerator g_DepthGenerator;
 xn::UserGenerator  g_UserGenerator;
 
@@ -117,11 +110,7 @@ void OpenNi::init()
 
    rc = g_Context.Init();
    CHECK_RC(rc, "Context.init");
-//   This should work but does not perhaps further information is needed
-//   XnLicense license = {"PrimeSense", "0KOIk2JeIBYClPWVnMoRKn5cdY4="};
-//   rc = g_Context.AddLicense(license);
-//  CHECK_RC(rc, "Licence");
-   //the legacy way of initializing from xml Path
+
    rc = g_Context.InitFromXmlFile(SAMPLE_XML_PATH);
    CHECK_RC(rc, "InitFromXml");
 
@@ -253,11 +242,7 @@ OpenNiPoint OpenNi::getPlayerPart(int nr, int part1, int part2)
    OpenNiPoint p1 = getPlayerPart(nr, part1);
    OpenNiPoint p2 = getPlayerPart(nr, part2);
 
-   p1.x = p1.x - p2.x;
-   p1.y = p1.y - p2.y;
-   p1.z = p2.z - p1.z;
-
-   return p1;
+   return p1 - p2;
 }
 //---------------------------------------------------------------------------
 
@@ -277,7 +262,8 @@ double OpenNi::getWinkelELBOW(int nr, int leftArm)
       p2 = getPlayerPart(nr, P_RSHOULDER, P_RELBOW);
    }
 
-   return acos((p1*p2)/(p1.length()*p2.length())) * 57.295779513082320876798154814105;
+   //return acos((p1*p2)/(p1.length()*p2.length()))* 57.295779513082320876798154814105;
+   return Calculation::getWinkel(p1,p2);
 }
 //---------------------------------------------------------------------------
 
@@ -290,7 +276,8 @@ double OpenNi::getWinkel(int nr, int pos1, int gelenk, int pos2)
    p1 = getPlayerPart(nr, pos1, gelenk);
    p2 = getPlayerPart(nr, pos2, gelenk);
 
-   return acos((p1*p2)/(p1.length()*p2.length())) * 57.295779513082320876798154814105;
+ //  return acos((p1*p2)/(p1.length()*p2.length()))* 57.295779513082320876798154814105;
+   return Calculation::getWinkel(p1,p2);
 }
 //---------------------------------------------------------------------------
 
