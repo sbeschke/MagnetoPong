@@ -43,6 +43,8 @@ VideoWindow::~VideoWindow()
 
 void VideoWindow::refresh(float timediff)
 {
+   if(!window_open) return;
+
    timepast += timediff;
    if(timepast > 42) //24fps
    {

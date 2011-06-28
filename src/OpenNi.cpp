@@ -23,11 +23,10 @@
 #define CHECK_RC(nRetVal, what) printf("%s : %s\n", what, xnGetStatusString(nRetVal));
 
 xn::Context        g_Context;
-xn::DepthGenerator g_DepthGenerator;
 xn::UserGenerator  g_UserGenerator;
 
 xn::ImageGenerator g_Image;
-xn::ImageMetaData  g_ImageMD;
+xn::DepthGenerator g_Depth;
 
 XnCallbackHandle h;
 XnCallbackHandle hCalib;
@@ -119,10 +118,14 @@ void OpenNi::init()
    rc = g_Context.InitFromXmlFile(SAMPLE_XML_PATH);
    CHECK_RC(rc, "InitFromXml");
 
+   rc = g_Image.Create(g_Context);
+   CHECK_RC(rc, "CreateImageGenerator");
    if(rc != XN_STATUS_OK) return;
-   rc = g_DepthGenerator.Create(g_Context);
+   rc = g_Depth.Create(g_Context);
+   CHECK_RC(rc, "CreateDepthGenerator");
+   if(rc != XN_STATUS_OK) return;
 
-   rc = g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator);
+   rc = g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_Depth);
    CHECK_RC(rc, "Find depth generator");
    if(rc != XN_STATUS_OK) return;
    rc = g_Context.FindExistingNode(XN_NODE_TYPE_USER, g_UserGenerator);
@@ -149,9 +152,6 @@ void OpenNi::init()
    CHECK_RC(rc, "RegisterToPoseCallbacks");
    if(rc != XN_STATUS_OK) return;
 
-   rc = g_Image.Create(g_Context);
-   CHECK_RC(rc, "CreateImageGenerator");
-
    rc = g_Context.StartGeneratingAll();
    CHECK_RC(rc, "StartGeneratingAll");
    if(rc != XN_STATUS_OK) return;
@@ -168,7 +168,11 @@ void OpenNi::update(float timediff)
       timepast += timediff;
 
       g_Context.WaitAndUpdateAll();
-      if(timepast > 42) pixels = (unsigned short*)g_Image.GetImageMap();
+      if(timepast > 42)
+      {
+         pixels = (unsigned short*)g_Image.GetImageMap();
+         depth  = (unsigned short*)g_Depth.GetDepthMap();
+      }
 
    }
    else init();

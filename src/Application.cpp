@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include "BoostBar.h"
 #include "VideoWindow.h"
+#include "DepthWindow.h"
 
 
 Application* Application::myself;
@@ -206,6 +207,7 @@ void Application::run(void)
 	kinect.setPlayerCallback(&playerCallback);
 
 	VideoWindow vwindow(&kinect);
+	DepthWindow dwindow(&kinect);
 
 	unsigned int start =  CL_System::get_time();
 	CL_DisplayWindowDescription window_desc;
@@ -282,6 +284,7 @@ void Application::run(void)
 		window.flip();
 		CL_KeepAlive::process();
 		vwindow.refresh(timediff);
+		dwindow.refresh(timediff);
 	}
 }
 //---------------------------------------------------------------------------

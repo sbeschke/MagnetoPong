@@ -141,6 +141,8 @@ public:
            //pos von Part1 relativ zu Part2
 
    unsigned short* getRGBPicture(){return pixels;}
+   unsigned short* getDepthPicture(){return depth;}
+
    double getWinkelELBOW(int nr, int leftArm);
    double getWinkel(int nr, int pos1, int gelenk, int pos2);
 
@@ -155,6 +157,7 @@ private:
    bool init_ok;
 
    unsigned short* pixels;
+   unsigned short*  depth;
    OpenNiPlayerCallback* playerCallback;
 
    float timepast;

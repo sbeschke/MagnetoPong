@@ -16,6 +16,7 @@ public:
    static bool pointonLine(OpenNiPoint lineP, OpenNiPoint lineDir, double lineWidth, OpenNiPoint point);
    static double getWinkel(OpenNiPoint pos1, OpenNiPoint gelenk, OpenNiPoint pos2, bool rad = false);
    static double getWinkel(OpenNiPoint vector1, OpenNiPoint vector2, bool rad = false);
+   static int hsl_to_rgb(double h, double s, double l);
 };
 
 #endif /* CALCULATION_H_ */
