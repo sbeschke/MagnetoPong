@@ -170,8 +170,8 @@ void OpenNi::update(float timediff)
       g_Context.WaitAndUpdateAll();
       if(timepast > 42)
       {
-         pixels = (unsigned short*)g_Image.GetImageMap();
-         depth  = (unsigned short*)g_Depth.GetDepthMap();
+         //pixels = (unsigned short*)g_Image.GetImageMap();
+         //depth  = (unsigned short*)g_Depth.GetDepthMap();
       }
 
    }
@@ -268,13 +268,13 @@ OpenNiPoint OpenNi::getPlayerPart(int nr, int part1, int part2)
 
 unsigned short* OpenNi::getRGBPicture()
 {
-   return pixels;
+   return (unsigned short*)g_Image.GetImageMap();//pixels;
 }
 //---------------------------------------------------------------------------
 
 unsigned short* OpenNi::getDepthPicture()
 {
-   return depth;
+   return (unsigned short*)g_Depth.GetDepthMap();//depth;
 }
 //---------------------------------------------------------------------------
 

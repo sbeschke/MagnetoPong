@@ -32,6 +32,7 @@ void DepthWindow::refreshPicture()
    double lh=0;
    double dh;
    double l;
+   double val;
 
    unsigned char array[640*480*3];
    int ptr=0;
@@ -39,9 +40,10 @@ void DepthWindow::refreshPicture()
 
    for(int i=0; i < 640*480; i++)
    {
-      if(pixels[i]*2.0 > min)
+      val = (double)pixels[i]*2.0;
+      if(val > min)
       {
-         h = (((double)pixels[i]*2.0-min)/max)*360.0;
+         h = ((val-min)/max)*360.0;
 
          if(viewEndles) while(h > 360) h -= 360.0;
 
@@ -51,7 +53,7 @@ void DepthWindow::refreshPicture()
 
          if(dh < details && dh > -details)
          {
-            //l -= (dh/(details*2.0)) * 0.4;
+           // l -= (dh/(details)) * 0.4;
             l -= 0.3;
          }
          else
