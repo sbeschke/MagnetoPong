@@ -18,6 +18,7 @@ DepthWindow::DepthWindow(OpenNi *kinect, double min, double max, double details,
    this->min = min;
    this->max = max;
    this->viewEndles = viewEndles;
+   show_video = false;
 }
 
 DepthWindow::~DepthWindow()

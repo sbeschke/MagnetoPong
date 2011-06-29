@@ -7,6 +7,7 @@
 
 #include "KinectInputDevice.h"
 #include "Application.h"
+#include "Calculation.h"
 #include <iostream>
 
 KinectInputDevice::KinectInputDevice(int nr, bool lefthand)
@@ -118,12 +119,12 @@ void KinectInputDevice::calcPos()
    {
       handPoint = Application::get()->kinect.getPlayerPart(playerNr, P_LHAND, P_LSHOULDER);
       x_pwinkel = 110;
-      x_nwinkel = 160;
+      x_nwinkel = 130;
    }
    else
    {
       handPoint = Application::get()->kinect.getPlayerPart(playerNr, P_RHAND, P_RSHOULDER);
-      x_pwinkel = 160;
+      x_pwinkel = 130;
       x_nwinkel = 110;
    }
 
@@ -146,29 +147,37 @@ void KinectInputDevice::calcPos()
 
 void KinectInputDevice::calibrate(OpenNiPoint p, double xnw, double xpw)
 {
+   double winkel = Application::get()->kinect.getWinkelELBOW(playerNr, leftHand);
+   if(p.x > 0)
+   {
+      if((winkel > xpw) && (winkel < xpw+10))
+      {
+         if(Calculation::pointonLine(OpenNiPoint(0,0,30), OpenNiPoint(1,0,0), 300, p))
+         {
+            x_max = p.x;
+            x_pstrech = (Application::x_res/2.0)/abs(x_max);
+            cout << "player " << playerNr << " x_max calc " << x_pstrech << endl;
+         }
+      }
+   }
+   else
+   {
+      if((winkel > xnw) && (winkel < xnw+10))
+      {
+         if(Calculation::pointonLine(OpenNiPoint(0,0,30), OpenNiPoint(1,0,0), 300, p))
+         {
+            x_min = p.x;
+            x_nstrech = (Application::x_res/2.0)/abs(x_min);
+            cout << "player " << playerNr << " x_min calc " << x_nstrech << endl;
+         }
+      }
+   }
+
    if((p.z < 100) && (p.z > -20))
    {
       if((p.y < 50) && (p.y > -50))
       {
-         double winkel = Application::get()->kinect.getWinkelELBOW(playerNr, leftHand);
-         if(p.x > 0)
-         {
-            if((winkel > xpw) && (winkel < xpw+10))
-            {
-               x_max = p.x;
-               x_pstrech = (Application::x_res/2.0)/abs(x_max);
-               cout << "player " << playerNr << " x_max calc " << x_pstrech << endl;
-            }
-         }
-         else
-         {
-            if((winkel > xnw) && (winkel < xnw+10))
-            {
-               x_min = p.x;
-               x_nstrech = (Application::x_res/2.0)/abs(x_min);
-               cout << "player " << playerNr << " x_min calc " << x_nstrech << endl;
-            }
-         }
+
       }
    }
 }
@@ -177,7 +186,6 @@ void KinectInputDevice::calibrate(OpenNiPoint p, double xnw, double xpw)
 void KinectInputDevice::calcFeldWinkel()
 {
    feldWinkel = Application::get()->kinect.getWinkelELBOW(playerNr, !leftHand);
-   cout << feldWinkel << endl;
 
    feldWinkel -= 90.0;
    feldWinkel /= 80.0;

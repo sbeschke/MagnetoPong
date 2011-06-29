@@ -12,9 +12,9 @@ class Program
 public:
 	static int main(const std::vector<CL_String> &args)
 	{
-		CL_SetupCore setup_core;
+		CL_SetupCore    setup_core;
 		CL_SetupDisplay setup_display;
-		CL_SetupGL setup_gl;
+		CL_SetupGL      setup_gl;
 
 		Application::x_res = 800;
 		Application::y_res = 600;
@@ -22,8 +22,10 @@ public:
 		Application::fullscreenmonitor = 0;
 		Application::detail = 1;
 
-		for(std::vector<CL_String>::const_iterator it = args.begin(); it != args.end(); it++) {
-			if(*it == "low") {
+		for(std::vector<CL_String>::const_iterator it = args.begin(); it != args.end(); it++)
+		{
+			if(*it == "low")
+			{
 				Application::detail = 0;
 			}
 		}
