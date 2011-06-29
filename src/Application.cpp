@@ -208,7 +208,7 @@ void Application::run(void)
 	kinect.setPlayerCallback(&playerCallback);
 
 	RGBWindow vwindow(&kinect);
-	DepthWindow dwindow(&kinect);
+	DepthWindow dwindow(&kinect, 500, 3000, 0.1, false);
 
 	unsigned int start =  CL_System::get_time();
 	CL_DisplayWindowDescription window_desc;
@@ -283,9 +283,11 @@ void Application::run(void)
       osmHuge.draw();
 
 		window.flip();
-		CL_KeepAlive::process();
+
 		vwindow.refresh(timediff);
 		dwindow.refresh(timediff);
+
+		CL_KeepAlive::process();
 	}
 }
 //---------------------------------------------------------------------------

@@ -14,11 +14,17 @@
 class DepthWindow : public VideoWindow
 {
 public:
-   DepthWindow(OpenNi *kinect);
+   DepthWindow(OpenNi *kinect, double min, double max, double details = 0.1, bool viewEndles = true);
    virtual ~DepthWindow();
 
 private:
    void refreshPicture();
+
+   double details;
+   double min;
+   double max;
+
+   bool viewEndles;
 
 };
 

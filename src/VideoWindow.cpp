@@ -18,7 +18,7 @@ VideoWindow::VideoWindow(OpenNi *kinect)
    CL_DisplayWindowDescription window_desc;
 
    window_desc.set_size(CL_Size(640, 480), true);
-   window_desc.set_title("MagnetoPong!!!11einself - Video");
+   window_desc.set_title("MagnetoPong!!!11einself - Video - mouseklick = start/stop");
    window_desc.set_visible(true);
    window_desc.set_position(CL_Rect(1,1,CL_Size(640, 480)),true);
 

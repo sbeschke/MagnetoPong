@@ -2,7 +2,7 @@
 <mp:config xmlns:mp="http://magnetopong.org/config">
     <display>
         <width>1920</width>
-        <height>1200</height>
+        <height>1180</height>
         <fullscreen>false</fullscreen>
         <fullscreenmonitor>1</fullscreendisplaymonitor>
     </display>
