@@ -18,7 +18,7 @@
 #include "TGString.h"
 #include "Calculation.h"
 
-#define SAMPLE_XML_PATH "Sample-User.xml"
+#define SAMPLE_XML_PATH "configs/OpenNi.xml"
 
 #define CHECK_RC(nRetVal, what) printf("%s : %s\n", what, xnGetStatusString(nRetVal));
 

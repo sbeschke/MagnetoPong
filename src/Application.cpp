@@ -113,9 +113,9 @@ void PlayerCallback::playerLost(int nr)
 void Application::domsetup()
 {
 	CL_String filename = "";
-	if(CL_FileHelp::file_exists("magnetopong.xml"))
+	if(CL_FileHelp::file_exists("configs/magnetopong.xml"))
 	{
-		filename = "magnetopong.xml";
+		filename = "configs/magnetopong.xml";
 	}
 	else if(CL_FileHelp::file_exists("~/.magnetopong/config.xml"))
 	{
@@ -224,8 +224,6 @@ void Application::run(void)
 	graphicContext = window.get_gc();
 	CL_InputDevice keyboard = window.get_ic().get_keyboard();
 	CL_InputDevice mouse    = window.get_ic().get_mouse(0);
-
-	CL_ResourceManager resources("resources.xml");
 
 	playersChanged();
 	clearBalls();

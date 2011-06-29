@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<resources>
-<sprite name="Boat">
-  <image file="boat.png">
-    <grid size="159,91" array="4,1" />
-  </image>
-  <animation speed="200" loop="yes" pingpong="no" />
-</sprite>
-</resources>
