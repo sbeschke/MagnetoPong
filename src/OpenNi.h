@@ -140,8 +140,8 @@ public:
    OpenNiPoint  getPlayerPart(int nr, int part1, int part2);
            //pos von Part1 relativ zu Part2
 
-   unsigned short* getRGBPicture(){return pixels;}
-   unsigned short* getDepthPicture(){return depth;}
+   unsigned short* getRGBPicture();
+   unsigned short* getDepthPicture();
 
    double getWinkelELBOW(int nr, int leftArm);
    double getWinkel(int nr, int pos1, int gelenk, int pos2);

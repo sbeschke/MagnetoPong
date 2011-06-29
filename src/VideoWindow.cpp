@@ -2,7 +2,7 @@
  * VideoWindow.cpp
  *
  *  Created on: 28.06.2011
- *      Author: matthas
+ *      Author: matthias
  */
 
 #include "VideoWindow.h"
@@ -28,32 +28,51 @@ VideoWindow::VideoWindow(OpenNi *kinect)
    graphicContext = window->get_gc();
    graphicContext.clear(CL_Colorf::white); //Fenster mit Weiß löschen
    window->show();
- //  window->bring_to_front();
    window->flip();
    window->set_visible(true, false);
    window_open = true;
+   show_video  = true;
+   mouse_down  = false;
+
+   mouse = new CL_InputDevice();
+   *mouse = window->get_ic().get_mouse(0);
    timepast = 42; //24fps;
 }
 
 VideoWindow::~VideoWindow()
 {
-
+   delete window;
 }
-
+//---------------------------------------------------------------------------
 
 void VideoWindow::refresh(float timediff)
 {
-   if(!window_open) return;
+   if(mouse->get_keycode(mouse->string_to_keyid("Mouse Left")))
+   {
+      if(!mouse_down)
+      {
+         show_video = !show_video;
+         mouse_down = true;
+      }
+   }
+   else
+   {
+      mouse_down = false;
+   }
+
+   if(!window_open || !show_video) return;
 
    timepast += timediff;
    if(timepast > 42) //24fps
    {
-      unsigned short* pixels = kinect->getRGBPicture();
-
-      CL_PixelBuffer buffer(640, 480, cl_bgr8, pixels);
-      graphicContext.draw_pixels(0,0,buffer,CL_Rect(0,0,640,480));
-
+      refreshPicture();
       window->flip();
       timepast = 0;
    }
+}
+//---------------------------------------------------------------------------
+
+void VideoWindow::setPosition(int x, int y)
+{
+   window->set_position(x,y);
 }

@@ -12,7 +12,7 @@
 #include <exception>
 #include <stdlib.h>
 #include "BoostBar.h"
-#include "VideoWindow.h"
+#include "RGBWindow.h"
 #include "DepthWindow.h"
 
 
@@ -158,6 +158,7 @@ void Application::domsetup()
 
 }
 //---------------------------------------------------------------------------
+
 Application::Application(void)
 {
    gamestatus = GS_PONG;
@@ -206,7 +207,7 @@ void Application::run(void)
 
 	kinect.setPlayerCallback(&playerCallback);
 
-	VideoWindow vwindow(&kinect);
+	RGBWindow vwindow(&kinect);
 	DepthWindow dwindow(&kinect);
 
 	unsigned int start =  CL_System::get_time();

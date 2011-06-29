@@ -266,6 +266,18 @@ OpenNiPoint OpenNi::getPlayerPart(int nr, int part1, int part2)
 }
 //---------------------------------------------------------------------------
 
+unsigned short* OpenNi::getRGBPicture()
+{
+   return pixels;
+}
+//---------------------------------------------------------------------------
+
+unsigned short* OpenNi::getDepthPicture()
+{
+   return depth;
+}
+//---------------------------------------------------------------------------
+
 double OpenNi::getWinkelELBOW(int nr, int leftArm)
 {
    OpenNiPoint p1, p2;
