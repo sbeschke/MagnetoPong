@@ -172,14 +172,6 @@ void KinectInputDevice::calibrate(OpenNiPoint p, double xnw, double xpw)
          }
       }
    }
-
-   if((p.z < 100) && (p.z > -20))
-   {
-      if((p.y < 50) && (p.y > -50))
-      {
-
-      }
-   }
 }
 //---------------------------------------------------------------------------
 
