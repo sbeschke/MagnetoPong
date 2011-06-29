@@ -70,7 +70,7 @@ int Calculation::hsl_to_rgb(double h, double s, double l)
             if(t3[i]<0) t3[i] += 1.0;
             if(t3[i]>1) t3[i] -= 1.0;
 
-            if(6.0*t3[i] < 1.0) clr[i] = temp1 + (temp2 - temp1) * t3[i] * 6.0;
+            if(6.0*t3[i] < 1.0)      clr[i] = temp1 + (temp2 - temp1) * t3[i] * 6.0;
             else if(2.0*t3[i] < 1.0) clr[i] = temp2;
             else if(3.0*t3[i] < 2.0) clr[i] = temp1 + (temp2 - temp1) * ((2.0 / 3.0) - t3[i]) * 6.0;
             else clr[i] = temp1;
