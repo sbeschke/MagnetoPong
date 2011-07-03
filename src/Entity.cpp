@@ -126,7 +126,7 @@ float Entity::getBoostRelaod()
    return BOOSTRELOADTIME;
 }
 
-void Entity::updateposition(float timedifference)
+void Entity::updateposition(float timedifference, int solidSides)
 {
    if(boostctr)
    {

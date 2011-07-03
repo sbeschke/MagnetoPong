@@ -22,7 +22,8 @@ class Entity;
 
 typedef std::set<Entity*> EntitySet;
 
-class Entity {
+class Entity
+{
 public:
 	Entity(Application* application);
 	virtual ~Entity();
@@ -32,23 +33,28 @@ public:
 	virtual Vec2d getPosition(void);
 	virtual float getX(void);
 	virtual float getY(void);
-	virtual void setPosition(const Vec2d& position);
+	virtual void  setPosition(const Vec2d& position);
 	virtual float getCharge(void);
-	virtual void setCharge(float charge);
+	virtual void  setCharge(float charge);
 	virtual float getMass(void);
-	virtual void setMass(float mass);
+	virtual void  setMass(float mass);
 	virtual CL_Colorf getColor();
-	virtual void setColor(CL_Colorf color);
+	virtual void  setColor(CL_Colorf color);
 	virtual float getRadius(void);
-	virtual void setRadius(float radius);
+	virtual void  setRadius(float radius);
 
-	virtual void setBoost(bool active);
+	virtual void  setBoost(bool active);
 	virtual float getBoostctr();
 	virtual float getBoostRelaod();
 	virtual float getBoost() {return boost;}
 
 	virtual bool updateforces(const EntitySet& objects, float timedifference) {return false;}
-	virtual void updateposition(float timedifference);
+	virtual void updateposition(float timedifference, int solidSides);
+
+	static const int LEFTSIDE   = 1;
+   static const int BOTTOMSIDE = 2;
+   static const int RIGHTSIDE  = 4;
+   static const int TOPSIDE    = 8;
 
 protected:
 	Application* application;

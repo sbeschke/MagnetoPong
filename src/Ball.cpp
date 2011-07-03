@@ -33,10 +33,8 @@ bool Ball::updateforces(const EntitySet& objects, float timedifference)
 	Vec2d position = this->getPosition();
 	for(EntitySet::iterator it = objects.begin(); it != objects.end(); it++)
 	{
-
 		Entity* object = *it;
 		if(object!=this)
-
 		{
 			Vec2d distance = position - object->getPosition();
 			float length = distance.length();
@@ -45,7 +43,7 @@ bool Ball::updateforces(const EntitySet& objects, float timedifference)
 			bool positiv1 = getCharge() > 0;
 			bool positiv2 = object->getCharge() > 0;
 			//TODO what is this for? seems to be evil!
-			if(positiv1 != positiv2) charge *= 1.5;
+			if(positiv1 != positiv2) charge *= 1.5; //es wurde gewünscht, dass die anziehung stärker ist
 			//if the ball does not touch the object
 			if( 2*RADIUS < length)
 			{
@@ -76,23 +74,47 @@ void Ball::initializePosition()
 	this->setPosition(startpos);
 
 }
-void Ball::updateposition(float timedifference)
+void Ball::updateposition(float timedifference, int solidSides)
 {
 	speed += this->force * timedifference;
 	Vec2d newpos = this->getPosition()+this->speed*timedifference;
 
-	if(newpos.y + speed.y +RADIUS> windowFrame.y){
-		speed.y = - speed.y;
-		newpos.y= this->windowFrame.y-RADIUS;
+	if(solidSides & Entity::BOTTOMSIDE)
+	{
+      if(newpos.y + speed.y + RADIUS > windowFrame.y)
+      {
+         speed.y = - speed.y;
+         newpos.y= this->windowFrame.y-RADIUS;
+      }
 	}
-	if(newpos.y - speed.y -RADIUS< 0){
-		speed.y = - speed.y;
-		newpos.y= RADIUS;
-	}
+	if(solidSides & Entity::TOPSIDE)
+   {
+      if(newpos.y - speed.y - RADIUS < 0)
+      {
+         speed.y = - speed.y;
+         newpos.y= RADIUS;
+      }
+   }
+	if(solidSides & Entity::RIGHTSIDE)
+   {
+      if(newpos.x + speed.x + RADIUS > windowFrame.x)
+      {
+         speed.x = - speed.x;
+         newpos.x= this->windowFrame.x-RADIUS;
+      }
+   }
+   if(solidSides & Entity::LEFTSIDE)
+   {
+      if(newpos.x - speed.x - RADIUS < 0)
+      {
+         speed.x = - speed.x;
+         newpos.x= RADIUS;
+      }
+   }
+
 	this->setPosition(newpos);
-
-
 }
+
 Vec2d Ball::getForce()
 {
 	return this->force;

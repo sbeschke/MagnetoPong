@@ -11,13 +11,6 @@
 #include "InputDevice.h"
 #include "OpenNi.h"
 
-#define EGG_POL    1
-#define EGG_STOP   2
-#define EGG_MEGA  42
-
-#define KICK_SIDE  1
-#define KICK_FRONT 2
-
 class KinectInputDevice : public InputDevice
 {
 public:
@@ -34,7 +27,7 @@ public:
    int   getEsterEgg();
    void  setInvert(bool aktivate){invert = aktivate; invertTimeout = 0;};
    bool  getInvert() { return invert;};
-
+   bool  getKlick();
 
 private:
    void calcPos();
@@ -43,14 +36,16 @@ private:
    void calcJump();
    void calcKicking();
    void calcEgg();
+   void calcKlick();
+
+   bool leftHand;
+   int  playerNr;
 
    OpenNiPoint handPoint;
    double feldWinkel;
 
-   bool invert;
+   bool  invert;
    float invertTimeout;
-   bool leftHand;
-   int  playerNr;
 
    int kickingL;
    int kickingR;
@@ -75,6 +70,9 @@ private:
 
    int  egg;
    bool eggRead;
+
+   bool klick;
+   bool klickRead;
 };
 
 #endif /* KINECTINPUTDEVICE_H_ */

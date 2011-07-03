@@ -2,7 +2,7 @@
  * VideoWindow.h
  *
  *  Created on: 28.06.2011
- *      Author: matthas
+ *      Author: matthias
  */
 
 #ifndef VIDEOWINDOW_H_

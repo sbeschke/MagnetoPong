@@ -13,15 +13,18 @@ class Bat;
 class InputDevice;
 class BoostBar;
 
-class Player {
+class Player
+{
 public:
 	Player(Application* application, InputDevice* device, int playerSlot);
 	virtual ~Player();
 
 	void quit(void);
 	virtual void processInput(float timepast);
+	virtual void draw(int what);
 	virtual Bat* getBat(void);
 	virtual int  getEsterEgg();
+	virtual bool getKlick();
 
 	virtual int  getNumber(void);
 	virtual void setNumber(int number);
@@ -34,6 +37,10 @@ public:
 
 	virtual void setInvert(bool activate);
 	virtual bool getInvert();
+
+	static const int BAR      = 1;
+	static const int SKELETON = 2;
+	static const int BAT      = 4;
 
 private:
 	Application* application;

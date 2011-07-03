@@ -76,3 +76,5 @@ void VideoWindow::setPosition(int x, int y)
 {
    window->set_position(x,y);
 }
+//---------------------------------------------------------------------------
+

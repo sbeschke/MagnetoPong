@@ -39,6 +39,9 @@ KinectInputDevice::KinectInputDevice(int nr, bool lefthand)
 
    egg = 0;
    eggRead = false;
+
+   klick = false;
+   klickRead = false;
 }
 
 KinectInputDevice::~KinectInputDevice()
@@ -71,6 +74,7 @@ void KinectInputDevice::processInput(float timepast)
    calcJump();
    calcKicking();
    calcEgg();
+   calcKlick();
 }
 //---------------------------------------------------------------------------
 
@@ -94,11 +98,7 @@ bool KinectInputDevice::getJump()
 
 int KinectInputDevice::getEsterEgg()
 {
-   if(egg == 0)
-   {
-      return 0;
-   }
-   else if(!eggRead)
+   if(egg && !eggRead)
    {
       eggRead = true;
       return egg;
@@ -106,6 +106,21 @@ int KinectInputDevice::getEsterEgg()
    else
    {
       return 0;
+   }
+}
+//---------------------------------------------------------------------------
+
+bool KinectInputDevice::getKlick()
+{
+   if(klick && !klickRead)
+   {
+      klickRead = true;
+      return true;
+
+   }
+   else
+   {
+      return false;
    }
 }
 //---------------------------------------------------------------------------
@@ -246,3 +261,15 @@ void KinectInputDevice::calcEgg()
 }
 //---------------------------------------------------------------------------
 
+void KinectInputDevice::calcKlick()
+{
+   if(feldWinkel > 0.5)
+   {
+      klick = true;
+   }
+   else
+   {
+      klick = false;
+      klickRead = false;
+   }
+}

@@ -16,7 +16,8 @@ MouseInputDevice::MouseInputDevice(CL_InputDevice* mouse)
 
 }
 
-MouseInputDevice::~MouseInputDevice() {
+MouseInputDevice::~MouseInputDevice()
+{
 }
 
 CL_Point MouseInputDevice::getPoint()
@@ -29,3 +30,7 @@ float MouseInputDevice::getZ(void)
 	return zValue;
 }
 
+bool MouseInputDevice::getKlick()
+{
+   return mouse->get_keycode(mouse->string_to_keyid("Mouse Left"));
+}

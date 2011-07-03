@@ -23,6 +23,7 @@ public:
 	int   getEsterEgg() {return 0;}
 	void  setInvert(bool aktivate) {};
    bool  getInvert(){return false;}
+   bool  getKlick();
 
 private:
 

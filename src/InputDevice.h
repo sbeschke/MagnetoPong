@@ -12,7 +12,8 @@
 #include <ClanLib/display.h>
 
 
-class InputDevice {
+class InputDevice
+{
 public:
 	InputDevice();
 	virtual ~InputDevice();
@@ -22,8 +23,16 @@ public:
 	virtual float getZ(void) =0;
 	virtual bool  getJump() =0;
 	virtual int   getEsterEgg() =0;
-	virtual void setInvert(bool aktivate) =0;
-	virtual bool getInvert() = 0;
+	virtual void  setInvert(bool aktivate) =0;
+	virtual bool  getInvert() =0;
+	virtual bool  getKlick() =0;
+
+	static const int EGG_POL  =  1;
+   static const int EGG_STOP =  2;
+   static const int EGG_MEGA = 42;
+
+   static const int KICK_SIDE  = 1;
+   static const int KICK_FRONT = 2;
 
 };
 

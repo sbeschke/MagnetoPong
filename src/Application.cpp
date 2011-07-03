@@ -14,6 +14,11 @@
 #include "BoostBar.h"
 #include "RGBWindow.h"
 #include "DepthWindow.h"
+#include "MenuButton.h"
+#include "Menu.h"
+#include "Pong.h"
+#include "Demo.h"
+#include "Squash.h"
 
 
 Application* Application::myself;
@@ -32,7 +37,6 @@ void PlayerCallback::playerRecognized(int nr)
 	else if(app->players[Application::PLAYER_LEFT] == 0) {
 		Application::get()->osmLeft.setMessage("Welcome. Please form a PSI to calibrate.", 5.0f);
 	}
-
 }
 //---------------------------------------------------------------------------
 
@@ -161,19 +165,27 @@ void Application::domsetup()
 
 Application::Application(void)
 {
-   gamestatus = GS_PONG;
+   Application::myself = this;
+
+   gamestatus = GS_DEMO;
 
    srand(time(NULL));
 
 	soundPlayer = new Sound();
+	pong = new Pong(this);
+	demo = new Demo(this);
+	squash = new Squash(this);
 
 	domsetup();
+
 	CL_FontDescription font_desc;
 	font_desc.set_typeface_name("Verdana");
 	font_desc.set_height(60);
-	CL_FontDescription huge_font_desc;
+
 	CL_FontDescription font_desc2 = font_desc;
-	font_desc2.set_height(50);
+   font_desc2.set_height(50);
+
+	CL_FontDescription huge_font_desc;
 	huge_font_desc.set_typeface_name("Verdana");
 	huge_font_desc.set_height(200);
 	huge_font_desc.set_weight(5);
@@ -187,18 +199,12 @@ Application::Application(void)
 			playerColors[PLAYER_LEFT]);
 	osmRight = OnScreenMessage(CL_Pointf(x_res * 3 / 4, y_res / 2),
 			font_desc, playerColors[PLAYER_RIGHT]);
-
-	spawnBall = false;
-	timeToSpawnBall = 0.0f;
-	inMatch = false;
-	timeToMatch = 0.0f;
 }
 //---------------------------------------------------------------------------
 
 void Application::run(void)
 {
 	quit = false;
-	Application::myself = this;
 
 	players.resize(2);
 	players[PLAYER_LEFT]  = 0;
@@ -207,12 +213,12 @@ void Application::run(void)
 
 	kinect.setPlayerCallback(&playerCallback);
 
-	RGBWindow vwindow(&kinect);
-	DepthWindow dwindow(&kinect, 500, 3000, 0.1, false);
+	RGBWindow   vwindow(&kinect);
+	DepthWindow dwindow(&kinect, 500, 3000, 0.1, true);
 
-	unsigned int start =  CL_System::get_time();
+	unsigned int start = CL_System::get_time();
+
 	CL_DisplayWindowDescription window_desc;
-
 	window_desc.set_size(CL_Size(Application::x_res,Application::y_res), true);
 	window_desc.set_fullscreen(Application::fullscreen,0);
 	window_desc.set_title("MagnetoPong!!!11einself");
@@ -222,26 +228,33 @@ void Application::run(void)
 	CL_Slot slot_quit = window.sig_window_close().connect(this, &Application::on_window_close);
 
 	graphicContext = window.get_gc();
-	CL_InputDevice keyboard = window.get_ic().get_keyboard();
-	CL_InputDevice mouse    = window.get_ic().get_mouse(0);
+	keyboard = window.get_ic().get_keyboard();
+	mouse    = window.get_ic().get_mouse(0);
+
+	dasMenu = new Menu();
 
 	playersChanged();
-	clearBalls();
 
 	//---------------------------------------------------------------------------
-	while (!quit)//schleife-schleife-schleife-schleife-schleife-schleife-schleife
+	while (!quit)//schleife-schleife-schleife-schleife-schleife-schleife-schleife ;)
 	{
 		int timediff = CL_System::get_time() - start ;
 		start = CL_System::get_time();
 
 		kinect.update(timediff);
 
-		//--Beenden-----------------------
-		if(keyboard.get_keycode(CL_KEY_ESCAPE) == true)	quit = true;
+      //--Beenden-----------------------
+      if(keyboard.get_keycode(CL_KEY_ESCAPE) == true)
+      {
+         while(keyboard.get_keycode(CL_KEY_ESCAPE));
+
+         switchTo(GS_MENU);
+      }
 
 		//--Leertaste aktiviert Maussteuerung
 		if(keyboard.get_keycode(CL_KEY_SPACE) == true && playersActive < 2)
 		{
+		   while(keyboard.get_keycode(CL_KEY_SPACE));
 			int playerSlot = PLAYER_RIGHT;
 			if(players[Application::PLAYER_RIGHT] != 0)
 			{
@@ -262,9 +275,10 @@ void Application::run(void)
 		//--Spielmodus
 		switch(gamestatus)
 		{
-		case GS_MENUE:
-		case GS_PONG:   runPong(timediff); break;
-		case GS_SQUASH: break;
+		case GS_DEMO:   demo->run(timediff);   break;
+		case GS_MENU:   runMenu(timediff);     break;
+		case GS_PONG:   pong->run(timediff);   break;
+		case GS_SQUASH: squash->run(timediff); break;
 		}
 
 		//--Textausgabe
@@ -290,28 +304,36 @@ void Application::run(void)
 }
 //---------------------------------------------------------------------------
 
-void Application::runPong(float timediff)
+void Application::switchTo(int status)
 {
-   //--Kräfte berechnen und Kollisionen erkennen
-   bool collision = false;
-   for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++)
+   switch(status)
    {
-      collision = collision || (*it)->updateforces(entities,timediff);
-   }
-   if(collision) //--bei Kollision sound ausgeben (nur wenn Spieler drin sind)
-   {
-      if(playersActive) soundPlayer->effect("collision");
-   }
-
-   //--Ball einfügen
-   if(spawnBall)
-   {
-      timeToSpawnBall -= timediff;
-      if(timeToSpawnBall <= 0.0f)
+   case GS_DEMO:
       {
-         doSpawnBall();
       }
+      break;
+   case GS_MENU:
+      {
+      }
+      break;
+   case GS_PONG:
+      {
+         pong->restartMatch();
+      }
+      break;
+   case GS_SQUASH:
+      {
+         squash->restartMatch();
+      }
+      break;
    }
+   gamestatus = status;
+}
+//---------------------------------------------------------------------------
+
+void Application::runMenu(float timediff)
+{
+   dasMenu->draw();
 
    //--Spieler input verarbeiten und Spielerskelett Zeichnen
    for(std::vector<Player*>::iterator it = players.begin();
@@ -321,58 +343,17 @@ void Application::runPong(float timediff)
       if(pl != 0)
       {
          pl->processInput(timediff);
-         kinect.drawPlayer(pl->getNumber());
-      }
-   }
+         pl->draw(Player::SKELETON | Player::BAT);
 
-   //--Bälle berechnen, zeichnen, und position überprüfen
-   for(EntitySet::iterator it = entities.begin(); it != entities.end();)
-   {
-      EntitySet::iterator next = it;
-      next++;
-      (*it)->updateposition(timediff);
-      (*it)->draw();
-
-      if(Ball* ball = dynamic_cast<Ball*>(*it))
-      {
-         if(checkBall(ball))
+         switch(dasMenu->checkPlayer(pl))
          {
-            remEntity(ball);
-            delete ball;
+         case Menu::NON: break;
+         case Menu::PONG:   switchTo(GS_PONG);   break;
+         case Menu::SQUASH: switchTo(GS_SQUASH); break;
+         case Menu::END:    quit = true;         break;
          }
       }
-      it = next;
    }
-
-   //--Spieler Verarbeiten
-   if(playersActive == 2)
-   {
-      drawScores(players[PLAYER_LEFT]->getScore(), players[PLAYER_RIGHT]->getScore());
-
-      if(!inMatch)
-      {
-         clearBalls();
-         timeToMatch -= timediff;
-         if(timeToMatch <= 0.0f)
-         {
-            startMatch();
-         }
-      }
-      doEsterEgg(PLAYER_LEFT,  players[PLAYER_LEFT]->getEsterEgg());
-      doEsterEgg(PLAYER_RIGHT, players[PLAYER_RIGHT]->getEsterEgg());
-   }
-}
-//---------------------------------------------------------------------------
-
-void Application::addEntity(Entity* entity)
-{
-	entities.insert(entity);
-}
-//---------------------------------------------------------------------------
-
-void Application::remEntity(Entity* entity)
-{
-	entities.erase(entity);
 }
 //---------------------------------------------------------------------------
 
@@ -383,6 +364,9 @@ void Application::addPlayer(Player* player, int playerSlot)
 		remPlayer(playerSlot);
 	}
 	players[playerSlot] = player;
+	pong->addEntity(player->getBat());
+	squash->addEntity(player->getBat());
+	cout << "player Add\n";
 	playersActive++;
 
 	playersChanged();
@@ -391,255 +375,79 @@ void Application::addPlayer(Player* player, int playerSlot)
 
 void Application::remPlayer(int playerSlot)
 {
-	//delete player;
 	Player* player = players[playerSlot];
 	player->quit();
+	pong->remEntity(player->getBat());
+	squash->remEntity(player->getBat());
+	delete player;
 	players[playerSlot] = 0;
 	playersActive--;
 
-	if(playerSlot == PLAYER_LEFT) {
+	if(playerSlot == PLAYER_LEFT)
+	{
 		osmLeft.setMessage("Player OUT", 5.0f);
 	}
-	if(playerSlot == PLAYER_RIGHT) {
+	if(playerSlot == PLAYER_RIGHT)
+	{
 		osmRight.setMessage("Player OUT", 5.0f);
 	}
 
-	endMatch();
 	playersChanged();
-}
-//---------------------------------------------------------------------------
-
-// return true if ball is out
-bool Application::checkBall(Ball* ball)
-{
-	bool ballOut = false;
-	Vec2d pos = ball->getPosition();
-
-	if(pos.x < 0)
-	{
-		this->ballOut(ball, PLAYER_RIGHT);
-		ballOut = true;
-	}
-	else if(pos.x >= x_res)
-	{
-		this->ballOut(ball, PLAYER_LEFT);
-		ballOut = true;
-	}
-	else if(!(pos.y >= 0 && pos.y < y_res))
-	{
-		ballGone(ball);
-		ballOut = true;
-	}
-
-	return ballOut;
-}
-//---------------------------------------------------------------------------
-
-void Application::ballOut(Ball* ball, int playerSlot)
-{
-	if(playersActive == 2)
-	{
-		soundPlayer->effect("point");
-		players[playerSlot]->incrementScore();
-
-		if(players[playerSlot]->getScore() >= SCORE_TO_WIN) {
-			soundPlayer->effect("win");
-			endMatch();
-			if(playerSlot == PLAYER_RIGHT) {
-				osmHuge.setMessage("Right WINS", 3.0f);
-			}
-			else if(playerSlot == PLAYER_LEFT) {
-				osmHuge.setMessage("Left WINS", 3.0f);
-			}
-		}
-		else {
-			if(playerSlot == PLAYER_RIGHT) {
-				osmShout.setMessage("Right Scores", 2.0f);
-			}
-			else if(playerSlot == PLAYER_LEFT) {
-				osmShout.setMessage("Left Scores", 2.0f);
-			}
-			spawnBall = true;
-			timeToSpawnBall = 3000.0f;
-		}
-	}
-	else
-	{
-		if(entities.size() <= ANZ_BALS_DEMO)
-		{
-			makeBall();
-		}
-	}
-}
-//---------------------------------------------------------------------------
-
-void Application::ballGone(Ball* ball)
-{
-	makeBall();
-}
-//---------------------------------------------------------------------------
-
-void Application::clearBalls(void)
-{
-	for(EntitySet::iterator it = entities.begin(); it != entities.end();) {
-		EntitySet::iterator next = it;
-		next++;
-		if(Ball* ball = dynamic_cast<Ball*>(*it)) {
-			remEntity(ball);
-			delete ball;
-		}
-		it = next;
-	}
-
-}
-//---------------------------------------------------------------------------
-
-void Application::makeBall(void)
-{
-	Ball* b1 = new Ball(this,Vec2d(Application::x_res, Application::y_res));
-	b1->initializePosition();
-	int ch = rand() % 2;
-	b1->setCharge(ch ? 1.0f : -1.0f);
-	addEntity(b1);
-}
-//---------------------------------------------------------------------------
-
-void Application::startMatch(void)
-{
-	inMatch = true;
-	osmShout.setMessage("FIGHT", 3.0f);
-	soundPlayer->effect("fight");
-	std::ostringstream centerText;
-	centerText << "Score " << SCORE_TO_WIN << " points to win";
-	osmCenter.setMessage(centerText.str(), 3.0f);
-	for(std::vector<Player*>::iterator it = players.begin(); it != players.end(); it++) {
-		if(*it != 0) {
-			(*it)->setScore(0);
-		}
-	}
-	makeBall();
-}
-//---------------------------------------------------------------------------
-
-void Application::endMatch(void)
-{
-	prepareMatch();
-}
-//---------------------------------------------------------------------------
-
-void Application::doSpawnBall(void)
-{
-	switch(playersActive)
-	{
-   case 0:
-   case 1:
-      {
-         makeBall();
-         spawnBall = true;
-         timeToSpawnBall = 3000.0f;
-      }
-      break;
-   case 2:
-      {
-         makeBall();
-         spawnBall = false;
-      }
-      break;
-   default: throw std::exception(); break;
-   }
-}
-//---------------------------------------------------------------------------
-
-void Application::prepareMatch(void)
-{
-	spawnBall = false;
-	inMatch = false;
-	timeToMatch = 5000.0f;
-	osmCenter.setMessage("Get ready...", 3.0f);
 }
 //---------------------------------------------------------------------------
 
 void Application::playersChanged(void)
 {
-	switch(playersActive) {
-		case 0:
-			osmCenter.setMessage("Stand in front of camera to play MagnetoPong!");
-			spawnBall = true;
-			timeToSpawnBall = 3000.0f;
-			break;
-		case 1:{
-			osmCenter.setMessage("Waiting for player 2 – Stand in front of camera to play MagnetoPong!");
-//			spawnBall = true;
-//			timeToSpawnBall = 3000.0f;
-			break;
-		}
-		case 2: {
-			prepareMatch();
-			break;
-		}
-		default: throw std::exception(); break;
-	}
-}
-//---------------------------------------------------------------------------
-
-void Application::drawScores(int s1, int s2)
-{
-   CL_FontDescription scoreFont_desc;
-   scoreFont_desc.set_typeface_name("Verdana");
-   scoreFont_desc.set_height(80);
-   CL_Font_System scoreFont(graphicContext, scoreFont_desc);
-
-   TGString txt = TGString(s1) + " : " + s2;
-   CL_Size scoreSize = scoreFont.get_text_size(graphicContext, txt);
-   CL_Pointf scoreLeftPos((x_res - scoreSize.width) / 2, scoreSize.height);
-   scoreFont.draw_text(graphicContext, scoreLeftPos, txt, CL_Colorf::black);
-}
-//---------------------------------------------------------------------------
-
-void Application::doEsterEgg(int playerNr, int egg)
-{
-   switch(egg)
+   switch(gamestatus)
    {
-   case EGG_POL:
-      {
-         for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++)
+   case GS_DEMO:
+         if(playersActive)
          {
-            if(Ball* ball = dynamic_cast<Ball*>(*it))
-            {
-               ball->setCharge(ball->getCharge()*-1);
-            }
-         }
-      }
-      break;
-   case EGG_STOP:
-      {
-         for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++)
-         {
-            if(Ball* ball = dynamic_cast<Ball*>(*it))
-            {
-               ball->setSpeed(Vec2d(0,0));
-            }
-         }
-      }
-      break;
-   case EGG_MEGA:
-      {
-         cout << "Mega Egg\n";
-         if(playerNr == PLAYER_LEFT)
-         {
-            players[PLAYER_RIGHT]->setInvert(!(players[PLAYER_RIGHT]->getInvert()));
-            Application::get()->osmLeft.setMessage("you found the megaEgg", 2);
+            switchTo(GS_MENU);
          }
          else
          {
-            players[PLAYER_LEFT]->setInvert(!(players[PLAYER_LEFT]->getInvert()));
-            Application::get()->osmRight.setMessage("you found the megaEgg", 2);
+            osmCenter.setMessage("Stand in front of camera to play MagnetoPong!");
          }
-         int i = rand() % 6;
-         TGString s = TGString("Egg") + i;
-         soundPlayer->effect(s);
+      break;
+   case GS_MENU:
+          if(!playersActive)
+          {
+             switchTo(GS_DEMO);
+          }
+      break;
+   case GS_PONG:
+      switch(playersActive)
+      {
+      case 0: switchTo(GS_DEMO); break;
+      case 1:
+         {
+            osmCenter.setMessage("Waiting for player 2 – Stand in front of camera to play MagnetoPong!");
+         }
+         break;
+      case 2:
+         {
+         }
+         break;
+      }
+      break;
+   case GS_SQUASH:
+      {
+         switch(playersActive)
+         {
+         case 0: switchTo(GS_DEMO); break;
+         case 1:
+            {
+
+            }
+            break;
+         case 2:
+            {
+            }
+            break;
+         }
+         break;
       }
       break;
    }
 }
-//---------------------------------------------------------------------------

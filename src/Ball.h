@@ -29,12 +29,13 @@ public:
 
 	void draw(void);
 	bool updateforces(const EntitySet& objects, float timedifference);
-	void updateposition(float timedifference);
+	void updateposition(float timedifference, int solidSides);
 	void initializePosition();
 
 	Vec2d getForce();
 
 	void  setSpeed(Vec2d v);
+	Vec2d getSpeed() {return speed;};
 
 private:
 	Vec2d speed;

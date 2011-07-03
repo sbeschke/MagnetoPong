@@ -15,6 +15,10 @@
 #include "Sound.h"
 
 class Ball;
+class Menu;
+class Pong;
+class Demo;
+class Squash;
 
 class PlayerCallback : public OpenNiPlayerCallback
 {
@@ -37,9 +41,21 @@ class Application
 private:
 	bool quit;
 	CL_GraphicContext graphicContext;
+	CL_InputDevice keyboard;
+	CL_InputDevice mouse;
 	static Application* myself;
+	Menu* dasMenu;
+	Pong* pong;
+	Demo* demo;
+	Squash* squash;
 
 public:
+	int gamestatus;
+
+	const static int GS_DEMO   = 0;
+	const static int GS_MENU   = 1;
+   const static int GS_PONG   = 2;
+   const static int GS_SQUASH = 3;
 
 	Sound *soundPlayer;
 
@@ -51,12 +67,6 @@ public:
 	static bool fullscreen;
 	static int  fullscreenmonitor;
 
-	int gamestatus;
-
-	const static int GS_MENUE = 0;
-	const static int GS_PONG  = 1;
-	const static int GS_SQUASH = 2;
-
 	const static int ANZ_BALS_DEMO = 8;
 	const static int SCORE_TO_WIN = 11;
 
@@ -66,11 +76,9 @@ public:
 	static Application* get(void) {return myself;}
 
 
-	EntitySet entities;
+	OpenNi kinect;
 	std::vector<Player*> players;
 	int playersActive;
-
-	OpenNi kinect;
 
 	OnScreenMessage osmCenter;
 	OnScreenMessage osmShout;
@@ -84,43 +92,22 @@ public:
 	}
 
 	Application(void);
+
 	void domsetup();
 
 	void run(void);
-	void runPong(float timediff);
+	void switchTo(int status);
+	void runMenu(float timediff);
 
 	void on_window_close()
 	{
 		quit = true;
 	}
 
-	void addEntity(Entity* entity);
-	void remEntity(Entity* entity);
-
 	void addPlayer(Player* player, int playerSlot);
 	void remPlayer(int playerSlot);
-	bool checkBall(Ball* ball);
-
-	void ballOut(Ball* ball, int playerSlot);
-	void ballGone(Ball* ball);
-
-	void clearBalls(void);
-	void makeBall(void);
-
-	bool inMatch;
-	float timeToMatch;
-	void startMatch(void);
-	void endMatch(void);
-
-	float timeToSpawnBall;
-	bool spawnBall;
-	void doSpawnBall(void);
 
 	void playersChanged(void);
-	void prepareMatch(void);
-
-	void drawScores(int s1, int s2);
-	void doEsterEgg(int playerNr, int egg);
 };
 
 #endif // APPLICATION_H_
