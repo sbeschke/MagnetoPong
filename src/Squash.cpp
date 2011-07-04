@@ -11,6 +11,7 @@
 #include "Bat.h"
 #include "InputDevice.h"
 #include <stdlib.h>
+#include <math.h>
 
 Squash::Squash(Application* app)
 :MagnetoEngine(app)
@@ -32,8 +33,8 @@ void Squash::run(float timediff)
 {
    if(app->players[app->PLAYER_RIGHT] == 0) return;
 
-   CL_Draw::line(app->getGC(), app->x_res/2, 0,
-                 app->x_res/2, app->y_res, CL_Colorf::blue);
+   CL_Draw::line(app->getGC(), app->x_res/3, 0,
+                 app->x_res/3, app->y_res, CL_Colorf::blue);
 
    //--Spieler input verarbeiten und Spielerskelett Zeichnen
    if(app->players[app->PLAYER_RIGHT] != 0)
@@ -41,9 +42,9 @@ void Squash::run(float timediff)
       Player* pl = app->players[app->PLAYER_RIGHT];
       pl->processInput(timediff);
       Vec2d pos = pl->getBat()->getPosition();
-      if(pos.x < app->x_res/2)
+      if(pos.x < app->x_res/3)
       {
-         pos.x = app->x_res/2;
+         pos.x = app->x_res/3;
          pl->getBat()->setPosition(pos);
       }
       pl->draw(Player::SKELETON | Player::BAR);
@@ -114,11 +115,14 @@ bool Squash::checkBall(Ball* ball)
    {
       Vec2d speed = ball->getSpeed();
       speed.x = -speed.x;
-   //   speed *= 1.3;
+      double length = sqrt(speed.x*speed.x + speed.y*speed.y) * 100;
+      int score = app->players[app->PLAYER_RIGHT]->getScore();
+      score += length;
+      app->players[app->PLAYER_RIGHT]->setScore(score);
+
       ball->setSpeed(speed);
       pos.x = 0;
       ball->setPosition(pos);
-      app->players[app->PLAYER_RIGHT]->incrementScore();
    }
    else if(pos.x >= app->x_res)
    {

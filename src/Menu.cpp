@@ -19,9 +19,8 @@ Menu::Menu()
    CL_FontDescription font_desc;
    font_desc.set_typeface_name("Verdana");
    font_desc.set_height(80);
-  // fontSystem = CL_Font_System(Application::get()->getGC(), font);
 
-   double w = 900;
+   double w = 800;
    double x = Application::x_res/2 - w/2;
    double y = 100;
    double h = 120;
@@ -84,7 +83,32 @@ void Menu::draw()
    {
       buttonList.at(i)->draw();
    }
-   //fontSystem.draw_text(Application::get()->getGC(),
-     //                     "to klick , CL_Colorf::black);
+
+   CL_FontDescription font_desc;
+   font_desc.set_typeface_name("Verdana");
+   font_desc.set_height(35);
+   CL_Font_System fontSystem = CL_Font_System(Application::get()->getGC(), font_desc);
+
+   TGString text = "The blue player is on the right side.\n"
+                   "You control your bat with the right hand\n"
+                   "and the field-energy with the angle of your\n"
+                   "left elbow.";
+
+   CL_Size size = fontSystem.get_text_size(Application::get()->getGC(), text);
+
+   fontSystem.draw_text(Application::get()->getGC(), Application::x_res-size.width-30, 100, text, CL_Colorf::blue);
+
+   text = "The orange player is on the left side.\n"
+          "You control your bat with the left hand\n"
+          "and the field-energy with the angle of your\n"
+          "right elbow.";
+
+   size = fontSystem.get_text_size(Application::get()->getGC(), text);
+   fontSystem.draw_text(Application::get()->getGC(), 30, 100, text, CL_Colorf::orange);
+
+   text = "To klick change your field to red.";
+   size = fontSystem.get_text_size(Application::get()->getGC(), text);
+   fontSystem.draw_text(Application::get()->getGC(), Application::x_res/2 - size.width/2, 50, text, CL_Colorf::black);
+
 }
 //---------------------------------------------------------------------------

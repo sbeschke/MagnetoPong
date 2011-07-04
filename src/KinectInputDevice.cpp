@@ -263,7 +263,7 @@ void KinectInputDevice::calcEgg()
 
 void KinectInputDevice::calcKlick()
 {
-   if(feldWinkel > 0.5)
+   if(feldWinkel > 0.7)
    {
       klick = true;
    }

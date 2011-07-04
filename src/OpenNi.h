@@ -41,6 +41,7 @@ using namespace std;
 #define P_RANKLE    22
 #define P_RFOOT     23
 #define P_SIZE      24
+//---------------------------------------------------------------------------
 
 class OpenNiPoint
 {
@@ -96,6 +97,7 @@ public:
    double y;
    double z;   
 };
+//---------------------------------------------------------------------------
 
 class OpenNiPlayer
 {
@@ -115,6 +117,7 @@ public:
 
    void changeForDisplay();
 };
+//---------------------------------------------------------------------------
 
 class OpenNiPlayerCallback
 {
@@ -125,6 +128,7 @@ public:
 	virtual void playerCalibrated(int nr) =0;
 	virtual void playerLost(int nr) =0;
 };
+//---------------------------------------------------------------------------
 
 class OpenNi
 {
