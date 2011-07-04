@@ -34,7 +34,7 @@ void Demo::run(float timediff)
          doSpawnBall();
       }
    }
-   calcCollision(timediff);
+   calcForces(timediff);
 }
 //---------------------------------------------------------------------------
 

@@ -18,53 +18,17 @@ Ball::Ball(Application* application, Vec2d windowFrame)
 
 }
 
-Ball::~Ball() {
+Ball::~Ball()
+{
+
 }
+//---------------------------------------------------------------------------
 
 void Ball::draw(void)
 {
 	Entity::draw();
 }
-
-bool Ball::updateforces(const EntitySet& objects, float timedifference)
-{
-	this->force = Vec2d(0,0);
-	bool overlap = false;
-	Vec2d position = this->getPosition();
-	for(EntitySet::iterator it = objects.begin(); it != objects.end(); it++)
-	{
-		Entity* object = *it;
-		if(object!=this)
-		{
-			Vec2d distance = position - object->getPosition();
-			float length = distance.length();
-			float charge = object->getCharge() * this->getCharge();
-
-			bool positiv1 = getCharge() > 0;
-			bool positiv2 = object->getCharge() > 0;
-			//TODO what is this for? seems to be evil!
-			if(positiv1 != positiv2) charge *= 1.5; //es wurde gewünscht, dass die anziehung stärker ist
-			//if the ball does not touch the object
-			if( 2*RADIUS < length)
-			{
-				float forceAmount = charge * BALLACC / (length * length);
-
-				this->force += (distance/length) * forceAmount;
-			}
-			else
-			{
-				//no inteaction because of overlap
-			}
-
-			//sound
-			if(object->getRadius()*4*(object->getBoost()) + this->getRadius()*4*this->getBoost() > length)
-			{
-			   overlap = true;
-			}
-		}
-	}
-	return overlap;
-}
+//---------------------------------------------------------------------------
 
 void Ball::initializePosition()
 {
@@ -74,6 +38,8 @@ void Ball::initializePosition()
 	this->setPosition(startpos);
 
 }
+//---------------------------------------------------------------------------
+
 void Ball::updateposition(float timedifference, int solidSides)
 {
 	speed += this->force * timedifference;
@@ -113,14 +79,24 @@ void Ball::updateposition(float timedifference, int solidSides)
    }
 
 	this->setPosition(newpos);
+	force = Vec2d(0,0);
 }
+//---------------------------------------------------------------------------
 
 Vec2d Ball::getForce()
 {
 	return this->force;
 }
+//---------------------------------------------------------------------------
+
+void Ball::addForce(Vec2d force)
+{
+   this->force += force;
+}
+//---------------------------------------------------------------------------
 
 void Ball::setSpeed(Vec2d v)
 {
    speed = v;
 }
+//---------------------------------------------------------------------------

@@ -68,8 +68,12 @@ void Pong::run(float timediff)
       doEsterEgg(app->PLAYER_LEFT,  app->players[app->PLAYER_LEFT]->getEsterEgg());
       doEsterEgg(app->PLAYER_RIGHT, app->players[app->PLAYER_RIGHT]->getEsterEgg());
    }
+   else
+   {
+      spawnBall = true;
+   }
 
-   if(calcCollision(timediff)) //--bei Kollision sound ausgeben (nur wenn Spieler drin sind)
+   if(calcForces(timediff)) //--bei Kollision sound ausgeben (nur wenn Spieler drin sind)
    {
       app->soundPlayer->effect("collision");
    }

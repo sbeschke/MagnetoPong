@@ -28,7 +28,8 @@ public:
 protected:
    virtual bool checkBall(Ball* ball)=0;
 
-   bool calcCollision(float timediff);
+   bool calcForces(float timediff); //to be called in run
+
    void makeBall();
    void remBall(Ball* ball);
    void clearBalls();

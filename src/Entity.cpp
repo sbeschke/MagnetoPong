@@ -79,6 +79,7 @@ void Entity::draw(void)
 	{
 		CL_Draw::circle(application->getGC(), center, radius*4.0, fieldColor);
 	}
+
 	CL_Draw::circle(application->getGC(), center, radius, getColor());
 }
 

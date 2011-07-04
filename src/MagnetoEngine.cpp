@@ -22,19 +22,62 @@ MagnetoEngine::~MagnetoEngine()
 }
 //---------------------------------------------------------------------------
 
-bool MagnetoEngine::calcCollision(float timediff)
+bool MagnetoEngine::calcForces(float timediff)
 {
-   bool collision = false;
-   //--Bälle berechnen, zeichnen, und position überprüfen
-   for(EntitySet::iterator it = entities.begin(); it != entities.end();)
+   Entity* object1;
+   Entity* object2;
+
+   bool overlap = false;
+   for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++)
    {
+      object1 = *it;
       EntitySet::iterator next = it;
       next++;
-      collision = collision || (*it)->updateforces(entities, timediff);
-      (*it)->updateposition(timediff, solidSides);
-      (*it)->draw();
 
-      if(Ball* ball = dynamic_cast<Ball*>(*it))
+      for(; next != entities.end(); next++)
+      {
+         object2 = *next;
+
+         Vec2d distance = object1->getPosition() - object2->getPosition();
+         float length = distance.length();
+         float charge = object1->getCharge() * object2->getCharge();
+
+         bool positiv1 = object1->getCharge() > 0;
+         bool positiv2 = object2->getCharge() > 0;
+         //TODO what is this for? seems to be evil!
+         if(positiv1 != positiv2) charge *= 1.5; //es wurde gewünscht, dass die Anziehung stärker ist
+
+         //if the ball does not touch the object
+         if(2*RADIUS < length)
+         {
+            float forceval = (charge * BALLACC / (length * length));
+            Vec2d force = (distance/length) * forceval;
+
+            if(Ball* ball = dynamic_cast<Ball*>(object1))
+            {
+               ball->addForce(force);
+            }
+            if(Ball* ball = dynamic_cast<Ball*>(object2))
+            {
+               ball->addForce(-force);
+            }
+         }
+         else
+         {
+            //no inteaction because of overlap
+         }
+
+         //sound
+         if(object2->getRadius()*4*(object2->getBoost()) + object1->getRadius()*4*object1->getBoost() > length)
+         {
+            overlap = true;
+         }
+      }
+
+      object1->updateposition(timediff, solidSides);
+      object1->draw();
+
+      if(Ball* ball = dynamic_cast<Ball*>(object1))
       {
          if(checkBall(ball))
          {
@@ -42,10 +85,8 @@ bool MagnetoEngine::calcCollision(float timediff)
             delete ball;
          }
       }
-      it = next;
    }
-
-   return collision;
+   return overlap;
 }
 //---------------------------------------------------------------------------
 

@@ -73,7 +73,7 @@ void Squash::run(float timediff)
       }
    }
 
-   if(calcCollision(timediff)) //--bei Kollision sound ausgeben (nur wenn Spieler drin sind)
+   if(calcForces(timediff)) //--bei Kollision sound ausgeben (nur wenn Spieler drin sind)
    {
       app->soundPlayer->effect("collision");
    }
