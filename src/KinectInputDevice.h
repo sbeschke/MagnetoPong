@@ -31,7 +31,7 @@ public:
 
 private:
    void calcPos();
-   void calibrate(OpenNiPoint p, double xnw, double xpw);
+   void calibrate();
    void calcFeldWinkel();
    void calcJump();
    void calcKicking();
@@ -55,18 +55,12 @@ private:
    double lastTorsoY;
 
    double x_offset;
-   double x_pstrech;
-   double x_nstrech;
-   double x_min;
-   double x_max;
+   double x_strech;
 
    double y_offset;
    double y_strech;
-   double y_min;
-   double y_max;
 
-   bool y_kali;
-   bool x_kali;
+   bool calibrated;
 
    int  egg;
    bool eggRead;

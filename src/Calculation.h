@@ -10,6 +10,9 @@
 
 #include "OpenNi.h"
 
+#define GRAD_TO_2PI 0.017453292519943295769236907684886
+#define PI_TO_GRAD  57.295779513082320876798154814105
+
 class Calculation
 {
 public:

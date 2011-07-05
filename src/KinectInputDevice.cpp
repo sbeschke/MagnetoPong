@@ -15,18 +15,13 @@ KinectInputDevice::KinectInputDevice(int nr, bool lefthand)
    leftHand = lefthand;
    playerNr = nr;
 
-   x_kali = false;
-   y_kali = false;
+   calibrated = false;
 
    x_offset = 0;
-   x_pstrech = 1;
-   x_nstrech = 1;
+   x_strech  = 1;
 
    y_offset = 0;
    y_strech = 1;
-
-   x_min = 0;
-   x_max = 0;
 
    lastTorsoY = 0;
    kickingR = 0;
@@ -58,6 +53,7 @@ void KinectInputDevice::setHand(bool lefthand)
 void KinectInputDevice::setPlayer(int nr)
 {
    playerNr = nr;
+   calibrate();
 }
 //---------------------------------------------------------------------------
 
@@ -130,62 +126,67 @@ void KinectInputDevice::calcPos()
    double x_nwinkel;
    double x_pwinkel;
 
+   OpenNiPoint p;
+
    if(leftHand)
    {
-      handPoint = Application::get()->kinect.getPlayerPart(playerNr, P_LHAND, P_LSHOULDER);
+      p = Application::get()->kinect.getPlayerPart(playerNr, P_LHAND, P_LSHOULDER);
       x_pwinkel = 110;
       x_nwinkel = 130;
    }
    else
    {
-      handPoint = Application::get()->kinect.getPlayerPart(playerNr, P_RHAND, P_RSHOULDER);
+      p = Application::get()->kinect.getPlayerPart(playerNr, P_RHAND, P_RSHOULDER);
       x_pwinkel = 130;
       x_nwinkel = 110;
    }
 
    if(invert)
    {
-      handPoint.x *= -1.0;
-      handPoint.y *= -1.0;
+      p.x *= -1.0;
+      p.y *= -1.0;
    }
-   else if(x_max == 0 || x_min == 0)//Kalibrierung
+
+   if(!calibrated)//Kalibrierung
    {
-      calibrate(handPoint, x_nwinkel, x_pwinkel);
+      calibrate();
    }
 
-   if(handPoint.x < 0) handPoint.x = (handPoint.x * x_nstrech +(Application::x_res/2.0) + x_offset);
-   else                handPoint.x = (handPoint.x * x_pstrech +(Application::x_res/2.0) + x_offset);
-
-   handPoint.y = (handPoint.y+(Application::y_res/2.0) + y_offset) * y_strech;
+   handPoint.x = (handPoint.x + (p.x * x_strech +(Application::x_res/2.0) + x_offset)) / 2.0;
+   handPoint.y = (handPoint.y + (p.y * y_strech +(Application::y_res/2.0) + y_offset)) / 2.0;
 }
 //---------------------------------------------------------------------------
 
-void KinectInputDevice::calibrate(OpenNiPoint p, double xnw, double xpw)
+void KinectInputDevice::calibrate()
 {
-   double winkel = Application::get()->kinect.getWinkelELBOW(playerNr, leftHand);
-   if(p.x > 0)
+   double armlength;
+   OpenNiPoint unterarm;
+   OpenNiPoint oberarm;
+   if(leftHand)
    {
-      if((winkel > xpw) && (winkel < xpw+10))
-      {
-         if(Calculation::pointonLine(OpenNiPoint(0,0,30), OpenNiPoint(1,0,0), 300, p))
-         {
-            x_max = p.x;
-            x_pstrech = (Application::x_res/2.0)/abs(x_max);
-            cout << "player " << playerNr << " x_max calc " << x_pstrech << endl;
-         }
-      }
+      unterarm = Application::get()->kinect.getPlayerPart(playerNr, P_LHAND,  P_LELBOW);
+      oberarm  = Application::get()->kinect.getPlayerPart(playerNr, P_LELBOW, P_LSHOULDER);
+
    }
    else
    {
-      if((winkel > xnw) && (winkel < xnw+10))
-      {
-         if(Calculation::pointonLine(OpenNiPoint(0,0,30), OpenNiPoint(1,0,0), 300, p))
-         {
-            x_min = p.x;
-            x_nstrech = (Application::x_res/2.0)/abs(x_min);
-            cout << "player " << playerNr << " x_min calc " << x_nstrech << endl;
-         }
-      }
+      unterarm = Application::get()->kinect.getPlayerPart(playerNr, P_RHAND,  P_RELBOW);
+      oberarm  = Application::get()->kinect.getPlayerPart(playerNr, P_RELBOW, P_RSHOULDER);
+   }
+   armlength = unterarm.length() + oberarm.length();
+   //armlength *= 0.9;
+   double winkel = atan((double)Application::y_res/(double)Application::x_res);
+   cout << winkel * PI_TO_GRAD << endl;
+   double xres = cos(winkel) * armlength;
+   double yres = sin(winkel) * armlength;
+
+   if(armlength && winkel)
+   {
+      x_strech = (Application::x_res/2.0) / xres;
+      y_strech = (Application::y_res/2.0) / yres;
+
+      cout << "calibrated: " << armlength << " : " << x_strech << "|" << y_strech << endl;;
+      calibrated = true;
    }
 }
 //---------------------------------------------------------------------------
@@ -263,7 +264,7 @@ void KinectInputDevice::calcEgg()
 
 void KinectInputDevice::calcKlick()
 {
-   if(feldWinkel > 0.7)
+   if(feldWinkel < -0.7)
    {
       klick = true;
    }

@@ -66,7 +66,7 @@ public:
    }
 
    OpenNiPoint operator-(OpenNiPoint& p)
-{
+   {
       OpenNiPoint np = *this;
       np.x -= p.x;
       np.y -= p.y;

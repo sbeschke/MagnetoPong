@@ -31,7 +31,7 @@ double Calculation::getWinkel(OpenNiPoint vector1, OpenNiPoint vector2, bool rad
    double winkel = acos((vector1*vector2)/(vector1.length()*vector2.length()));
 
    if(rad) return winkel;
-   else    return winkel* 57.295779513082320876798154814105;
+   else    return winkel* PI_TO_GRAD;
 }
 //---------------------------------------------------------------------------
 

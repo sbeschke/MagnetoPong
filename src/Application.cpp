@@ -247,7 +247,8 @@ void Application::run(void)
       {
          while(keyboard.get_keycode(CL_KEY_ESCAPE));
 
-         switchTo(GS_MENU);
+         if(gamestatus != GS_DEMO) switchTo(GS_MENU);
+         else quit = true;
       }
 
 		//--Leertaste aktiviert Maussteuerung
