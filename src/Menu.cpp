@@ -18,14 +18,15 @@ Menu::Menu()
 {
    menuNr = MENUROOT;
 
+   double fontsize = Application::x_res / 24;
    CL_FontDescription font_desc;
    font_desc.set_typeface_name("Verdana");
-   font_desc.set_height(80);
+   font_desc.set_height(fontsize);
 
-   double w = 800;
+   double w = fontsize*9;
    double x = Application::x_res/2 - w/2;
    double y = 100;
-   double h = 120;
+   double h = fontsize+fontsize/2;
    double d = 15;
 
    MenuButton* b;
@@ -173,9 +174,11 @@ void Menu::draw()
       list->at(i)->draw();
    }
 
+   double fontsize = Application::x_res / 50;
+
    CL_FontDescription font_desc;
    font_desc.set_typeface_name("Verdana");
-   font_desc.set_height(35);
+   font_desc.set_height(fontsize);
    CL_Font_System fontSystem = CL_Font_System(Application::get()->getGC(), font_desc);
 
    TGString text = "The blue player is on the right side.\n"

@@ -22,11 +22,13 @@
 
 
 Application* Application::myself;
-int Application::detail;
-int Application::x_res;
-int Application::y_res;
+int  Application::detail;
+int  Application::x_res;
+int  Application::y_res;
 bool Application::fullscreen;
-int Application::fullscreenmonitor;
+int  Application::fullscreenmonitor;
+bool Application::enableEasterEggs;
+int  Application::scoreToWin;
 
 void PlayerCallback::playerRecognized(int nr)
 {
@@ -132,9 +134,9 @@ void Application::domsetup()
 	else
 	{
 		CL_Console::write_line("Could not find magnetopong.xml");
-
 	}
-	if(filename.length() > 0)try
+
+	if(filename.length() > 0) try
 	{
 		CL_File file(filename);
 		CL_String ns_magnetopong = "http://magnetopong.org/config";
@@ -146,6 +148,19 @@ void Application::domsetup()
 		Application::y_res = display.get_child_int("height",Application::y_res);
 		Application::fullscreen = display.get_child_bool("fullscreen",Application::fullscreen);
 		Application::fullscreenmonitor = display.get_child_bool("fullscreenmonitor",Application::fullscreenmonitor);
+
+		CL_DomElement gameplay = root.named_item("gameplay").to_element();
+		Application::scoreToWin = gameplay.get_child_int("winpoints", 11);
+		Application::enableEasterEggs = gameplay.get_child_bool("enableeastereggs",true);
+
+		CL_DomElement physics = root.named_item("physics").to_element();
+
+		CL_DomElement ball = physics.named_item("ball").to_element();
+		Ball::ballacc = TGString(ball.get_child_string("acceleration", "5.0")).toDouble();
+		Ball::radius  = TGString(ball.get_child_string("radius", "10.0")).toDouble();
+
+		CL_DomElement bat = physics.named_item("bat").to_element();
+      Bat::radius = TGString(bat.get_child_string("radius", "20.0")).toDouble();
 
 		CL_DomElement sound = root.named_item("sound").to_element();
 		this->soundPlayer->domLoad(sound);

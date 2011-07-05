@@ -9,13 +9,15 @@
 #include "Application.h"
 #include "stdlib.h"
 
+float Ball::ballacc;
+float Ball::radius;
 
 Ball::Ball(Application* application, Vec2d windowFrame)
 : Entity(application)
 {
 	setColor(CL_Colorf(0.0f, 0.0f, 0.0f, 0.6f));
+	setRadius(Ball::radius);
 	this->windowFrame = windowFrame;
-
 }
 
 Ball::~Ball()
@@ -47,34 +49,34 @@ void Ball::updateposition(float timedifference, int solidSides)
 
 	if(solidSides & Entity::BOTTOMSIDE)
 	{
-      if(newpos.y + speed.y + RADIUS > windowFrame.y)
+      if(newpos.y + speed.y + getRadius() > windowFrame.y)
       {
          speed.y = - speed.y;
-         newpos.y= this->windowFrame.y-RADIUS;
+         newpos.y= this->windowFrame.y-getRadius();
       }
 	}
 	if(solidSides & Entity::TOPSIDE)
    {
-      if(newpos.y - speed.y - RADIUS < 0)
+      if(newpos.y - speed.y - getRadius() < 0)
       {
          speed.y = - speed.y;
-         newpos.y= RADIUS;
+         newpos.y= getRadius();
       }
    }
 	if(solidSides & Entity::RIGHTSIDE)
    {
-      if(newpos.x + speed.x + RADIUS > windowFrame.x)
+      if(newpos.x + speed.x + getRadius() > windowFrame.x)
       {
          speed.x = - speed.x;
-         newpos.x= this->windowFrame.x-RADIUS;
+         newpos.x= this->windowFrame.x-getRadius();
       }
    }
    if(solidSides & Entity::LEFTSIDE)
    {
-      if(newpos.x - speed.x - RADIUS < 0)
+      if(newpos.x - speed.x - getRadius() < 0)
       {
          speed.x = - speed.x;
-         newpos.x= RADIUS;
+         newpos.x= getRadius();
       }
    }
 

@@ -57,6 +57,7 @@ public:
 
 protected:
 	Application* application;
+
 private:
 	Vec2d position;
 	float charge;

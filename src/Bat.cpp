@@ -9,12 +9,15 @@
 #include <sstream>
 #include "Application.h"
 
+int Bat::radius;
+
 Bat::Bat(Application* application)
 : Entity(application)
 {
 	setColor(CL_Colorf::cornsilk);
-	setRadius(20.0f);
+	setRadius(Bat::radius);
 }
 
-Bat::~Bat() {
+Bat::~Bat()
+{
 }

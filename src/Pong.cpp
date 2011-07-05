@@ -65,8 +65,11 @@ void Pong::run(float timediff)
          }
       }
 
-      doEsterEgg(app->PLAYER_LEFT,  app->players[app->PLAYER_LEFT]->getEsterEgg());
-      doEsterEgg(app->PLAYER_RIGHT, app->players[app->PLAYER_RIGHT]->getEsterEgg());
+      if(Application::enableEasterEggs)
+      {
+         doEsterEgg(app->PLAYER_LEFT,  app->players[app->PLAYER_LEFT]->getEsterEgg());
+         doEsterEgg(app->PLAYER_RIGHT, app->players[app->PLAYER_RIGHT]->getEsterEgg());
+      }
    }
    else
    {
@@ -113,7 +116,7 @@ void Pong::ballOut(int player)
       app->soundPlayer->effect("point");
       app->players[player]->incrementScore();
 
-      if(app->players[player]->getScore() >= Application::SCORE_TO_WIN)
+      if(app->players[player]->getScore() >= Application::scoreToWin)
       {
          app->soundPlayer->effect("win");
 
@@ -143,10 +146,11 @@ void Pong::ballOut(int player)
    }
    else
    {
+      /*
       if(entities.size() <= app->ANZ_BALS_DEMO)
       {
          makeBall();
-      }
+      }*/
    }
 }
 //---------------------------------------------------------------------------
@@ -157,7 +161,7 @@ void Pong::startMatch(void)
    app->osmShout.setMessage("FIGHT", 3.0f);
    app->soundPlayer->effect("fight");
    std::ostringstream centerText;
-   centerText << "Score " << app->SCORE_TO_WIN << " points to win";
+   centerText << "Score " << app->scoreToWin << " points to win";
    app->osmCenter.setMessage(centerText.str(), 3.0f);
 
    for(std::vector<Player*>::iterator it = app->players.begin(); it != app->players.end(); it++)

@@ -13,8 +13,11 @@
 #include <ClanLib/display.h>
 #include <ClanLib/gl.h>
 
-class Bat: public Entity {
+class Bat: public Entity
+{
 public:
+   static int radius;
+
 	Bat(Application* application);
 	virtual ~Bat();
 

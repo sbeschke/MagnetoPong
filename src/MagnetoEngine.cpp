@@ -26,6 +26,8 @@ bool MagnetoEngine::calcForces(float timediff)
 {
    Entity* object1;
    Entity* object2;
+   bool isball1;
+   bool isball2;
 
    bool overlap = false;
    for(EntitySet::iterator it = entities.begin(); it != entities.end(); it++)
@@ -33,10 +35,13 @@ bool MagnetoEngine::calcForces(float timediff)
       object1 = *it;
       EntitySet::iterator next = it;
       next++;
+      bool isball1 = false;
+
 
       for(; next != entities.end(); next++)
       {
          object2 = *next;
+         bool isball2 = false;
 
          Vec2d distance = object1->getPosition() - object2->getPosition();
          float length = distance.length();
@@ -48,18 +53,20 @@ bool MagnetoEngine::calcForces(float timediff)
          if(positiv1 != positiv2) charge *= 1.5; //es wurde gewünscht, dass die Anziehung stärker ist
 
          //if the ball does not touch the object
-         if(2*RADIUS < length)
+         if(object1->getRadius() + object2->getRadius() < length)
          {
-            float forceval = (charge * BALLACC / (length * length));
+            float forceval = (charge * Ball::ballacc / (length * length));
             Vec2d force = (distance/length) * forceval;
 
             if(Ball* ball = dynamic_cast<Ball*>(object1))
             {
                ball->addForce(force);
+               isball1 = true;
             }
             if(Ball* ball = dynamic_cast<Ball*>(object2))
             {
                ball->addForce(-force);
+               isball2 = true;
             }
          }
          else
@@ -68,9 +75,12 @@ bool MagnetoEngine::calcForces(float timediff)
          }
 
          //sound
-         if(object2->getRadius()*4*(object2->getBoost()) + object1->getRadius()*4*object1->getBoost() > length)
+         if(!(!isball2 && !isball1))
          {
-            overlap = true;
+            if(object2->getRadius()*4*(object2->getBoost()) + object1->getRadius()*4*object1->getBoost() > length)
+            {
+               overlap = true;
+            }
          }
       }
 

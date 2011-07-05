@@ -67,8 +67,8 @@ public:
 	static bool fullscreen;
 	static int  fullscreenmonitor;
 
-	const static int ANZ_BALS_DEMO = 8;
-	const static int SCORE_TO_WIN = 11;
+	static bool enableEasterEggs;
+	static int scoreToWin;
 
 	const static unsigned int PLAYER_LEFT = 0;
 	const static unsigned int PLAYER_RIGHT = 1;
