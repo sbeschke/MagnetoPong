@@ -12,6 +12,7 @@
 Sound::Sound()
 {
 	output = CL_SoundOutput(44100);
+	soundsOn = true;
 }
 //---------------------------------------------------------------------------
 Sound::~Sound()
@@ -21,10 +22,10 @@ Sound::~Sound()
 		delete it->second;
 	}
 	this->effects.clear();
-
 }
 
 //---------------------------------------------------------------------------
+
 void Sound::domLoad(CL_DomElement config)
 {
 	CL_DomElement domeffects = config.named_item("effects").to_element();
@@ -43,6 +44,7 @@ void Sound::domLoad(CL_DomElement config)
 
 }
 //---------------------------------------------------------------------------
+
 void Sound::loadeffects(std::map<std::string, std::string> &effects)
 {
 	for(EffectMap::iterator it = this->effects.begin(); it != this->effects.end(); it++)
@@ -56,7 +58,7 @@ void Sound::loadeffects(std::map<std::string, std::string> &effects)
 		if(CL_FileHelp::file_exists(it->second.c_str()))
 		{
 		CL_SoundBuffer* tempbuffer = new CL_SoundBuffer(it->second);
-		this->effects[it->first]= tempbuffer;
+		this->effects[it->first] = tempbuffer;
 		}
 		else
 		{
@@ -66,6 +68,7 @@ void Sound::loadeffects(std::map<std::string, std::string> &effects)
 
 }
 //---------------------------------------------------------------------------
+
 void Sound::effect(std::string name)
 {
 	if(effects.find(name) != effects.end())
@@ -73,7 +76,7 @@ void Sound::effect(std::string name)
 	   if(name == "collision") effects[name]->set_volume(0.3);
 	   else                    effects[name]->set_volume(1);
 
-	   effects[name]->play();
+	   if(soundsOn) effects[name]->play();
 	}
 	else
 	{
@@ -82,6 +85,7 @@ void Sound::effect(std::string name)
 
 }
 //---------------------------------------------------------------------------
+
 void Sound::setmusic(std::string filename)
 {
 	this->music.stop();
@@ -97,8 +101,19 @@ void Sound::setmusic(std::string filename)
 	}
 }
 //---------------------------------------------------------------------------
+
 void Sound::play()
 {
 	music.set_looping(true);
-	music.play();
+	if(soundsOn) music.play();
+}
+//---------------------------------------------------------------------------
+
+void Sound::setActive(bool active)
+{
+   soundsOn = active;
+   if(!soundsOn)
+   {
+      music.stop();
+   }
 }

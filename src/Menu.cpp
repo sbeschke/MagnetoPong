@@ -16,6 +16,8 @@
 
 Menu::Menu()
 {
+   menuNr = MENUROOT;
+
    CL_FontDescription font_desc;
    font_desc.set_typeface_name("Verdana");
    font_desc.set_height(80);
@@ -30,22 +32,67 @@ Menu::Menu()
    b = new MenuButton(PONG, x, y, w, h, 20, font_desc);
    b->setText("start MagnetoPong");
    b->setColor(CL_Colorf::red, CL_Colorf::blue, CL_Colorf::green);
-   buttonList.push_back(b);
+   buttonListRoot.push_back(b);
 
    b = new MenuButton(SQUASH, x, y+= h+d, w, h, 20, font_desc);
    b->setText("start MagnetoSquash");
    b->setColor(CL_Colorf::red, CL_Colorf::blue, CL_Colorf::green);
-   buttonList.push_back(b);
+   buttonListRoot.push_back(b);
+
+   b = new MenuButton(OPTION, x, y+= h+d, w, h, 20, font_desc);
+   b->setText("Options");
+   b->setColor(CL_Colorf::red, CL_Colorf::blue, CL_Colorf::green);
+   buttonListRoot.push_back(b);
 
    b = new MenuButton(END, x, y+= h+d*2, w, h, 20, font_desc);
    b->setText("Quit");
    b->setColor(CL_Colorf::red, CL_Colorf::blue, CL_Colorf::green);
-   buttonList.push_back(b);
+   buttonListRoot.push_back(b);
+
+   y = 100;
+   b = new MenuButton(DIF1, x, y, w, h, 20, font_desc);
+   b->setText("Easy");
+   b->setColor(CL_Colorf::red, CL_Colorf::blue, CL_Colorf::green);
+   buttonListDif.push_back(b);
+
+   b = new MenuButton(DIF2, x, y+= h+d, w, h, 20, font_desc);
+   b->setText("Normal");
+   b->setColor(CL_Colorf::red, CL_Colorf::blue, CL_Colorf::green);
+   buttonListDif.push_back(b);
+
+   b = new MenuButton(DIF3, x, y+= h+d, w, h, 20, font_desc);
+   b->setText("Hard");
+   b->setColor(CL_Colorf::red, CL_Colorf::blue, CL_Colorf::green);
+   buttonListDif.push_back(b);
+
+   b = new MenuButton(DIF4, x, y+= h+d, w, h, 20, font_desc);
+   b->setText("Extrem");
+   b->setColor(CL_Colorf::red, CL_Colorf::blue, CL_Colorf::green);
+   buttonListDif.push_back(b);
+
+   b = new MenuButton(BACK, x, y+= h+d*2, w, h, 20, font_desc);
+   b->setText("Back");
+   b->setColor(CL_Colorf::red, CL_Colorf::blue, CL_Colorf::green);
+   buttonListDif.push_back(b);
+
+   y = 100;
+   b = new MenuButton(SOUND, x, y, w, h, 20, font_desc);
+   b->setText("Sound OFF");
+   b->setColor(CL_Colorf::red, CL_Colorf::blue, CL_Colorf::green);
+   buttonListOpt.push_back(b);
+
+   b = new MenuButton(BACK, x, y+= h+d*2, w, h, 20, font_desc);
+   b->setText("Back");
+   b->setColor(CL_Colorf::red, CL_Colorf::blue, CL_Colorf::green);
+   buttonListOpt.push_back(b);
+
 }
 
 Menu::~Menu()
 {
-   buttonList.clear();
+   buttonListDif.clear();
+   buttonListRoot.clear();
+   buttonListOpt.clear();
 }
 //---------------------------------------------------------------------------
 
@@ -55,10 +102,37 @@ int Menu::checkPlayer(Player* pl)
    double y = pl->getBat()->getY();
    bool klick = pl->getKlick();
    MenuButton* b;
-
-   for(int i=0; i < buttonList.size(); i++)
+   vector<MenuButton* >* list;
+   switch(menuNr)
    {
-      b = buttonList.at(i);
+   case MENUROOT: list = &buttonListRoot; break;
+   case MENUDIF:  list = &buttonListDif;  break;
+   case MENUOPT:
+      {
+         list = &buttonListOpt;
+         for(int i=0; i < list->size(); i++)
+         {
+            if(list->at(i)->getID() == SOUND)
+            {
+               if(Application::get()->soundPlayer->getActive())
+               {
+                  list->at(i)->setText("Sound OFF");
+               }
+               else
+               {
+                  list->at(i)->setText("Sound ON");
+               }
+               break;
+            }
+         }
+      }
+      break;
+   default: list = &buttonListRoot; break;
+   }
+
+   for(int i=0; i < list->size(); i++)
+   {
+      b = list->at(i);
 
       if(b->getPointOnButton(x,y))
       {
@@ -77,11 +151,26 @@ int Menu::checkPlayer(Player* pl)
 }
 //---------------------------------------------------------------------------
 
+void Menu::setMenu(int menuNr)
+{
+   this->menuNr = menuNr;
+}
+//---------------------------------------------------------------------------
+
 void Menu::draw()
 {
-   for(int i=0; i < buttonList.size(); i++)
+   vector<MenuButton* >* list;
+   switch(menuNr)
    {
-      buttonList.at(i)->draw();
+   case MENUROOT: list = &buttonListRoot; break;
+   case MENUDIF:  list = &buttonListDif;  break;
+   case MENUOPT:  list = &buttonListOpt;  break;
+   default: list = &buttonListRoot; break;
+   }
+
+   for(int i=0; i < list->size(); i++)
+   {
+      list->at(i)->draw();
    }
 
    CL_FontDescription font_desc;

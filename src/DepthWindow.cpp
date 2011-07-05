@@ -29,6 +29,9 @@ DepthWindow::~DepthWindow()
 void DepthWindow::refreshPicture()
 {
    unsigned short* pixels = kinect->getDepthPicture();
+
+   if(pixels == NULL) return;
+
    double h;
    double lh=0;
    double dh;

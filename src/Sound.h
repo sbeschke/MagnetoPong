@@ -28,6 +28,8 @@ public:
 	void effect(std::string name);
 	void loadeffects(std::map<std::string,std::string> &effects);
 
+	void setActive(bool active);
+	bool getActive() {return soundsOn;}
 
 private:
 	EffectMap effects;
@@ -37,6 +39,8 @@ private:
 	CL_SetupMikMod setup_mikmod;
 	CL_SetupVorbis setup_vorbis;
 	CL_SoundOutput output;
+
+	bool soundsOn;
 
 
 };

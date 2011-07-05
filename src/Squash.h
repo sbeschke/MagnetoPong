@@ -19,6 +19,7 @@ public:
    void run(float timediff);
 
    void restartMatch();
+   void setDifficulty(float dif);
 
 private:
    void startMatch();
@@ -30,6 +31,7 @@ private:
 
    bool  inMatch;
    float timeToMatch;
+   float difficulty;
 };
 
 #endif /* SQUASH_H_ */

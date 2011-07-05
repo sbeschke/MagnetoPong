@@ -21,6 +21,7 @@ Squash::Squash(Application* app)
 
    inMatch = false;
    timeToMatch = 2000;
+   difficulty = 1;
 }
 
 Squash::~Squash()
@@ -105,6 +106,12 @@ void Squash::restartMatch()
 }
 //---------------------------------------------------------------------------
 
+void Squash::setDifficulty(float dif)
+{
+   difficulty = dif;
+}
+//---------------------------------------------------------------------------
+
 // return true if ball is out
 bool Squash::checkBall(Ball* ball)
 {
@@ -113,13 +120,15 @@ bool Squash::checkBall(Ball* ball)
 
    if(pos.x < 0)
    {
+      app->soundPlayer->effect("point");
       Vec2d speed = ball->getSpeed();
       speed.x = -speed.x;
-      double length = sqrt(speed.x*speed.x + speed.y*speed.y) * 100;
+      double points = sqrt(speed.x*speed.x + speed.y*speed.y) * 40*difficulty*difficulty;
       int score = app->players[app->PLAYER_RIGHT]->getScore();
-      score += length;
+      score += points;
       app->players[app->PLAYER_RIGHT]->setScore(score);
 
+      speed *= difficulty;
       ball->setSpeed(speed);
       pos.x = 0;
       ball->setPosition(pos);

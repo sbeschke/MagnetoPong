@@ -268,12 +268,16 @@ OpenNiPoint OpenNi::getPlayerPart(int nr, int part1, int part2)
 
 unsigned short* OpenNi::getRGBPicture()
 {
+   if(!init_ok) return NULL;
+
    return (unsigned short*)g_Image.GetImageMap();//pixels;
 }
 //---------------------------------------------------------------------------
 
 unsigned short* OpenNi::getDepthPicture()
 {
+   if(!init_ok) return NULL;
+
    return (unsigned short*)g_Depth.GetDepthMap();//depth;
 }
 //---------------------------------------------------------------------------

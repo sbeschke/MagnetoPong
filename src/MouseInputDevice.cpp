@@ -13,7 +13,7 @@
 MouseInputDevice::MouseInputDevice(CL_InputDevice* mouse)
 : mouse(mouse), zValue(0.5f)
 {
-
+   klick = false;
 }
 
 MouseInputDevice::~MouseInputDevice()
@@ -32,5 +32,15 @@ float MouseInputDevice::getZ(void)
 
 bool MouseInputDevice::getKlick()
 {
-   return mouse->get_keycode(mouse->string_to_keyid("Mouse Left"));
+   klick = mouse->get_keycode(mouse->string_to_keyid("Mouse Left"));
+   if(klick && !klickRead)
+   {
+      klickRead = true;
+      return true;
+   }
+   else if(!klick)
+   {
+      klickRead = false;
+   }
+   return false;
 }

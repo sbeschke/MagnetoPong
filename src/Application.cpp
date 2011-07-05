@@ -159,7 +159,6 @@ void Application::domsetup()
 		CL_Console::write_line("DOM Error: " + exception.get_message_and_stack_trace());
 		console.display_close_message();
 	}
-
 }
 //---------------------------------------------------------------------------
 
@@ -172,8 +171,8 @@ Application::Application(void)
    srand(time(NULL));
 
 	soundPlayer = new Sound();
-	pong = new Pong(this);
-	demo = new Demo(this);
+	pong   = new Pong(this);
+	demo   = new Demo(this);
 	squash = new Squash(this);
 
 	domsetup();
@@ -306,6 +305,12 @@ void Application::run(void)
 
 void Application::switchTo(int status)
 {
+   osmCenter.hide();
+   osmShout.hide();
+   osmLeft.hide();
+   osmRight.hide();
+   osmHuge.hide();
+
    switch(status)
    {
    case GS_DEMO:
@@ -348,12 +353,20 @@ void Application::runMenu(float timediff)
          switch(dasMenu->checkPlayer(pl))
          {
          case Menu::NON: break;
-         case Menu::PONG:   switchTo(GS_PONG);   break;
-         case Menu::SQUASH: switchTo(GS_SQUASH); break;
-         case Menu::END:    quit = true;         break;
+         case Menu::PONG:   switchTo(GS_PONG); break;
+         case Menu::SQUASH: dasMenu->setMenu(Menu::MENUDIF);  break;
+         case Menu::OPTION: dasMenu->setMenu(Menu::MENUOPT);  break;
+         case Menu::DIF1:   squash->setDifficulty(0.8); switchTo(GS_SQUASH);  break;
+         case Menu::DIF2:   squash->setDifficulty(1);   switchTo(GS_SQUASH);  break;
+         case Menu::DIF3:   squash->setDifficulty(1.6); switchTo(GS_SQUASH);  break;
+         case Menu::DIF4:   squash->setDifficulty(2.1); switchTo(GS_SQUASH);  break;
+         case Menu::SOUND:  soundPlayer->setActive(!soundPlayer->getActive()); break;
+         case Menu::BACK:   dasMenu->setMenu(Menu::MENUROOT); break;
+         case Menu::END:    quit = true; break;
          }
       }
    }
+   //
 }
 //---------------------------------------------------------------------------
 

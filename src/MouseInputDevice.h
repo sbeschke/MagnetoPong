@@ -29,6 +29,8 @@ private:
 
 	CL_InputDevice* mouse;
 	float zValue;
+	bool klick;
+	bool klickRead;
 };
 
 #endif /* MOUSEINPUTDEVICE_H_ */
