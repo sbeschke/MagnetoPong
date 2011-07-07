@@ -14,7 +14,6 @@ using namespace std;
 class MenuButton;
 class Player;
 
-//typedef vector<MenuButton* >* buttonList;
 
 class Menu
 {
@@ -22,11 +21,14 @@ public:
    Menu();
    virtual ~Menu();
 
+   void resetButtons();
+
    int checkPlayer(Player* pl);
 
    static const int MENUROOT = 0;
    static const int MENUDIF  = 1;
    static const int MENUOPT  = 2;
+   static const int MENURES  = 3;
 
    void setMenu(int menuNr);
    void draw();
@@ -40,15 +42,31 @@ public:
    static const int DIF3   = 23;
    static const int DIF4   = 24;
    static const int SOUND  = 31;
+   static const int RES    = 32;
+   static const int CHRES  = 321;
+   static const int SAVERES= 322;
+
    static const int BACK   = 91;
    static const int END    = 99;
+
+   int getXres();
+   int getYres();
+
+   void incRes();
+   void decRes();
 
 private:
    vector<MenuButton* > buttonListRoot;
    vector<MenuButton* > buttonListDif;
    vector<MenuButton* > buttonListOpt;
+   vector<MenuButton* > buttonListRes;
 
    int menuNr;
+
+   int res_ctr;
+
+   void setRes(int x, int y);
+
 
 };
 

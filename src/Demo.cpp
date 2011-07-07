@@ -26,7 +26,7 @@ Demo::~Demo()
 void Demo::run(float timediff)
 {
    //--Ball einfügen
-   if(spawnBall)
+   //if(spawnBall)
    {
       timeToSpawnBall -= timediff;
       if(timeToSpawnBall <= 0.0f)

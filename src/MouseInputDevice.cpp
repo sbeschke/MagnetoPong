@@ -7,7 +7,6 @@
 
 #include "MouseInputDevice.h"
 
-
 #include <iostream>
 
 MouseInputDevice::MouseInputDevice(CL_InputDevice* mouse)

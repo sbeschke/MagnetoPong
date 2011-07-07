@@ -48,6 +48,7 @@ private:
 	Pong* pong;
 	Demo* demo;
 	Squash* squash;
+	CL_DisplayWindow window;
 
 public:
 	int gamestatus;
@@ -93,6 +94,7 @@ public:
 
 	Application(void);
 
+	void setRes(int x, int y);
 	void domsetup();
 
 	void run(void);

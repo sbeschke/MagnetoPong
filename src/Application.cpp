@@ -207,12 +207,19 @@ Application::Application(void)
 
 	osmCenter = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.75f), font_desc2, CL_Colorf::darkslateblue);
 	osmShout  = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.25f), font_desc2, CL_Colorf::deeppink);
-	osmHuge   = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.5f),
-			huge_font_desc, CL_Colorf::deeppink);
-	osmLeft = OnScreenMessage(CL_Pointf(x_res / 4, y_res / 2), font_desc,
-			playerColors[PLAYER_LEFT]);
-	osmRight = OnScreenMessage(CL_Pointf(x_res * 3 / 4, y_res / 2),
-			font_desc, playerColors[PLAYER_RIGHT]);
+	osmHuge   = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.5f),  huge_font_desc, CL_Colorf::deeppink);
+	osmLeft  = OnScreenMessage(CL_Pointf(x_res / 4, y_res / 2), font_desc, 	playerColors[PLAYER_LEFT]);
+	osmRight = OnScreenMessage(CL_Pointf(x_res * 3 / 4, y_res / 2), font_desc, playerColors[PLAYER_RIGHT]);
+}
+//---------------------------------------------------------------------------
+
+void Application::setRes(int x, int y)
+{
+   x_res = x;
+   y_res = y-40;
+   window.set_size(x_res, y_res, true);
+   dasMenu->resetButtons();
+   window.flip();
 }
 //---------------------------------------------------------------------------
 
@@ -233,11 +240,11 @@ void Application::run(void)
 	unsigned int start = CL_System::get_time();
 
 	CL_DisplayWindowDescription window_desc;
-	window_desc.set_size(CL_Size(Application::x_res,Application::y_res), true);
-	window_desc.set_fullscreen(Application::fullscreen,0);
+	window_desc.set_size(CL_Size(Application::x_res, Application::y_res), true);
+	window_desc.set_fullscreen(Application::fullscreen, fullscreenmonitor);
 	window_desc.set_title("MagnetoPong!!!11einself");
 
-	CL_DisplayWindow window(window_desc);
+	window = CL_DisplayWindow(window_desc);
 
 	CL_Slot slot_quit = window.sig_window_close().connect(this, &Application::on_window_close);
 
@@ -377,12 +384,14 @@ void Application::runMenu(float timediff)
          case Menu::DIF3:   squash->setDifficulty(1.6); switchTo(GS_SQUASH);  break;
          case Menu::DIF4:   squash->setDifficulty(2.1); switchTo(GS_SQUASH);  break;
          case Menu::SOUND:  soundPlayer->setActive(!soundPlayer->getActive()); break;
+         case Menu::RES:    dasMenu->setMenu(Menu::MENURES);  break;
+         case Menu::CHRES:  dasMenu->incRes();                break;
+         case Menu::SAVERES:setRes(dasMenu->getXres(), dasMenu->getYres()); break;
          case Menu::BACK:   dasMenu->setMenu(Menu::MENUROOT); break;
          case Menu::END:    quit = true; break;
          }
       }
    }
-   //
 }
 //---------------------------------------------------------------------------
 
