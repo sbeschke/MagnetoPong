@@ -44,7 +44,7 @@ public:
 private:
 	Vec2d speed;
 	Vec2d force;
-	Vec2d windowFrame;
+//	Vec2d windowFrame;
 };
 
 #endif /* BALL_H_ */

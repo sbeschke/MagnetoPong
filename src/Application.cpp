@@ -208,17 +208,23 @@ Application::Application(void)
 	osmCenter = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.75f), font_desc2, CL_Colorf::darkslateblue);
 	osmShout  = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.25f), font_desc2, CL_Colorf::deeppink);
 	osmHuge   = OnScreenMessage(CL_Pointf(x_res / 2, (float)y_res * 0.5f),  huge_font_desc, CL_Colorf::deeppink);
-	osmLeft  = OnScreenMessage(CL_Pointf(x_res / 4, y_res / 2), font_desc, 	playerColors[PLAYER_LEFT]);
-	osmRight = OnScreenMessage(CL_Pointf(x_res * 3 / 4, y_res / 2), font_desc, playerColors[PLAYER_RIGHT]);
+	osmLeft   = OnScreenMessage(CL_Pointf(x_res / 4, y_res / 2), font_desc, 	playerColors[PLAYER_LEFT]);
+	osmRight  = OnScreenMessage(CL_Pointf(x_res * 3 / 4, y_res / 2), font_desc, playerColors[PLAYER_RIGHT]);
 }
 //---------------------------------------------------------------------------
 
 void Application::setRes(int x, int y)
 {
-   x_res = x;
-   y_res = y-40;
-   window.set_size(x_res, y_res, true);
+   Application::x_res = x;
+   Application::y_res = y;
+   window.set_size(Application::x_res, Application::y_res, true);
    dasMenu->resetButtons();
+   osmCenter.setPos(CL_Pointf(x_res / 2, (float)y_res * 0.75f));
+   osmShout.setPos(CL_Pointf(x_res / 2, (float)y_res * 0.25f));
+   osmHuge.setPos(CL_Pointf(x_res / 2, (float)y_res * 0.5f));
+   osmLeft.setPos(CL_Pointf(x_res / 4, y_res / 2));
+   osmRight.setPos(CL_Pointf(x_res * 3 / 4, y_res / 2));
+
    window.flip();
 }
 //---------------------------------------------------------------------------
@@ -257,7 +263,7 @@ void Application::run(void)
 	playersChanged();
 
 	//---------------------------------------------------------------------------
-	while (!quit)//schleife-schleife-schleife-schleife-schleife-schleife-schleife ;)
+	while(!quit)//schleife-schleife-schleife-schleife-schleife-schleife-schleife ;)
 	{
 		int timediff = CL_System::get_time() - start ;
 		start = CL_System::get_time();
@@ -356,6 +362,7 @@ void Application::switchTo(int status)
       break;
    }
    gamestatus = status;
+   playersChanged();
 }
 //---------------------------------------------------------------------------
 

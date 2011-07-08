@@ -34,6 +34,11 @@ void OnScreenMessage::setMessage(const std::string message, float timeout)
 	hasTimeout = true;
 }
 
+void OnScreenMessage::setPos(CL_Pointf textPos)
+{
+   this->textPos = textPos;
+}
+
 void OnScreenMessage::tick(float secs)
 {
 	if(!hasTimeout) return;

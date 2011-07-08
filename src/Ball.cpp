@@ -17,7 +17,7 @@ Ball::Ball(Application* application, Vec2d windowFrame)
 {
 	setColor(CL_Colorf(0.0f, 0.0f, 0.0f, 0.6f));
 	setRadius(Ball::radius);
-	this->windowFrame = windowFrame;
+//	this->windowFrame = windowFrame;
 }
 
 Ball::~Ball()
@@ -34,9 +34,9 @@ void Ball::draw(void)
 
 void Ball::initializePosition()
 {
-	Vec2d startpos = windowFrame/2;
+	Vec2d startpos = Application::x_res/2;
 	startpos.x += (rand() % 21)-10;
-	startpos.y  =  rand() % (int)windowFrame.y;
+	startpos.y  =  rand() % Application::y_res;
 	this->setPosition(startpos);
 
 }
@@ -49,10 +49,10 @@ void Ball::updateposition(float timedifference, int solidSides)
 
 	if(solidSides & Entity::BOTTOMSIDE)
 	{
-      if(newpos.y + speed.y + getRadius() > windowFrame.y)
+      if(newpos.y + speed.y + getRadius() > Application::y_res)
       {
          speed.y = - speed.y;
-         newpos.y= this->windowFrame.y-getRadius();
+         newpos.y= Application::y_res-getRadius();
       }
 	}
 	if(solidSides & Entity::TOPSIDE)
@@ -65,10 +65,10 @@ void Ball::updateposition(float timedifference, int solidSides)
    }
 	if(solidSides & Entity::RIGHTSIDE)
    {
-      if(newpos.x + speed.x + getRadius() > windowFrame.x)
+      if(newpos.x + speed.x + getRadius() > Application::x_res)
       {
          speed.x = - speed.x;
-         newpos.x= this->windowFrame.x-getRadius();
+         newpos.x= Application::x_res-getRadius();
       }
    }
    if(solidSides & Entity::LEFTSIDE)

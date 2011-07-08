@@ -22,6 +22,8 @@ public:
 	void setMessage(const std::string message);
 	void setMessage(const std::string message, float timeout);
 
+	void setPos(CL_Pointf textPos);
+
 	void tick(float secs);
 	void draw(void);
 	void hide(void);
