@@ -49,6 +49,8 @@ public:
    static const int BACK   = 91;
    static const int END    = 99;
 
+   void setRes(int x, int y);
+
    int getXres();
    int getYres();
 
@@ -64,8 +66,6 @@ private:
    int menuNr;
 
    int res_ctr;
-
-   void setRes(int x, int y);
 
 
 };

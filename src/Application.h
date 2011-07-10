@@ -39,6 +39,7 @@ const CL_Colorf playerColors[] = {
 class Application
 {
 private:
+
 	bool quit;
 	CL_GraphicContext graphicContext;
 	CL_InputDevice keyboard;
