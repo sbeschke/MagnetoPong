@@ -140,8 +140,8 @@ public:
    void update(float timediff);
    int  getAnzPlayer();
    OpenNiPlayer getPlayer(int nr);
-   OpenNiPoint  getPlayerPart(int nr, int part);
-   OpenNiPoint  getPlayerPart(int nr, int part1, int part2);
+   OpenNiPoint  getPlayerPart(int nr, int part, bool projective = false);
+   OpenNiPoint  getPlayerPart(int nr, int part1, int part2, bool projective = false);
            //pos von Part1 relativ zu Part2
 
    unsigned short* getRGBPicture();

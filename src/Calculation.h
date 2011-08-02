@@ -20,6 +20,7 @@ public:
    static double getWinkel(OpenNiPoint pos1, OpenNiPoint gelenk, OpenNiPoint pos2, bool rad = false);
    static double getWinkel(OpenNiPoint vector1, OpenNiPoint vector2, bool rad = false);
    static int hsl_to_rgb(double h, double s, double l);
+   static bool isEqual(double v1, double v2, double tol);
 };
 
 #endif /* CALCULATION_H_ */

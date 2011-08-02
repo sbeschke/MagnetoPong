@@ -33,7 +33,7 @@ protected:
 
    OpenNi* kinect;
    CL_GraphicContext graphicContext;
-   CL_DisplayWindow* window;
+   CL_DisplayWindow window;
    CL_InputDevice* mouse;
 
    bool window_open;

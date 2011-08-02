@@ -84,3 +84,10 @@ int Calculation::hsl_to_rgb(double h, double s, double l)
 
    return (b << 16) + (g << 8) + r;
 }
+//---------------------------------------------------------------------------
+
+bool Calculation::isEqual(double v1, double v2, double tol)
+{
+   return (v1 <= (v2+tol)) && (v1 >= (v2-tol));
+}
+//---------------------------------------------------------------------------

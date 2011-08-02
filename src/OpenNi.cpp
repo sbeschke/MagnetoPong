@@ -170,8 +170,8 @@ void OpenNi::update(float timediff)
       g_Context.WaitAndUpdateAll();
       if(timepast > 42)
       {
-         //pixels = (unsigned short*)g_Image.GetImageMap();
-         //depth  = (unsigned short*)g_Depth.GetDepthMap();
+         pixels = (unsigned short*)g_Image.GetImageMap();
+         depth  = (unsigned short*)g_Depth.GetDepthMap();
       }
 
    }
@@ -211,7 +211,7 @@ OpenNiPlayer OpenNi::getPlayer(int nr)
 }
 //---------------------------------------------------------------------------
 
-OpenNiPoint OpenNi::getPlayerPart(int nr, int part)
+OpenNiPoint OpenNi::getPlayerPart(int nr, int part, bool projective)
 {
    OpenNiPoint p;
    if(!init_ok) return p;
@@ -248,19 +248,34 @@ OpenNiPoint OpenNi::getPlayerPart(int nr, int part)
       case P_RANKLE:    s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_ANKLE,     pos); break;
       case P_RFOOT:     s.GetSkeletonJointPosition(nr, XN_SKEL_RIGHT_FOOT,      pos); break;
       }
-      p.x = pos.position.X;// * -1.0;
-      p.y = pos.position.Y * -1.0;
-      p.z = abs(pos.position.Z);
+
+      if(!projective)
+      {
+         p.x = pos.position.X;// * -1.0;
+         p.y = pos.position.Y * -1.0;
+         p.z = abs(pos.position.Z);
+      }
+      else
+      {
+         XnPoint3D pos2[2];
+         pos2->X = pos.position.X;
+         pos2->Y = pos.position.Y;
+         pos2->Z = pos.position.Z;
+         g_Depth.ConvertRealWorldToProjective(1, pos2, pos2);
+         p.x = pos2->X;
+         p.y = pos2->Y;
+         p.z = pos2->Z;
+      }
 
    }
    return p;
 }
 //---------------------------------------------------------------------------
 
-OpenNiPoint OpenNi::getPlayerPart(int nr, int part1, int part2)
+OpenNiPoint OpenNi::getPlayerPart(int nr, int part1, int part2, bool projective)
 {
-   OpenNiPoint p1 = getPlayerPart(nr, part1);
-   OpenNiPoint p2 = getPlayerPart(nr, part2);
+   OpenNiPoint p1 = getPlayerPart(nr, part1, projective);
+   OpenNiPoint p2 = getPlayerPart(nr, part2, projective);
 
    return p1 - p2;
 }
@@ -270,7 +285,7 @@ unsigned short* OpenNi::getRGBPicture()
 {
    if(!init_ok) return NULL;
 
-   return (unsigned short*)g_Image.GetImageMap();//pixels;
+   return pixels; //(unsigned short*)g_Image.GetImageMap();//
 }
 //---------------------------------------------------------------------------
 
@@ -278,7 +293,7 @@ unsigned short* OpenNi::getDepthPicture()
 {
    if(!init_ok) return NULL;
 
-   return (unsigned short*)g_Depth.GetDepthMap();//depth;
+   return depth;//(unsigned short*)g_Depth.GetDepthMap();//
 }
 //---------------------------------------------------------------------------
 

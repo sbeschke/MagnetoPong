@@ -22,26 +22,26 @@ VideoWindow::VideoWindow(OpenNi *kinect)
    window_desc.set_visible(true);
    window_desc.set_position(CL_Rect(1,1,CL_Size(640, 480)),true);
 
-   window = new CL_DisplayWindow(window_desc);
+   window = CL_DisplayWindow(window_desc);
 
-   CL_Slot slot_quit = window->sig_window_close().connect(this, &VideoWindow::on_window_close);
-   graphicContext = window->get_gc();
+   CL_Slot slot_quit = window.sig_window_close().connect(this, &VideoWindow::on_window_close);
+   graphicContext = window.get_gc();
    graphicContext.clear(CL_Colorf::white); //Fenster mit Weiß löschen
-   window->show();
-   window->flip();
-   window->set_visible(true, false);
+   window.show();
+   window.flip();
+   window.set_visible(true, false);
    window_open = true;
    show_video  = true;
    mouse_down  = false;
 
    mouse = new CL_InputDevice();
-   *mouse = window->get_ic().get_mouse(0);
+   *mouse = window.get_ic().get_mouse(0);
    timepast = 42; //24fps;
 }
 
 VideoWindow::~VideoWindow()
 {
-   delete window;
+ //  delete window;
 }
 //---------------------------------------------------------------------------
 
@@ -66,7 +66,7 @@ void VideoWindow::refresh(float timediff)
    if(timepast > 42) //24fps
    {
       refreshPicture();
-      window->flip();
+      window.flip();
       timepast = 0;
    }
 }
@@ -74,7 +74,7 @@ void VideoWindow::refresh(float timediff)
 
 void VideoWindow::setPosition(int x, int y)
 {
-   window->set_position(x,y);
+   window.set_position(x,y);
 }
 //---------------------------------------------------------------------------
 

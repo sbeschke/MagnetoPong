@@ -24,6 +24,7 @@ public:
 	void  setInvert(bool aktivate) {};
    bool  getInvert(){return false;}
    bool  getKlick();
+   bool  getExit() {return false;}
 
 private:
 
