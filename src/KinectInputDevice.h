@@ -39,6 +39,7 @@ private:
    void calcEgg();
    void calcKlick();
    void calcExit();
+   void calcLaufen();
 
    bool leftHand;
    int  playerNr;
@@ -72,6 +73,8 @@ private:
 
    bool exit;
    bool exitRead;
+
+   bool laufen;
 };
 
 #endif /* KINECTINPUTDEVICE_H_ */
