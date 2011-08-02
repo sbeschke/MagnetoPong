@@ -84,7 +84,7 @@ void PlayerCallback::playerCalibrated(int nr)
 		return;
 	}
 
-	KinectInputDevice* device = new KinectInputDevice(nr, playerSlot == Application::PLAYER_LEFT);
+	KinectInputDevice* device = new KinectInputDevice(&Application::get()->kinect, (double)Application::x_res, (double)Application::y_res, nr, playerSlot == Application::PLAYER_LEFT);
 	Player* player = new Player(app, device, playerSlot);
 	player->setNumber(nr);
 	player->getBat()->setColor(playerColors[playerSlot]);

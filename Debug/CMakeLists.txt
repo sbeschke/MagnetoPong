@@ -51,7 +51,7 @@ FIND_PACKAGE(OpenNI REQUIRED)
 ############
 # INCLUDES #
 ############
-include_directories(${PROJECT_SOURCE_DIR})
+include_directories(${PROJECT_SOURCE_DIR}/../src)
 include_directories(${OPENNI_INCLUDE})
 include_directories(${ClanLib_INCLUDE_DIRS})
 
