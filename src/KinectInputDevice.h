@@ -28,6 +28,7 @@ public:
    void  setInvert(bool aktivate){invert = aktivate; invertTimeout = 0;};
    bool  getInvert() { return invert;};
    bool  getKlick();
+   bool  getExit();
 
 private:
    void calcPos();
@@ -37,6 +38,7 @@ private:
    void calcKicking();
    void calcEgg();
    void calcKlick();
+   void calcExit();
 
    bool leftHand;
    int  playerNr;
@@ -67,6 +69,9 @@ private:
 
    bool klick;
    bool klickRead;
+
+   bool exit;
+   bool exitRead;
 };
 
 #endif /* KINECTINPUTDEVICE_H_ */

@@ -51,6 +51,21 @@ void Squash::run(float timediff)
       pl->draw(Player::SKELETON | Player::BAR);
    }
 
+   if(app->players[app->PLAYER_LEFT] != 0)
+   {
+      if(app->players[app->PLAYER_LEFT]->getExit())
+      {
+         app->switchTo(app->GS_MENU);
+      }
+   }
+   if(app->players[app->PLAYER_RIGHT] != 0)
+   {
+      if(app->players[app->PLAYER_RIGHT]->getExit())
+      {
+         app->switchTo(app->GS_MENU);
+      }
+   }
+
    //--Ball einfügen
    if(spawnBall)
    {

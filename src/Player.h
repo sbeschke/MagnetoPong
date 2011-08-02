@@ -38,6 +38,8 @@ public:
 	virtual void setInvert(bool activate);
 	virtual bool getInvert();
 
+	virtual bool getExit();
+
 	static const int BAR      = 1;
 	static const int SKELETON = 2;
 	static const int BAT      = 4;

@@ -37,6 +37,9 @@ KinectInputDevice::KinectInputDevice(int nr, bool lefthand)
 
    klick = false;
    klickRead = false;
+
+   exit = false;
+   exitRead = false;
 }
 
 KinectInputDevice::~KinectInputDevice()
@@ -71,6 +74,7 @@ void KinectInputDevice::processInput(float timepast)
    calcKicking();
    calcEgg();
    calcKlick();
+   calcExit();
 }
 //---------------------------------------------------------------------------
 
@@ -111,6 +115,21 @@ bool KinectInputDevice::getKlick()
    if(klick && !klickRead)
    {
       klickRead = true;
+      return true;
+
+   }
+   else
+   {
+      return false;
+   }
+}
+//---------------------------------------------------------------------------
+
+bool KinectInputDevice::getExit()
+{
+   if(exit && !exitRead)
+   {
+      exitRead = true;
       return true;
 
    }
@@ -274,3 +293,21 @@ void KinectInputDevice::calcKlick()
       klickRead = false;
    }
 }
+//---------------------------------------------------------------------------
+
+void KinectInputDevice::calcExit()
+{
+   OpenNiPoint torso = Application::get()->kinect.getPlayerPart(playerNr, P_TORSO);
+   OpenNiPoint neck = Application::get()->kinect.getPlayerPart(playerNr, P_NECK, P_TORSO);
+   OpenNiPoint head = Application::get()->kinect.getPlayerPart(playerNr, P_HEAD, P_TORSO);
+   if(Calculation::isEqual(neck.y, torso.y, 20) && Calculation::isEqual(head.y, torso.y, 20))
+   {
+      exit = true;
+   }
+   else
+   {
+      exit = false;
+      exitRead = false;
+   }
+}
+//---------------------------------------------------------------------------
