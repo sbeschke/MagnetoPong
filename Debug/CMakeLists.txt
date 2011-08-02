@@ -60,7 +60,7 @@ include_directories(${ClanLib_INCLUDE_DIRS})
 # SOURCE #
 ##########
 # Search for cpp-files
-aux_source_directory(${PROJECT_SOURCE_DIR} SOURCE_FILES)
+aux_source_directory(${PROJECT_SOURCE_DIR}/../src SOURCE_FILES)
 
 #########
 # BUILD #
