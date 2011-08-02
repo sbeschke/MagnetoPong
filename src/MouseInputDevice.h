@@ -25,6 +25,7 @@ public:
    bool  getInvert(){return false;}
    bool  getKlick();
    bool  getExit() {return false;}
+   bool  getLaufen() {return false;};
 
 private:
 

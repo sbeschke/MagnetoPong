@@ -27,6 +27,7 @@ public:
 	virtual bool  getInvert() =0;
 	virtual bool  getKlick() =0;
 	virtual bool  getExit() =0;
+	virtual bool  getLaufen() =0;
 
 	static const int EGG_POL  =  1;
    static const int EGG_STOP =  2;

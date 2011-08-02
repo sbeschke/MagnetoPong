@@ -78,6 +78,7 @@ void KinectInputDevice::processInput(float timepast)
    calcEgg();
    calcKlick();
    calcExit();
+   calcLaufen();
 }
 //---------------------------------------------------------------------------
 
@@ -317,6 +318,26 @@ void KinectInputDevice::calcExit()
 
 void KinectInputDevice::calcLaufen()
 {
-  // double winkelLK =
+   double winkelLK = kinect->getWinkel(playerNr, P_LHIP, P_LKNEE, P_LFOOT);
+   double winkelRK = kinect->getWinkel(playerNr, P_RHIP, P_RKNEE, P_RFOOT);
+
+   laufen = false;
+
+   if(winkelLK < lastLKnee-5)
+   {
+      if(winkelRK > lastRKnee+5)
+      {
+         laufen = true;
+      }
+   }
+   else if(winkelLK > lastLKnee+5)
+   {
+      if(winkelRK < lastRKnee-5)
+      {
+         laufen = true;
+      }
+   }
+   lastLKnee = winkelLK;
+   lastRKnee = winkelRK;
 }
 //---------------------------------------------------------------------------

@@ -39,6 +39,7 @@ public:
 	virtual bool getInvert();
 
 	virtual bool getExit();
+	virtual bool getLaufen();
 
 	static const int BAR      = 1;
 	static const int SKELETON = 2;

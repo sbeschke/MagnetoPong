@@ -29,6 +29,7 @@ public:
    bool  getInvert() { return invert;};
    bool  getKlick();
    bool  getExit();
+   bool  getLaufen(){return laufen;};
 
 private:
    void calcPos();
