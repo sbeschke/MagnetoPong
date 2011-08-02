@@ -14,7 +14,7 @@
 class KinectInputDevice : public InputDevice
 {
 public:
-   KinectInputDevice(int nr, bool lefthand);
+   KinectInputDevice(OpenNi* kinect, double xres, double yres, int nr, bool lefthand);
    virtual ~KinectInputDevice();
 
    void setHand(bool lefthand);
@@ -40,6 +40,10 @@ private:
    void calcKlick();
    void calcExit();
    void calcLaufen();
+
+   OpenNi* kinect;
+   double x_res;
+   double y_res;
 
    bool leftHand;
    int  playerNr;
@@ -75,6 +79,8 @@ private:
    bool exitRead;
 
    bool laufen;
+   double lastLKnee;
+   double lastRKnee;
 };
 
 #endif /* KINECTINPUTDEVICE_H_ */

@@ -10,8 +10,11 @@
 #include "Calculation.h"
 #include <iostream>
 
-KinectInputDevice::KinectInputDevice(int nr, bool lefthand)
+KinectInputDevice::KinectInputDevice(OpenNi* kinect, double xres, double yres, int nr, bool lefthand)
 {
+   this->kinect = kinect;
+   x_res = xres;
+   y_res = yres;
    leftHand = lefthand;
    playerNr = nr;
 
@@ -149,13 +152,13 @@ void KinectInputDevice::calcPos()
 
    if(leftHand)
    {
-      p = Application::get()->kinect.getPlayerPart(playerNr, P_LHAND, P_LSHOULDER);
+      p = kinect->getPlayerPart(playerNr, P_LHAND, P_LSHOULDER);
       x_pwinkel = 110;
       x_nwinkel = 130;
    }
    else
    {
-      p = Application::get()->kinect.getPlayerPart(playerNr, P_RHAND, P_RSHOULDER);
+      p = kinect->getPlayerPart(playerNr, P_RHAND, P_RSHOULDER);
       x_pwinkel = 130;
       x_nwinkel = 110;
    }
@@ -171,8 +174,8 @@ void KinectInputDevice::calcPos()
       calibrate();
    }
 
-   handPoint.x = (handPoint.x + (p.x * x_strech +(Application::x_res/2.0) + x_offset)) / 2.0;
-   handPoint.y = (handPoint.y + (p.y * y_strech +(Application::y_res/2.0) + y_offset)) / 2.0;
+   handPoint.x = (handPoint.x + (p.x * x_strech +(x_res/2.0) + x_offset)) / 2.0;
+   handPoint.y = (handPoint.y + (p.y * y_strech +(y_res/2.0) + y_offset)) / 2.0;
 }
 //---------------------------------------------------------------------------
 
@@ -183,26 +186,26 @@ void KinectInputDevice::calibrate()
    OpenNiPoint oberarm;
    if(leftHand)
    {
-      unterarm = Application::get()->kinect.getPlayerPart(playerNr, P_LHAND,  P_LELBOW);
-      oberarm  = Application::get()->kinect.getPlayerPart(playerNr, P_LELBOW, P_LSHOULDER);
+      unterarm = kinect->getPlayerPart(playerNr, P_LHAND,  P_LELBOW);
+      oberarm  = kinect->getPlayerPart(playerNr, P_LELBOW, P_LSHOULDER);
 
    }
    else
    {
-      unterarm = Application::get()->kinect.getPlayerPart(playerNr, P_RHAND,  P_RELBOW);
-      oberarm  = Application::get()->kinect.getPlayerPart(playerNr, P_RELBOW, P_RSHOULDER);
+      unterarm = kinect->getPlayerPart(playerNr, P_RHAND,  P_RELBOW);
+      oberarm  = kinect->getPlayerPart(playerNr, P_RELBOW, P_RSHOULDER);
    }
    armlength = unterarm.length() + oberarm.length();
    //armlength *= 0.9;
-   double winkel = atan((double)Application::y_res/(double)Application::x_res);
+   double winkel = atan(y_res/x_res);
    cout << winkel * PI_TO_GRAD << endl;
    double xres = cos(winkel) * armlength;
    double yres = sin(winkel) * armlength;
 
    if(armlength && winkel)
    {
-      x_strech = (Application::x_res/2.0) / xres;
-      y_strech = (Application::y_res/2.0) / yres;
+      x_strech = (x_res/2.0) / xres;
+      y_strech = (y_res/2.0) / yres;
 
       cout << "calibrated: " << armlength << " : " << x_strech << "|" << y_strech << endl;;
       calibrated = true;
@@ -212,7 +215,7 @@ void KinectInputDevice::calibrate()
 
 void KinectInputDevice::calcFeldWinkel()
 {
-   feldWinkel = Application::get()->kinect.getWinkelELBOW(playerNr, !leftHand);
+   feldWinkel = kinect->getWinkelELBOW(playerNr, !leftHand);
 
    feldWinkel -= 90.0;
    feldWinkel /= 80.0;
@@ -223,7 +226,7 @@ void KinectInputDevice::calcFeldWinkel()
 
 void KinectInputDevice::calcJump()
 {
-   OpenNiPoint p = Application::get()->kinect.getPlayerPart(playerNr, P_TORSO);
+   OpenNiPoint p = kinect->getPlayerPart(playerNr, P_TORSO);
    jumping = false;
    if(lastTorsoY)
    {
@@ -238,12 +241,12 @@ void KinectInputDevice::calcJump()
 
 void KinectInputDevice::calcKicking()
 {
-   double winkel = Application::get()->kinect.getWinkel(playerNr, P_RSHOULDER, P_RHIP, P_RKNEE);
+   double winkel = kinect->getWinkel(playerNr, P_RSHOULDER, P_RHIP, P_RKNEE);
 
    if(winkel < 90  ) kickingR = 1;
    else              kickingR = 0;
 
-   winkel = Application::get()->kinect.getWinkel(playerNr, P_LSHOULDER, P_LHIP, P_LKNEE);
+   winkel = kinect->getWinkel(playerNr, P_LSHOULDER, P_LHIP, P_LKNEE);
 
    if(winkel < 90  ) kickingL = 1;
    else              kickingL = 0;
@@ -297,9 +300,9 @@ void KinectInputDevice::calcKlick()
 
 void KinectInputDevice::calcExit()
 {
-   OpenNiPoint torso = Application::get()->kinect.getPlayerPart(playerNr, P_TORSO);
-   OpenNiPoint neck = Application::get()->kinect.getPlayerPart(playerNr, P_NECK, P_TORSO);
-   OpenNiPoint head = Application::get()->kinect.getPlayerPart(playerNr, P_HEAD, P_TORSO);
+   OpenNiPoint torso = kinect->getPlayerPart(playerNr, P_TORSO);
+   OpenNiPoint neck  = kinect->getPlayerPart(playerNr, P_NECK, P_TORSO);
+   OpenNiPoint head  = kinect->getPlayerPart(playerNr, P_HEAD, P_TORSO);
    if(Calculation::isEqual(neck.y, torso.y, 80) && Calculation::isEqual(head.y, torso.y, 80))
    {
       exit = true;
@@ -314,6 +317,6 @@ void KinectInputDevice::calcExit()
 
 void KinectInputDevice::calcLaufen()
 {
-
+  // double winkelLK =
 }
 //---------------------------------------------------------------------------
