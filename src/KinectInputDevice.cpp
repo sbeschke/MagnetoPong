@@ -300,7 +300,7 @@ void KinectInputDevice::calcExit()
    OpenNiPoint torso = Application::get()->kinect.getPlayerPart(playerNr, P_TORSO);
    OpenNiPoint neck = Application::get()->kinect.getPlayerPart(playerNr, P_NECK, P_TORSO);
    OpenNiPoint head = Application::get()->kinect.getPlayerPart(playerNr, P_HEAD, P_TORSO);
-   if(Calculation::isEqual(neck.y, torso.y, 20) && Calculation::isEqual(head.y, torso.y, 20))
+   if(Calculation::isEqual(neck.y, torso.y, 80) && Calculation::isEqual(head.y, torso.y, 80))
    {
       exit = true;
    }

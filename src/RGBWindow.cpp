@@ -35,15 +35,40 @@ void RGBWindow::refreshPicture()
    if(Application::get()->players[Application::PLAYER_RIGHT] != 0)
    {
       int nr = Application::get()->players[Application::PLAYER_RIGHT]->getNumber();
+
+
       OpenNiPoint hand = kinect->getPlayerPart(nr, P_RHAND, true);
+      CL_Draw::circle(graphicContext, CL_Pointf(hand.x , hand.y), 5, CL_Colorf::red);
 
-      cout << "bla1" << endl;
-      CL_Draw::circle(graphicContext, CL_Pointf(123,302), 2, CL_Colorf::gray);
-      cout << "bla2" << endl;
-      CL_Draw::circle(graphicContext, CL_Pointf(400,200), 5, CL_Colorf::red);
-      cout << "bla3" << endl;
+      OpenNiPoint finger = kinect->getPlayerPart(nr, P_LHAND, true);
+      CL_Draw::circle(graphicContext, CL_Pointf(finger.x , finger.y), 5, CL_Colorf::green);
+
+      finger = kinect->getPlayerPart(nr, P_HEAD, true);
+      CL_Draw::circle(graphicContext, CL_Pointf(finger.x , finger.y), 5, CL_Colorf::green);
+
+      finger = kinect->getPlayerPart(nr, P_LELBOW, true);
+      CL_Draw::circle(graphicContext, CL_Pointf(finger.x , finger.y), 5, CL_Colorf::green);
+
+      finger = kinect->getPlayerPart(nr, P_RELBOW, true);
+      CL_Draw::circle(graphicContext, CL_Pointf(finger.x , finger.y), 5, CL_Colorf::green);
+
+      finger = kinect->getPlayerPart(nr, P_RHIP, true);
+      CL_Draw::circle(graphicContext, CL_Pointf(finger.x , finger.y), 5, CL_Colorf::green);
+
+      finger = kinect->getPlayerPart(nr, P_RKNEE, true);
+      CL_Draw::circle(graphicContext, CL_Pointf(finger.x , finger.y), 5, CL_Colorf::green);
+
+      finger = kinect->getPlayerPart(nr, P_RFOOT, true);
+      CL_Draw::circle(graphicContext, CL_Pointf(finger.x , finger.y), 5, CL_Colorf::green);
+
+      finger = kinect->getPlayerPart(nr, P_TORSO, true);
+      CL_Draw::circle(graphicContext, CL_Pointf(finger.x , finger.y), 5, CL_Colorf::green);
+
+      finger = kinect->getPlayerPart(nr, P_WAIST, true);
+      CL_Draw::circle(graphicContext, CL_Pointf(finger.x , finger.y), 5, CL_Colorf::green);
+
+      finger = kinect->getPlayerPart(nr, P_RSHOULDER, true);
+      CL_Draw::circle(graphicContext, CL_Pointf(finger.x , finger.y), 5, CL_Colorf::green);
    }
-
-
 }
 //---------------------------------------------------------------------------

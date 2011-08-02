@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mp:config xmlns:mp="http://magnetopong.org/config">
     <display>
-        <width>1280</width>
-        <height>700</height>
+        <width>1360</width>
+        <height>750</height>
         <fullscreen>false</fullscreen>
         <fullscreenmonitor>1</fullscreendisplaymonitor>
     </display>

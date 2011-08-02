@@ -9,6 +9,7 @@
 
 #include "Calculation.h"
 #include "OpenNi.h"
+#include "Application.h"
 
 DepthWindow::DepthWindow(OpenNi *kinect, double min, double max, double details,bool viewEndles)
 :VideoWindow(kinect)
@@ -81,5 +82,17 @@ void DepthWindow::refreshPicture()
 
    CL_PixelBuffer buffer(640, 480, cl_bgr8, array);
    graphicContext.draw_pixels(0,0,buffer,CL_Rect(0,0,640,480));
+
+   if(Application::get()->players[Application::PLAYER_RIGHT] != 0)
+   {
+      int nr = Application::get()->players[Application::PLAYER_RIGHT]->getNumber();
+
+
+      OpenNiPoint hand = kinect->getPlayerPart(nr, P_RHAND, true);
+      CL_Draw::circle(graphicContext, CL_Pointf(hand.x , hand.y), 5, CL_Colorf::red);
+
+      OpenNiPoint finger = kinect->getPlayerPart(nr, P_LHAND, true);
+      CL_Draw::circle(graphicContext, CL_Pointf(finger.x , finger.y), 5, CL_Colorf::green);
+   }
 }
 //---------------------------------------------------------------------------
