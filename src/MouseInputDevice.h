@@ -19,7 +19,7 @@ public:
 	void processInput(float timepast){};
 	CL_Point getPoint();
 	float getZ(void);
-	bool  getJump(void) { return false; }
+	bool  getJump(void) {return false;}
 	int   getEsterEgg() {return 0;}
 	void  setInvert(bool aktivate) {};
    bool  getInvert(){return false;}

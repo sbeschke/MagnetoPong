@@ -451,7 +451,7 @@ void Application::playersChanged(void)
          }
          else
          {
-            osmCenter.setMessage("Stand in front of camera to play MagnetoPong!");
+            osmCenter.setMessage("Stand in front of Kinect to play MagnetoPong!");
          }
       break;
    case GS_MENU:
@@ -466,7 +466,7 @@ void Application::playersChanged(void)
       case 0: switchTo(GS_DEMO); break;
       case 1:
          {
-            osmCenter.setMessage("Waiting for player 2 – Stand in front of camera to play MagnetoPong!");
+            osmCenter.setMessage("Waiting for player 2 – Stand in front of Kinect to play MagnetoPong!");
          }
          break;
       case 2:
