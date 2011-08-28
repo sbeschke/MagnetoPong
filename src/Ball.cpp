@@ -12,12 +12,12 @@
 float Ball::ballacc;
 float Ball::radius;
 
-Ball::Ball(Application* application, Vec2d windowFrame)
+Ball::Ball(Application* application)
 : Entity(application)
 {
 	setColor(CL_Colorf(0.0f, 0.0f, 0.0f, 0.6f));
 	setRadius(Ball::radius);
-//	this->windowFrame = windowFrame;
+	type = TYPE_BALL;
 }
 
 Ball::~Ball()
@@ -44,7 +44,9 @@ void Ball::initializePosition()
 
 void Ball::updateposition(float timedifference, int solidSides)
 {
-	speed += this->force * timedifference;
+//	if(speed.length() > 10) speed += (this->force * timedifference)/speed;
+//	else speed += (this->force * timedifference);
+   speed += (this->force * timedifference);
 	Vec2d newpos = this->getPosition()+this->speed*timedifference;
 
 	if(solidSides & Entity::BOTTOMSIDE)

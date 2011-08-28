@@ -36,31 +36,10 @@ void Pong::run(float timediff)
       {
          pl->processInput(timediff);
          pl->draw(Player::SKELETON | Player::BAR);
-      }
-   }
-
-   if(app->players[app->PLAYER_LEFT] != 0)
-   {
-      if(app->players[app->PLAYER_LEFT]->getExit())
-      {
-         app->switchTo(app->GS_MENU);
-      }
-   }
-   if(app->players[app->PLAYER_RIGHT] != 0)
-   {
-      if(app->players[app->PLAYER_RIGHT]->getExit())
-      {
-         app->switchTo(app->GS_MENU);
-      }
-   }
-
-   //--Ball einfügen
-   if(spawnBall)
-   {
-      timeToSpawnBall -= timediff;
-      if(timeToSpawnBall <= 0.0f)
-      {
-         doSpawnBall();
+         if(pl->getExit())
+         {
+            app->switchTo(app->GS_MENU);
+         }
       }
    }
 
@@ -72,11 +51,21 @@ void Pong::run(float timediff)
       if(!inMatch)
       {
          clearBalls();
-         spawnBall = false;
          timeToMatch -= timediff;
          if(timeToMatch <= 0.0f)
          {
             startMatch();
+         }
+      }
+      else
+      {
+         if(timeToSpawnBall > 0)
+         {
+            timeToSpawnBall -= timediff;
+            if(timeToSpawnBall <= 0.0f)
+            {
+               makeBall();
+            }
          }
       }
 
@@ -88,46 +77,32 @@ void Pong::run(float timediff)
    }
    else
    {
-      spawnBall = true;
+      //--Ball einfügen
+      timeToSpawnBall -= timediff;
+      if(timeToSpawnBall <= 0.0f)
+      {
+         makeBall();
+         timeToSpawnBall = timeToSpawnBallVal;
+      }
    }
 
    if(calcForces(timediff)) //--bei Kollision sound ausgeben (nur wenn Spieler drin sind)
    {
       app->soundPlayer->effect("collision");
    }
+   drawBalls();
 }
 //---------------------------------------------------------------------------
 
-// return true if ball is out
-bool Pong::checkBall(Ball* ball)
-{
-   bool ballOut = false;
-   Vec2d pos = ball->getPosition();
-
-   if(pos.x < 0)
-   {
-      this->ballOut(app->PLAYER_RIGHT);
-      ballOut = true;
-   }
-   else if(pos.x >= app->x_res)
-   {
-      this->ballOut(app->PLAYER_LEFT);
-      ballOut = true;
-   }
-   else if(!(pos.y >= 0 && pos.y < app->y_res))
-   {
-      makeBall();
-      ballOut = true;
-   }
-
-   return ballOut;
-}
-//---------------------------------------------------------------------------
-
-void Pong::ballOut(int player)
+void Pong::ballOut(int side)
 {
    if(app->playersActive == 2)
    {
+      int player;
+      if(side == Entity::LEFTSIDE) player = app->PLAYER_RIGHT;
+      else if(side == Entity::RIGHTSIDE) player = app->PLAYER_LEFT;
+      else return;
+
       app->soundPlayer->effect("point");
       app->players[player]->incrementScore();
 
@@ -155,17 +130,11 @@ void Pong::ballOut(int player)
          {
             app->osmShout.setMessage("Left Scores", 2.0f);
          }
-         spawnBall = true;
          timeToSpawnBall = 3000.0f;
       }
    }
    else
    {
-      /*
-      if(entities.size() <= app->ANZ_BALS_DEMO)
-      {
-         makeBall();
-      }*/
    }
 }
 //---------------------------------------------------------------------------
@@ -173,6 +142,7 @@ void Pong::ballOut(int player)
 void Pong::startMatch(void)
 {
    inMatch = true;
+   timeToSpawnBall = 0;
    app->osmShout.setMessage("FIGHT", 3.0f);
    app->soundPlayer->effect("fight");
    std::ostringstream centerText;
@@ -193,9 +163,9 @@ void Pong::startMatch(void)
 
 void Pong::restartMatch()
 {
-   spawnBall = false;
-   inMatch   = false;
+   inMatch     = false;
    timeToMatch = 5000.0f;
+   timeToSpawnBall = 0;
    app->osmCenter.setMessage("Get ready...", 3.0f);
 }
 //---------------------------------------------------------------------------

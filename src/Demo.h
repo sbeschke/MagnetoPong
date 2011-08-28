@@ -2,7 +2,7 @@
  * Demo.h
  *
  *  Created on: 03.07.2011
- *      Author: matthas
+ *      Author: matthias
  */
 
 #ifndef DEMO_H_
@@ -19,7 +19,7 @@ public:
    void run(float timediff);
 
 private:
-   bool checkBall(Ball* ball);
+   void ballOut(int side);
 };
 
 #endif /* DEMO_H_ */

@@ -37,6 +37,7 @@ public:
    static const int PONG   =  1;
    static const int SQUASH =  2;
    static const int OPTION =  3;
+   static const int FLIGHT =  4;
    static const int DIF1   = 21;
    static const int DIF2   = 22;
    static const int DIF3   = 23;

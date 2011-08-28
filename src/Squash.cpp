@@ -2,7 +2,7 @@
  * Squash.cpp
  *
  *  Created on: 03.07.2011
- *      Author: matthas
+ *      Author: matthias
  */
 
 #include "Squash.h"
@@ -40,6 +40,11 @@ void Squash::run(float timediff)
    //--Spieler input verarbeiten und Spielerskelett Zeichnen
    if(app->players[app->PLAYER_RIGHT] != 0)
    {
+      if(app->players[app->PLAYER_RIGHT]->getExit())
+      {
+         app->switchTo(app->GS_MENU);
+      }
+
       Player* pl = app->players[app->PLAYER_RIGHT];
       pl->processInput(timediff);
       Vec2d pos = pl->getBat()->getPosition();
@@ -49,39 +54,18 @@ void Squash::run(float timediff)
          pl->getBat()->setPosition(pos);
       }
       pl->draw(Player::SKELETON | Player::BAR);
-   }
 
-   if(app->players[app->PLAYER_LEFT] != 0)
-   {
-      if(app->players[app->PLAYER_LEFT]->getExit())
-      {
-         app->switchTo(app->GS_MENU);
-      }
-   }
-   if(app->players[app->PLAYER_RIGHT] != 0)
-   {
-      if(app->players[app->PLAYER_RIGHT]->getExit())
-      {
-         app->switchTo(app->GS_MENU);
-      }
-   }
 
-   //--Ball einfügen
-   if(spawnBall)
-   {
-      timeToSpawnBall -= timediff;
-      if(timeToSpawnBall <= 0.0f)
-      {
-         doSpawnBall();
-      }
+      drawScores(app->players[app->PLAYER_RIGHT]->getScore());
    }
-
-   drawScores(app->players[app->PLAYER_RIGHT]->getScore());
+   else
+   {
+      app->switchTo(app->GS_MENU);
+   }
 
    if(!inMatch)
    {
       clearBalls();
-      spawnBall = false;
       timeToMatch -= timediff;
       if(timeToMatch <= 0.0f)
       {
@@ -93,13 +77,14 @@ void Squash::run(float timediff)
    {
       app->soundPlayer->effect("collision");
    }
+
+   drawBalls();
 }
 //---------------------------------------------------------------------------
 
 void Squash::startMatch(void)
 {
    inMatch = true;
-   spawnBall = false;
    app->osmShout.setMessage("FIGHT", 3.0f);
    app->soundPlayer->effect("fight");
 
@@ -114,10 +99,10 @@ void Squash::startMatch(void)
 
 void Squash::restartMatch()
 {
-   spawnBall = false;
    inMatch   = false;
    timeToMatch = 5000.0f;
    app->osmCenter.setMessage("Get ready...", 3.0f);
+   clearBalls();
 }
 //---------------------------------------------------------------------------
 
@@ -128,9 +113,8 @@ void Squash::setDifficulty(float dif)
 //---------------------------------------------------------------------------
 
 // return true if ball is out
-bool Squash::checkBall(Ball* ball)
+int Squash::checkBall(Ball* ball)
 {
-   bool ballOut = false;
    Vec2d pos = ball->getPosition();
 
    if(pos.x < 0)
@@ -138,6 +122,7 @@ bool Squash::checkBall(Ball* ball)
       app->soundPlayer->effect("point");
       Vec2d speed = ball->getSpeed();
       speed.x = -speed.x;
+
       double points = sqrt(speed.x*speed.x + speed.y*speed.y) * 40*difficulty*difficulty;
       int score = app->players[app->PLAYER_RIGHT]->getScore();
       score += points;
@@ -150,20 +135,19 @@ bool Squash::checkBall(Ball* ball)
    }
    else if(pos.x >= app->x_res)
    {
-      this->ballOut(app->PLAYER_RIGHT);
-      ballOut = true;
+      //this->ballOut(Entity::RIGHTSIDE);
+      return Entity::RIGHTSIDE;
    }
    else if(!(pos.y >= 0 && pos.y < app->y_res))
    {
       makeBall();
-      ballOut = true;
    }
 
-   return ballOut;
+   return 0;
 }
 //---------------------------------------------------------------------------
 
-void Squash::ballOut(int player)
+void Squash::ballOut(int side)
 {
    app->soundPlayer->effect("win");
    app->osmHuge.setMessage("GAMEOVER", 3.0f);

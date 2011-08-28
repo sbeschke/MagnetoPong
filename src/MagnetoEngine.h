@@ -11,6 +11,7 @@
 #include "Entity.h"
 class Application;
 class Ball;
+class Brick;
 
 class MagnetoEngine
 {
@@ -20,21 +21,19 @@ public:
 
    virtual void run(float timediff) =0;
 
-   EntitySet entities;
-
    void addEntity(Entity* entity);
    void remEntity(Entity* entity);
 
 protected:
-   virtual bool checkBall(Ball* ball)=0;
+   virtual void ballOut(int side)=0;
+   virtual int  checkBall(Ball* ball);
 
    bool calcForces(float timediff); //to be called in run
 
+   void drawBalls();
    void makeBall();
    void remBall(Ball* ball);
    void clearBalls();
-
-   void doSpawnBall();
 
    int solidSides;
 
@@ -42,11 +41,11 @@ protected:
 
    float timeToSpawnBall;
    float timeToSpawnBallVal;
-   bool  spawnBall;
 
+   EntitySet entities;
 private:
-   void ballOut(int player);
-   void drawScores(int s1, int s2);
+   Vec2d calcForce(Brick* brick, Ball* ball);
+
 };
 
 #endif /* MAGNETOENGINE_H_ */

@@ -13,14 +13,7 @@
 #include <ClanLib/core.h>
 #include <ClanLib/display.h>
 #include <ClanLib/gl.h>
-/*
-#ifndef BALLACC
-#define BALLACC 5.0
-#endif
-#ifndef RADIUS
-#define RADIUS 15
-#endif
-*/
+
 
 class Ball: public Entity
 {
@@ -28,7 +21,7 @@ public:
    static float ballacc;
    static float radius;
 
-	Ball(Application* application,Vec2d windowFrame);
+	Ball(Application* application);
 	virtual ~Ball();
 
 	void draw(void);

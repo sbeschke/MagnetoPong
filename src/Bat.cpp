@@ -16,6 +16,7 @@ Bat::Bat(Application* application)
 {
 	setColor(CL_Colorf::cornsilk);
 	setRadius(Bat::radius);
+	type = TYPE_BAT;
 }
 
 Bat::~Bat()
