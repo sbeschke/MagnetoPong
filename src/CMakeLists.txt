@@ -30,6 +30,8 @@ set(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO
 	-pg
 )
 
+add_definitions(-std=c++11)
+
 if(ENABLE_ALL_WARNINGS)
 	add_definitions(-Wall)
 endif()
