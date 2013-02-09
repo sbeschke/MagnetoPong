@@ -80,11 +80,6 @@ void Menu::resetButtons()
    b->setColor(CL_Colorf::red, CL_Colorf::blue, CL_Colorf::green);
    buttonListRoot.push_back(b);
 
-   b = new MenuButton(FLIGHT, x, y+= h+d, w, h, 20, font_desc);
-   b->setText("start MagnetoFlight");
-   b->setColor(CL_Colorf::red, CL_Colorf::blue, CL_Colorf::green);
-   buttonListRoot.push_back(b);
-
    b = new MenuButton(OPTION, x, y+= h+d, w, h, 20, font_desc);
    b->setText("Options");
    b->setColor(CL_Colorf::red, CL_Colorf::blue, CL_Colorf::green);

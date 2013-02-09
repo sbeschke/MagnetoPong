@@ -13,7 +13,6 @@ Entity::Entity(Application* application)
 {
    boost = 1;
    boostctr = 0;
-   type = TYPE_ENTITY;
 }
 
 Entity::~Entity() {

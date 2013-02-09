@@ -10,7 +10,7 @@
 #include <iostream>
 
 MouseInputDevice::MouseInputDevice(CL_InputDevice* mouse)
-: mouse(mouse), zValue(1)
+: mouse(mouse), zValue(0.5f)
 {
    klick = false;
 }

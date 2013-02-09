@@ -21,7 +21,8 @@ public:
    void restartMatch();
 
 private:
-   void ballOut(int side);
+   bool checkBall(Ball* ball);
+   void ballOut(int player);
 
    void startMatch();
 

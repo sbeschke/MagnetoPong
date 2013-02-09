@@ -19,7 +19,6 @@ class Menu;
 class Pong;
 class Demo;
 class Squash;
-class Flight;
 
 class PlayerCallback : public OpenNiPlayerCallback
 {
@@ -50,9 +49,7 @@ private:
 	Pong* pong;
 	Demo* demo;
 	Squash* squash;
-	Flight* flight;
 	CL_DisplayWindow window;
-	CL_String settingsFilename;
 
 public:
 	int gamestatus;
@@ -61,7 +58,6 @@ public:
 	const static int GS_MENU   = 1;
    const static int GS_PONG   = 2;
    const static int GS_SQUASH = 3;
-   const static int GS_FLIGHT = 4;
 
 	Sound *soundPlayer;
 

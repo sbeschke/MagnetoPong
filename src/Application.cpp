@@ -19,7 +19,6 @@
 #include "Pong.h"
 #include "Demo.h"
 #include "Squash.h"
-#include "Flight.h"
 
 
 Application* Application::myself;
@@ -119,80 +118,61 @@ void PlayerCallback::playerLost(int nr)
 //---------------------------------------------------------------------------
 void Application::domsetup()
 {
-
+	CL_String filename = "";
 	if(CL_FileHelp::file_exists("configs/magnetopong.xml"))
 	{
-	   settingsFilename = "configs/magnetopong.xml";
+		filename = "configs/magnetopong.xml";
 	}
 	else if(CL_FileHelp::file_exists("~/.magnetopong/config.xml"))
 	{
-	   settingsFilename = "~/.magnetopong.xml";
+		filename = "~/.magnetopong.xml";
 	}
 	else if(CL_FileHelp::file_exists("/etc/magnetopong.xml"))
 	{
-	   settingsFilename = "/etc/magnetopong.xml";
+		filename = "/etc/magnetopong.xml";
 	}
-	else if(CL_FileHelp::file_exists("/home/matthas/Desktop/CPP_Linux/MagnetoPong/Debug/configs/magnetopong.xml"))
-   {
-      settingsFilename = "/home/matthas/Desktop/CPP_Linux/MagnetoPong/Debug/configs/magnetopong.xml";
-
-   }
 	else
 	{
 		CL_Console::write_line("Could not find magnetopong.xml");
 	}
 
-	if(settingsFilename.length() > 0)
+	if(filename.length() > 0) try
 	{
-	   try
-		{
-         CL_File file(settingsFilename);
-         CL_String ns_magnetopong = "http://magnetopong.org/config";
-         CL_DomDocument document(file);
-         CL_DomNode root = document.named_item_ns(ns_magnetopong,"config");
-         CL_DomElement display = root.named_item("display").to_element();
-         Application::x_res = display.get_child_int("width", Application::x_res);
-         Application::y_res = display.get_child_int("height", Application::y_res);
-         Application::fullscreen = display.get_child_bool("fullscreen", Application::fullscreen);
-         Application::fullscreenmonitor = display.get_child_bool("fullscreenmonitor", Application::fullscreenmonitor);
+		CL_File file(filename);
+		CL_String ns_magnetopong = "http://magnetopong.org/config";
+		CL_DomDocument document(file);
+		CL_DomNode root = document.named_item_ns(ns_magnetopong,"config");
+		CL_DomElement display = root.named_item("display").to_element();
+		//CL_DomElement display = Application::domconfig.named_item("display").to_element();
+		Application::x_res = display.get_child_int("width",Application::x_res);
+		Application::y_res = display.get_child_int("height",Application::y_res);
+		Application::fullscreen = display.get_child_bool("fullscreen",Application::fullscreen);
+		Application::fullscreenmonitor = display.get_child_bool("fullscreenmonitor",Application::fullscreenmonitor);
 
-         CL_DomElement gameplay = root.named_item("gameplay").to_element();
-         Application::scoreToWin = gameplay.get_child_int("winpoints", 11);
-         Application::enableEasterEggs = gameplay.get_child_bool("enableeastereggs",true);
+		CL_DomElement gameplay = root.named_item("gameplay").to_element();
+		Application::scoreToWin = gameplay.get_child_int("winpoints", 11);
+		Application::enableEasterEggs = gameplay.get_child_bool("enableeastereggs",true);
 
-         CL_DomElement physics = root.named_item("physics").to_element();
+		CL_DomElement physics = root.named_item("physics").to_element();
 
-         CL_DomElement ball = physics.named_item("ball").to_element();
-         Ball::ballacc = TGString(ball.get_child_string("acceleration", "5.0")).toDouble();
-         Ball::radius  = TGString(ball.get_child_string("radius", "10.0")).toDouble();
+		CL_DomElement ball = physics.named_item("ball").to_element();
+		Ball::ballacc = TGString(ball.get_child_string("acceleration", "5.0")).toDouble();
+		Ball::radius  = TGString(ball.get_child_string("radius", "10.0")).toDouble();
 
-         CL_DomElement bat = physics.named_item("bat").to_element();
-         Bat::radius = TGString(bat.get_child_string("radius", "20.0")).toDouble();
+		CL_DomElement bat = physics.named_item("bat").to_element();
+      Bat::radius = TGString(bat.get_child_string("radius", "20.0")).toDouble();
 
-         CL_DomElement sound = root.named_item("sound").to_element();
-         this->soundPlayer->domLoad(sound);
+		CL_DomElement sound = root.named_item("sound").to_element();
+		this->soundPlayer->domLoad(sound);
 
-         file.close();
-      }
-      catch(CL_Exception &exception)
-      {
-         // Create a console window for text-output if not available
-         CL_ConsoleWindow console("Console", 80, 160);
-         CL_Console::write_line("DOM Error: " + exception.get_message_and_stack_trace());
-         console.display_close_message();
-      }
+		file.close();
 	}
-	else
+	catch(CL_Exception &exception)
 	{
-	   Application::x_res = 640;
-	   Application::y_res = 480;
-	   Application::fullscreen = false;
-	   Application::fullscreenmonitor = 0;
-	   Application::scoreToWin = 11;
-	   Application::enableEasterEggs = true;
-	   Ball::ballacc = 5.0;
-	   Ball::radius  = 10.0;
-	   Bat::radius   = 20.0;
+		// Create a console window for text-output if not available
+		CL_ConsoleWindow console("Console", 80, 160);
+		CL_Console::write_line("DOM Error: " + exception.get_message_and_stack_trace());
+		console.display_close_message();
 	}
 }
 //---------------------------------------------------------------------------
@@ -201,18 +181,16 @@ Application::Application(void)
 {
    Application::myself = this;
 
-   soundPlayer = new Sound();
-
-   domsetup();
-
    gamestatus = GS_DEMO;
 
    srand(time(NULL));
 
+	soundPlayer = new Sound();
 	pong   = new Pong(this);
 	demo   = new Demo(this);
 	squash = new Squash(this);
-	flight = new Flight(this);
+
+	domsetup();
 
 	CL_FontDescription font_desc;
 	font_desc.set_typeface_name("Verdana");
@@ -245,29 +223,7 @@ void Application::setRes(int x, int y)
    osmHuge.setPos(CL_Pointf(x_res / 2, (float)y_res * 0.5f));
    osmLeft.setPos(CL_Pointf(x_res / 4, y_res / 2));
    osmRight.setPos(CL_Pointf(x_res * 3 / 4, y_res / 2));
-/*
-   if(settingsFilename.length() > 0) try
-   {
-      CL_File file(settingsFilename);
-      CL_String ns_magnetopong = "http://magnetopong.org/config";
-      CL_DomDocument document(file);
-      CL_DomNode root = document.named_item_ns(ns_magnetopong,"config");
-      CL_DomElement display = root.named_item("display").to_element();
-      display.set_child_int("width",  Application::x_res);
-      display.set_child_int("heigth", Application::y_res);
-      CL_DomNode tmp1 = display;
-      CL_DomNode tmp2 = root.named_item("display");
-      root.replace_child(tmp1, tmp2);
-      tmp1 = document.named_item_ns(ns_magnetopong,"config");
-      document.replace_child(root, tmp1);
-      document.save(file,true);
-      file.close();
-   }
-   catch(...)
-   {
-      cout << "setRes Error write file" << endl;
-   }
-   */
+
    window.flip();
 }
 //---------------------------------------------------------------------------
@@ -350,7 +306,6 @@ void Application::run(void)
 		case GS_MENU:   runMenu(timediff);     break;
 		case GS_PONG:   pong->run(timediff);   break;
 		case GS_SQUASH: squash->run(timediff); break;
-		case GS_FLIGHT: flight->run(timediff); break;
 		}
 
 		//--Textausgabe
@@ -404,11 +359,6 @@ void Application::switchTo(int status)
          squash->restartMatch();
       }
       break;
-   case GS_FLIGHT:
-      {
-         flight->start();
-      }
-      break;
    }
    gamestatus = status;
    playersChanged();
@@ -435,7 +385,6 @@ void Application::runMenu(float timediff)
          case Menu::PONG:   switchTo(GS_PONG); break;
          case Menu::SQUASH: dasMenu->setMenu(Menu::MENUDIF);  break;
          case Menu::OPTION: dasMenu->setMenu(Menu::MENUOPT);  break;
-         case Menu::FLIGHT: switchTo(GS_FLIGHT); break;
          case Menu::DIF1:   squash->setDifficulty(0.8); switchTo(GS_SQUASH);  break;
          case Menu::DIF2:   squash->setDifficulty(1);   switchTo(GS_SQUASH);  break;
          case Menu::DIF3:   squash->setDifficulty(1.6); switchTo(GS_SQUASH);  break;
@@ -461,7 +410,6 @@ void Application::addPlayer(Player* player, int playerSlot)
 	players[playerSlot] = player;
 	pong->addEntity(player->getBat());
 	squash->addEntity(player->getBat());
-	flight->addEntity(player->getBat());
 	cout << "player Add\n";
 	playersActive++;
 
@@ -475,7 +423,6 @@ void Application::remPlayer(int playerSlot)
 	player->quit();
 	pong->remEntity(player->getBat());
 	squash->remEntity(player->getBat());
-	flight->remEntity(player->getBat());
 	delete player;
 	players[playerSlot] = 0;
 	playersActive--;

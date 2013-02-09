@@ -2,7 +2,7 @@
  * Squash.h
  *
  *  Created on: 03.07.2011
- *      Author: matthias
+ *      Author: matthas
  */
 
 #ifndef SQUASH_H_
@@ -22,10 +22,10 @@ public:
    void setDifficulty(float dif);
 
 private:
-   void ballOut(int side);
-   int  checkBall(Ball* ball);
-
    void startMatch();
+
+   bool checkBall(Ball* ball);
+   void ballOut(int player);
 
    void drawScores(int s1);
 

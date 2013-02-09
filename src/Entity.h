@@ -25,17 +25,11 @@ typedef std::set<Entity*> EntitySet;
 class Entity
 {
 public:
-   static const int TYPE_ENTITY = 0;
-   static const int TYPE_BAT    = 1;
-   static const int TYPE_BALL   = 2;
-   static const int TYPE_BRICK  = 3;
-
 	Entity(Application* application);
 	virtual ~Entity();
 
 	virtual void draw(void);
 
-	int getType(){return type;};
 	virtual Vec2d getPosition(void);
 	virtual float getX(void);
 	virtual float getY(void);
@@ -64,10 +58,6 @@ public:
 protected:
 	Application* application;
 
-	int type;
-
-	CL_Colorf color;
-
 private:
 	Vec2d position;
 	float charge;
@@ -76,6 +66,7 @@ private:
 	float boost;
 	float boostctr;
 
+	CL_Colorf color;
 };
 
 
