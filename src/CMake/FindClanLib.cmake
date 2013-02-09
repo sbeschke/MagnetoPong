@@ -70,7 +70,7 @@ ClanLib_MSG("Checking for ClanLib")
 FIND_PATH(ClanLib_INCLUDE_DIRS ClanLib/core.h
   ${ClanLib_ROOT_DIR}/include ${ClanLib_ROOT_DIR}/include/ClanLib-${ClanLib_MAJOR_VERSION}.${ClanLib_MINOR_VERSION}
   /usr/local/include          /usr/local/include/ClanLib-${ClanLib_MAJOR_VERSION}.${ClanLib_MINOR_VERSION}
-  /usr/include                /usr/include/ClanLib--${ClanLib_MAJOR_VERSION}.${ClanLib_MINOR_VERSION}
+  /usr/include                /usr/include/ClanLib-${ClanLib_MAJOR_VERSION}.${ClanLib_MINOR_VERSION}
   DOC "Where to find the ClanLib includes.")
 IF(ClanLib_INCLUDE_DIRS)
   ClanLib_MSG("Checking for ClanLib -- headers")

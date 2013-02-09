@@ -6,17 +6,17 @@
 #
 # made by sycoso
 
-FIND_PATH(OPENNI_NI_INCLUDE NAME XnOpenNI.h PATHS /usr/include/ni /usr/include/openni /usr/include/OpenNI /usr/local/include/ni /usr/local/include/openni /usr/local/include/OpenNI ~/.local/include/ni ~/.local/include/openni ~/.local/include/OpenNI)
+FIND_PATH(OPENNI_NI_INCLUDE NAME XnOpenNI.h PATHS /usr/include/ni /usr/include/openni /usr/include/OpenNI /usr/local/include/ni /usr/local/include/openni /usr/local/include/OpenNI ~/.local/include/ni ~/.local/include/openni ~/.local/include/OpenNI $ENV{OPENNI2_INCLUDE})
 
-FIND_PATH(NITE_INCLUDE NAME XnVNite.h PATHS /usr/include/nite /usr/include/NITE /usr/local/include/nite /usr/local/include/NITE ~/.local/include/nite ~/.local/include/NITE)
+FIND_PATH(NITE_INCLUDE NAME NiTE.h PATHS /usr/include/nite /usr/include/NITE /usr/local/include/nite /usr/local/include/NITE ~/.local/include/nite ~/.local/include/NITE $ENV{NITE2_INCLUDE})
 
 set(OPENNI_INCLUDE
 	${OPENNI_NI_INCLUDE}
 	${NITE_INCLUDE}
 )
 
-FIND_LIBRARY(OPENNI_NI_LIBRARY NAME OpenNI PATHS /usr/lib /usr/local/lib ~/.local/lib)
-FIND_LIBRARY(NITE_LIBRARY NAME XnVCNITE_1_3_1 PATHS /usr/lib /usr/local/lib ~/.local/lib)
+FIND_LIBRARY(OPENNI_NI_LIBRARY NAME OpenNI PATHS /usr/lib /usr/local/lib ~/.local/lib $ENV{OPENNI2_REDIST})
+FIND_LIBRARY(NITE_LIBRARY NAME NiTE2 PATHS /usr/lib /usr/local/lib ~/.local/lib $ENV{NITE2_REDIST64})
 
 set(OPENNI_LIBRARY
 	${OPENNI_NI_LIBRARY}
